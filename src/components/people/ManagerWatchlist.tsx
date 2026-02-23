@@ -7,7 +7,7 @@ interface Props {
     data?: any[];
 }
 
-const ManagerWatchlist: React.FC<Props> = ({ dateRange, data = [] }) => {
+const ManagerWatchlist: React.FC<Props> = ({ data = [] }) => {
     const topManagers = [...data]
         .sort((a, b) => b.exits - a.exits)
         .slice(0, 5);

@@ -7,7 +7,7 @@ interface Props {
     data?: any;
 }
 
-const LeaveAndDeptOverview: React.FC<Props> = ({ dateRange, data }) => {
+const LeaveAndDeptOverview: React.FC<Props> = ({ data }) => {
     if (!data) return null;
 
     const totalEmployees = data.companyAvailability.totalEmployees;

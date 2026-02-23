@@ -1,12 +1,12 @@
 import React from 'react';
-import { DateRangeOption } from '../../types';
-import { UserMinus, AlertTriangle, ArrowRight } from 'lucide-react';
+import type { DateRangeOption } from '../../types';
+import { UserMinus, AlertTriangle } from 'lucide-react';
 
 interface Props {
   dateRange: DateRangeOption;
 }
 
-const WorkforceStability: React.FC<Props> = ({ dateRange }) => {
+const WorkforceStability: React.FC<Props> = () => {
   // Widget A: Exit Trend Data
   const exitData = [
     { label: "Regrettable", value: 35, color: "text-rose-500", bg: "bg-rose-500" },

@@ -1,14 +1,12 @@
 import React from 'react';
-import { DateRangeOption } from '../../types';
+import type { DateRangeOption } from '../../types';
 import { Users, Timer, CheckCircle, TrendingUp } from 'lucide-react';
 
 interface Props {
     dateRange: DateRangeOption;
 }
 
-const RecruitmentVelocity: React.FC<Props> = ({ dateRange }) => {
-    // Metric 3: Offer Acceptance Rate (Gauge Data)
-    const acceptanceRate = 88;
+const RecruitmentVelocity: React.FC<Props> = () => {
 
     // Widget C: Sourcing Efficacy Pie Data
     const sourcingData = [

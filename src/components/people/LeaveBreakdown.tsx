@@ -1,12 +1,12 @@
 import React from 'react';
-import { DateRangeOption } from '../../types';
+import type { DateRangeOption } from '../../types';
 import { CalendarOff, Plane, Coffee, Home } from 'lucide-react';
 
 interface Props {
     dateRange: DateRangeOption;
 }
 
-const LeaveBreakdown: React.FC<Props> = ({ dateRange }) => {
+const LeaveBreakdown: React.FC<Props> = () => {
     const departments = [
         { name: "Engineering", count: 12, total: 45, icon: Home },
         { name: "Sales & Marketing", count: 8, total: 32, icon: Plane },
