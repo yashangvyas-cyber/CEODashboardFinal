@@ -1,6 +1,7 @@
 import React from 'react';
 import type { DateRangeOption } from '../../types';
 import { Clock } from 'lucide-react';
+import InfoTooltip from '../common/InfoTooltip';
 
 interface Props {
     dateRange: DateRangeOption;
@@ -19,6 +20,7 @@ const UpcomingExpirations: React.FC<Props> = ({ data = [], metricData }) => {
                     <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider flex items-center">
                         <Clock className="w-4 h-4 mr-2 text-amber-500 group-hover:scale-110 transition-transform" />
                         Upcoming Expirations
+                        <InfoTooltip content="Tracks upcoming project completions or resource contract renewals, highlighting those at risk of expiring soon." />
                     </h3>
                     <p className="text-xs text-slate-400 mt-1">Hirebase & Hourly Renewals</p>
                 </div>

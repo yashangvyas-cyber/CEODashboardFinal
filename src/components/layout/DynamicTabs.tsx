@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
-import type { ModuleOption } from '../../types';
+import React from 'react';
+import type { ModuleOption, DateRangeOption, BusinessUnitOption } from '../../types';
+import { useWidgetConfig } from '../../hooks/useWidgetConfig';
+import { CustomizeWidgetsButton } from './CustomizeWidgetsPanel';
 
 // Gemini People Components
 import ExitByTypeAndReason from '../people/ExitByTypeAndReason';
 import AttritionAnalysis from '../people/AttritionAnalysis';
 import TalentRiskScore from '../people/TalentRiskScore';
-import LeaveAndDeptOverview from '../people/LeaveAndDeptRisk';
 import ManagerWatchlist from '../people/ManagerWatchlist';
+import AttritionMetrics from '../people/AttritionMetrics';
 import SkillsGap from '../people/SkillsGap';
 import TopEmployees from '../people/TopEmployees';
 
@@ -30,11 +32,13 @@ import CRMPipelineSummaries from '../crm/CRMPipelineSummaries';
 import TopRevenueContributors from '../crm/TopRevenueContributors';
 import LostDealAnalysis from '../crm/LostDealAnalysis';
 import RevenueSourceMix from '../crm/RevenueSourceMix';
+import RevenueTrend from '../crm/RevenueTrend';
+import AvgDaysToPay from '../crm/AvgDaysToPay';
 
 // Recruitment Components
-import HiringEfficiency from '../recruitment/HiringEfficiency';
-import CandidateRatio from '../recruitment/CandidateRatio';
+import RecruitmentSummaryCards from '../recruitment/RecruitmentSummaryCards';
 import StageConversion from '../recruitment/StageConversion';
+import RecruitmentVelocity from '../people/RecruitmentVelocity';
 import JobStatus from '../recruitment/JobStatus';
 import OfferAcceptance from '../recruitment/OfferAcceptance';
 
@@ -152,10 +156,10 @@ const mockPMData = {
         { name: 'Crypto Platform', hours: 10, type: 'Hourly' }
     ],
     compliance: [
-        { department: 'Backend Engineering', unapproved: 45 },
-        { department: 'Frontend UI', unapproved: 8 },
-        { department: 'Quality Assurance', unapproved: 5 },
-        { department: 'Business Analysis', unapproved: 0 }
+        { department: 'Backend Engineering', unapproved: 45, missing: 12 },
+        { department: 'Frontend UI', unapproved: 8, missing: 4 },
+        { department: 'Quality Assurance', unapproved: 5, missing: 2 },
+        { department: 'Business Analysis', unapproved: 0, missing: 0 }
     ],
     dailyAllocations: {
         missingLogs: [
@@ -294,204 +298,212 @@ const mockRecruitmentData = {
     }
 };
 
-
 interface DynamicTabsProps {
-    searchedModules: ModuleOption[];
+    activeTab: ModuleOption;
+    dateRange: DateRangeOption;
+    selectedBU: BusinessUnitOption;
 }
 
-const MODULE_LABELS: Record<ModuleOption, string> = {
-    people: 'People',
-    crm: 'CRM & Invoice',
-    recruitment: 'Recruitment',
-    project_management: 'Project Management'
-};
+export const DynamicTabs: React.FC<DynamicTabsProps> = ({ activeTab, dateRange, selectedBU }) => {
+    const peopleWC = useWidgetConfig('people');
+    const crmWC = useWidgetConfig('crm');
+    const recruitmentWC = useWidgetConfig('recruitment');
+    const pmWC = useWidgetConfig('project_management');
 
-export const DynamicTabs: React.FC<DynamicTabsProps> = ({ searchedModules }) => {
-    // Select the first tab automatically if any are searched
-    const [activeTab, setActiveTab] = useState<ModuleOption | null>(
-        searchedModules.length > 0 ? searchedModules[0] : null
-    );
-
-    // If search changes and active tab is no longer in the list, fix it
-    React.useEffect(() => {
-        if (searchedModules.length > 0 && (!activeTab || !searchedModules.includes(activeTab))) {
-            setActiveTab(searchedModules[0]);
-        }
-    }, [searchedModules, activeTab]);
-
-    if (searchedModules.length === 0) {
-        return (
-            <div className="flex flex-col items-center justify-center h-96 text-center text-slate-400">
-                <div className="h-16 w-16 bg-slate-100 rounded-full flex items-center justify-center mb-4 border border-slate-200">
-                    <svg className="w-8 h-8 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
-                    </svg>
-                </div>
-                <p className="text-lg font-medium text-slate-600 mb-1">No Data Available</p>
-                <p className="text-sm">Select modules above and hit 'Search' to view reports.</p>
-            </div>
-        );
-    }
+    // Current tab's widget config
+    const wc = activeTab === 'people' ? peopleWC
+        : activeTab === 'crm' ? crmWC
+            : activeTab === 'recruitment' ? recruitmentWC
+                : pmWC;
 
     return (
-        <div className="w-full flex-1 flex flex-col pt-6 px-6 pb-12">
-            {/* Tab Navigation */}
-            <div className="flex border-b border-slate-200">
-                {searchedModules.map(mod => (
-                    <button
-                        key={mod}
-                        onClick={() => setActiveTab(mod)}
-                        className={`px-6 py-3 text-sm font-medium transition-colors border-b-2 ${activeTab === mod
-                            ? 'border-indigo-600 text-indigo-600'
-                            : 'border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300'
-                            }`}
-                    >
-                        {MODULE_LABELS[mod]}
-                    </button>
-                ))}
+        <div className="w-full flex-1 flex flex-col pt-1 bg-slate-50/50">
+
+            {/* ── Tab Header Bar with Customize Widgets ── */}
+            <div className="px-6 pt-3 pb-2 flex items-center justify-end">
+                <div className="relative">
+                    <CustomizeWidgetsButton
+                        tab={activeTab}
+                        config={wc.config}
+                        toggle={wc.toggle}
+                    />
+                </div>
             </div>
 
             {/* Tab Content Area */}
-            <div className="flex-1 mt-6">
+            <div className="flex-1">
                 {activeTab === 'people' && (
-                    <div className="flex flex-col space-y-6">
-                        {/* TRUE BENTO BOX LAYOUT (12-Column Grid) */}
-                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 auto-rows-max">
+                    <div className="animate-in fade-in slide-in-from-bottom-2 duration-500 px-6 pb-12">
+                        <div className="flex flex-col space-y-6">
+                            {/* 3-COLUMN VERTICAL STACKING ARCHITECTURE */}
+                            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
-                            {/* BENTO ROW 1: Early Attrition (4/12) + Exit Trend (8/12) */}
-                            <div className="lg:col-span-4 flex flex-col justify-center">
-                                <TalentRiskScore data={mockPeopleData.talentRisk} />
-                            </div>
-                            <div className="lg:col-span-8 flex flex-col h-full">
-                                <AttritionAnalysis data={mockPeopleData.exitTrend} />
-                            </div>
+                                {/* Column 1: The Trigger (3/12) */}
+                                <div className="lg:col-span-3 flex flex-col gap-6">
+                                    {peopleWC.isVisible('talentRiskScore') && <TalentRiskScore data={mockPeopleData.talentRisk} />}
+                                    {peopleWC.isVisible('exitByTypeAndReason') && <ExitByTypeAndReason data={mockPeopleData.exitByTypeAndReason} />}
+                                </div>
 
-                            {/* BENTO ROW 2: Exit by Type & Reason (6/12) + Leave Risk (6/12) */}
-                            <div className="lg:col-span-6 flex flex-col h-full min-h-[340px]">
-                                <ExitByTypeAndReason data={mockPeopleData.exitByTypeAndReason} />
-                            </div>
-                            <div className="lg:col-span-6 flex flex-col h-full min-h-[340px]">
-                                <LeaveAndDeptOverview data={mockPeopleData.leaveAndDeptRisk} />
-                            </div>
+                                {/* Column 2: The Trend (6/12) */}
+                                <div className="lg:col-span-6 flex flex-col gap-6">
+                                    {peopleWC.isVisible('attritionAnalysis') && <AttritionAnalysis data={mockPeopleData.exitTrend} />}
+                                    {peopleWC.isVisible('skillsGap') && <SkillsGap data={mockPeopleData.skillsGap} />}
+                                </div>
 
-                            {/* BENTO ROW 3: Manager Watchlist (6/12) + Skills Gap (6/12) */}
-                            <div className="lg:col-span-6 flex flex-col h-full min-h-[340px]">
-                                <ManagerWatchlist data={mockPeopleData.managerWatchlist} />
-                            </div>
-                            <div className="lg:col-span-6 flex flex-col h-full min-h-[340px]">
-                                <SkillsGap data={mockPeopleData.skillsGap} />
-                            </div>
-
-                            {/* BENTO ROW 4: Top Employees (6/12) */}
-                            <div className="lg:col-span-6 flex flex-col h-full min-h-[340px]">
-                                <TopEmployees data={mockPeopleData.topEmployees} />
+                                {/* Column 3: The Impact (3/12) */}
+                                <div className="lg:col-span-3 flex flex-col gap-6">
+                                    {peopleWC.isVisible('attritionMetrics') && <AttritionMetrics data={mockPeopleData.exitTrend} />}
+                                    {peopleWC.isVisible('managerWatchlist') && <ManagerWatchlist data={mockPeopleData.managerWatchlist} />}
+                                    {peopleWC.isVisible('topEmployees') && <TopEmployees data={mockPeopleData.topEmployees} />}
+                                </div>
                             </div>
                         </div>
                     </div>
                 )}
+
                 {activeTab === 'crm' && (
-                    <div className="flex flex-col space-y-6">
-                        {/* High-Fidelity Executive Summary Row (Localized) */}
-                        <CRMSummaryCards dateRange="this_year" data={mockCRMData.summary} />
+                    <div className="animate-in fade-in slide-in-from-bottom-2 duration-500 px-6 pb-12">
+                        <div className="flex flex-col space-y-6">
 
-                        {/* CRM Tab Bento Grid */}
-                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 auto-rows-max">
-                            {/* BENTO ROW 1: Pipeline Pipeline Summaries (Leads & Deals) */}
-                            <div className="lg:col-span-12">
-                                <CRMPipelineSummaries data={mockCRMData.pipelineSummaries} />
-                            </div>
+                            {crmWC.isVisible('crmSummaryCards') && <CRMSummaryCards dateRange="this_year" data={mockCRMData.summary} />}
 
-                            {/* BENTO ROW 2: Receivables Aging (4/12) + Collection Efficiency (4/12) + Collection Goal (4/12) */}
-                            <div className="lg:col-span-4 flex flex-col h-full min-h-[380px]">
-                                <ReceivablesAging dateRange="this_year" data={mockCRMData.receivablesAging} />
-                            </div>
-                            <div className="lg:col-span-4 flex flex-col h-full min-h-[380px]">
-                                <CollectionEfficiency dateRange="this_year" data={mockCRMData.collectionEfficiency} />
-                            </div>
-                            <div className="lg:col-span-4 flex flex-col h-full min-h-[380px]">
-                                <CollectionGoalCard dateRange="this_year" data={mockCRMData.collectionGoal} />
-                            </div>
+                            {crmWC.isVisible('revenueTrend') && (
+                                <div className="h-[340px]"><RevenueTrend /></div>
+                            )}
 
-                            {/* BENTO ROW 3: Analytical Charts (Source Mix & Lost Deals) */}
-                            <div className="lg:col-span-6 flex flex-col min-h-[400px]">
-                                <RevenueSourceMix data={mockCRMData.sourceMix} />
-                            </div>
-                            <div className="lg:col-span-6 flex flex-col min-h-[400px]">
-                                <LostDealAnalysis data={mockCRMData.lostDealAnalysis} />
+                            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                                {crmWC.isVisible('crmFunnelSwitcher') && (
+                                    <div className="lg:col-span-8 flex flex-col min-h-[580px]">
+                                        <CRMFunnelSwitcher data={mockCRMData.pipelineFunnel} />
+                                    </div>
+                                )}
+                                <div className="lg:col-span-4 flex flex-col gap-4">
+                                    {crmWC.isVisible('crmPipelineSummaries') && <CRMPipelineSummaries data={mockCRMData.pipelineSummaries} />}
+                                    {crmWC.isVisible('salesMetrics') && <SalesMetrics dateRange="this_year" data={mockCRMData.salesMetrics} />}
+                                </div>
                             </div>
 
-                            {/* BENTO ROW 4: Financial Table (Top Contributors) */}
-                            <div className="lg:col-span-12 min-h-[450px]">
-                                <TopRevenueContributors data={mockCRMData.topContributors} />
+                            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                                {crmWC.isVisible('receivablesAging') && (
+                                    <div className="lg:col-span-4 flex flex-col min-h-[380px]">
+                                        <ReceivablesAging dateRange="this_year" data={mockCRMData.receivablesAging} />
+                                    </div>
+                                )}
+                                {crmWC.isVisible('avgDaysToPay') && (
+                                    <div className="lg:col-span-4 flex flex-col min-h-[380px]">
+                                        <AvgDaysToPay />
+                                    </div>
+                                )}
+                                {crmWC.isVisible('collectionEfficiency') && (
+                                    <div className="lg:col-span-2 flex flex-col min-h-[380px]">
+                                        <CollectionEfficiency dateRange="this_year" data={mockCRMData.collectionEfficiency} />
+                                    </div>
+                                )}
+                                {crmWC.isVisible('collectionGoalCard') && (
+                                    <div className="lg:col-span-2 flex flex-col min-h-[380px]">
+                                        <CollectionGoalCard dateRange="this_year" data={mockCRMData.collectionGoal} />
+                                    </div>
+                                )}
                             </div>
 
-                            {/* BENTO ROW 5: Funnel Switcher (8/12) + Metrics (4/12) */}
-                            <div className="lg:col-span-8 flex flex-col h-full min-h-[550px]">
-                                <CRMFunnelSwitcher data={mockCRMData.pipelineFunnel} />
+                            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                                {crmWC.isVisible('revenueSourceMix') && (
+                                    <div className="lg:col-span-6 flex flex-col min-h-[400px]">
+                                        <RevenueSourceMix data={mockCRMData.sourceMix} />
+                                    </div>
+                                )}
+                                {crmWC.isVisible('lostDealAnalysis') && (
+                                    <div className="lg:col-span-6 flex flex-col min-h-[400px]">
+                                        <LostDealAnalysis data={mockCRMData.lostDealAnalysis} />
+                                    </div>
+                                )}
                             </div>
-                            <div className="lg:col-span-4 flex flex-col h-full min-h-[420px]">
-                                <SalesMetrics dateRange="this_year" data={mockCRMData.salesMetrics} />
-                            </div>
+
+                            {crmWC.isVisible('topRevenueContributors') && (
+                                <div className="min-h-[450px]">
+                                    <TopRevenueContributors data={mockCRMData.topContributors} />
+                                </div>
+                            )}
+
                         </div>
                     </div>
                 )}
+
+
                 {activeTab === 'recruitment' && (
-                    <div className="flex flex-col space-y-6">
-                        {/* Recruitment Tab Bento Grid */}
-                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 auto-rows-max">
-                            {/* BENTO ROW 1: Hiring Efficiency (6/12) + Candidate Ratio (6/12) */}
-                            <div className="lg:col-span-6 flex flex-col h-full min-h-[340px]">
-                                <HiringEfficiency data={mockRecruitmentData.hiringEfficiency} />
-                            </div>
-                            <div className="lg:col-span-6 flex flex-col h-full min-h-[340px]">
-                                <CandidateRatio data={mockRecruitmentData.candidateRatio} />
+                    <div className="animate-in fade-in slide-in-from-bottom-2 duration-500 px-6 pb-12">
+                        <div className="flex flex-col space-y-6">
+
+                            {recruitmentWC.isVisible('recruitmentSummaryCards') && (
+                                <div className="grid grid-cols-12 gap-6 items-start">
+                                    <RecruitmentSummaryCards data={mockRecruitmentData} />
+                                </div>
+                            )}
+
+                            <div className="grid grid-cols-12 gap-6 items-start">
+                                {recruitmentWC.isVisible('stageConversion') && (
+                                    <div className="col-span-12 lg:col-span-4 flex flex-col h-fit">
+                                        <StageConversion data={mockRecruitmentData.stageConversion} />
+                                    </div>
+                                )}
+                                {recruitmentWC.isVisible('recruitmentVelocity') && (
+                                    <div className="col-span-12 lg:col-span-4 flex flex-col h-full">
+                                        <RecruitmentVelocity dateRange="last_year" />
+                                    </div>
+                                )}
+                                <div className="col-span-12 lg:col-span-4 flex flex-col gap-6 h-fit">
+                                    {recruitmentWC.isVisible('jobStatus') && <JobStatus data={mockRecruitmentData.jobStatus} />}
+                                    {recruitmentWC.isVisible('offerAcceptance') && <OfferAcceptance data={mockRecruitmentData.offerAcceptance} />}
+                                </div>
                             </div>
 
-                            {/* BENTO ROW 2: Stage Conversion Funnel (12/12) */}
-                            <div className="lg:col-span-12 flex flex-col h-full min-h-[480px]">
-                                <StageConversion data={mockRecruitmentData.stageConversion} />
-                            </div>
-
-                            {/* BENTO ROW 3: Job Status (6/12) + Offer Acceptance (6/12) */}
-                            <div className="lg:col-span-6 flex flex-col h-full min-h-[380px]">
-                                <JobStatus data={mockRecruitmentData.jobStatus} />
-                            </div>
-                            <div className="lg:col-span-6 flex flex-col h-full min-h-[380px]">
-                                <OfferAcceptance data={mockRecruitmentData.offerAcceptance} />
-                            </div>
                         </div>
                     </div>
                 )}
+
+
                 {activeTab === 'project_management' && (
-                    <div className="flex flex-col space-y-6">
-                        {/* TRUE BENTO BOX LAYOUT (12-Column Grid) */}
-                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 auto-rows-max">
+                    <div className="animate-in fade-in slide-in-from-bottom-2 duration-500 px-6 pb-12">
+                        <div className="flex flex-col space-y-6">
+                            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 auto-rows-max">
 
-                            {/* BENTO ROW 1: Central Overview (8/12) + Compliance KPIs (4/12) */}
-                            <div className="lg:col-span-8 flex flex-col h-full">
-                                <ResourceAllocationCentral dateRange="this_year" data={mockPMData.resourceCentral} />
-                            </div>
-                            <div className="lg:col-span-4 flex flex-col h-full">
-                                <MissingAllocations dateRange="this_year" data={mockPMData.dailyAllocations} />
-                            </div>
+                                {pmWC.isVisible('resourceAllocationCentral') && (
+                                    <div className="lg:col-span-8 flex flex-col h-full">
+                                        <ResourceAllocationCentral dateRange="this_year" data={mockPMData.resourceCentral} />
+                                    </div>
+                                )}
+                                {pmWC.isVisible('missingAllocations') && (
+                                    <div className="lg:col-span-4 flex flex-col h-full">
+                                        <MissingAllocations dateRange={dateRange} data={mockPMData.dailyAllocations} />
+                                    </div>
+                                )}
 
-                            {/* BENTO ROW 2: Health (4/12) + Effort (4/12) + Expirations (4/12) */}
-                            <div className="lg:col-span-4 flex flex-col">
-                                <PMHealthBreakdown dateRange="this_year" data={mockPMData.healthBreakdown} />
-                            </div>
-                            <div className="lg:col-span-4 flex flex-col">
-                                <TopEffortConsumers dateRange="this_year" data={mockPMData.effortConsumers} />
-                            </div>
-                            <div className="lg:col-span-4 flex flex-col">
-                                <UpcomingExpirations dateRange="this_year" data={mockPMData.expirations} metricData={mockPMData.hireVsExpire} />
-                            </div>
+                                {pmWC.isVisible('pmHealthBreakdown') && (
+                                    <div className="lg:col-span-4 flex flex-col">
+                                        <PMHealthBreakdown dateRange="this_year" data={mockPMData.healthBreakdown} />
+                                    </div>
+                                )}
+                                {pmWC.isVisible('topEffortConsumers') && (
+                                    <div className="lg:col-span-4 flex flex-col">
+                                        <TopEffortConsumers dateRange="this_year" data={mockPMData.effortConsumers} />
+                                    </div>
+                                )}
+                                {pmWC.isVisible('upcomingExpirations') && (
+                                    <div className="lg:col-span-4 flex flex-col">
+                                        <UpcomingExpirations dateRange="this_year" data={mockPMData.expirations} metricData={mockPMData.hireVsExpire} />
+                                    </div>
+                                )}
 
-                            {/* BENTO ROW 3: Leakage (6/12) + Timesheet Detail (6/12) */}
-                            <div className="lg:col-span-6 flex flex-col">
-                                <RevenueLeakage dateRange="this_year" data={mockPMData.leakage} />
-                            </div>
-                            <div className="lg:col-span-6 flex flex-col">
-                                <TimesheetCompliance dateRange="this_year" data={mockPMData.compliance} />
+                                {pmWC.isVisible('revenueLeakage') && (
+                                    <div className="lg:col-span-6 flex flex-col">
+                                        <RevenueLeakage dateRange="this_year" data={mockPMData.leakage} />
+                                    </div>
+                                )}
+                                {pmWC.isVisible('timesheetCompliance') && (
+                                    <div className="lg:col-span-6 flex flex-col">
+                                        <TimesheetCompliance dateRange={dateRange} data={mockPMData.compliance} />
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>

@@ -37,7 +37,7 @@ const PipelineFunnel: React.FC<Props> = ({ data }) => {
             </div>
 
             <div className="flex-1 min-h-0 relative">
-                <ResponsiveContainer width="100%" height="100%">
+                <ResponsiveContainer width="100%" height="100%" minWidth={0} debounce={50}>
                     <FunnelChart>
                         <Tooltip
                             contentStyle={{

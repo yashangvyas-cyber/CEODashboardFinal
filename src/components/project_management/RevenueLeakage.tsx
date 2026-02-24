@@ -1,6 +1,7 @@
 import React from 'react';
 import type { DateRangeOption } from '../../types';
 import { AlertTriangle } from 'lucide-react';
+import InfoTooltip from '../common/InfoTooltip';
 
 interface Props {
     dateRange: DateRangeOption;
@@ -18,6 +19,7 @@ const RevenueLeakage: React.FC<Props> = ({ data = [] }) => {
                     <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider flex items-center">
                         <AlertTriangle className="w-4 h-4 mr-2 text-rose-500 group-hover:scale-110 transition-transform" />
                         Revenue Leakage Risk
+                        <InfoTooltip content="Identifies projects where the actual hours spent exceed either the fixed-cost budget or the hours billed, representing a direct loss of potential revenue." />
                     </h3>
                     <p className="text-xs text-slate-400 mt-1">Unbilled / Over-Budget Projects</p>
                 </div>

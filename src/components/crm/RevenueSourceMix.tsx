@@ -1,5 +1,6 @@
 import React from 'react';
 import type { DateRangeOption } from '../../types';
+import InfoTooltip from '../common/InfoTooltip';
 
 interface Props {
     dateRange?: DateRangeOption;
@@ -11,7 +12,10 @@ const RevenueSourceMix: React.FC<Props> = ({ data }) => {
 
     return (
         <div className="premium-card p-6 flex flex-col h-full group hover-scale relative overflow-hidden h-full">
-            <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-6">Revenue Source Mix</h3>
+            <div className="flex items-center mb-6">
+                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest">Revenue Source Mix</h3>
+                <InfoTooltip content="Breakdown of revenue between new customer acquisitions and expansion or retention of existing clients." />
+            </div>
 
             <div className="flex-1 flex flex-col justify-center relative z-10">
                 <div className="flex h-12 w-full rounded-2xl overflow-hidden shadow-sm border border-slate-100">

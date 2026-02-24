@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type { DateRangeOption } from '../../types';
 import { AlertCircle, Users } from 'lucide-react';
+import InfoTooltip from '../common/InfoTooltip';
 
 interface Props {
     dateRange: DateRangeOption;
@@ -28,6 +29,7 @@ const MissingAllocations: React.FC<Props> = ({ data = { missingLogs: [], onBench
                     <h3 className={`text-sm font-semibold uppercase tracking-wider flex items-center ${isMissingView ? 'text-rose-600' : 'text-amber-600'}`}>
                         {isMissingView ? <AlertCircle className="w-4 h-4 mr-2" /> : <Users className="w-4 h-4 mr-2" />}
                         {isMissingView ? 'Missing Logs' : 'On Bench'}
+                        <InfoTooltip content="Identifies resources either staffed on projects but not logging daily hours (Missing Logs) or completely unassigned and available for work (Bench)." />
                     </h3>
                     <p className="text-[10px] text-slate-400 mt-1 max-w-[150px] leading-tight">
                         {isMissingView ? 'Staffed on projects but no daily log' : 'Present but completely unassigned'}

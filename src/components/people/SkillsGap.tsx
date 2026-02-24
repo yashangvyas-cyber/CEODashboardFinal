@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import type { DateRangeOption } from '../../types';
-import { Info, Maximize2, Search, ChevronDown, ChevronUp } from 'lucide-react';
+import { Maximize2, Search, ChevronDown, ChevronUp } from 'lucide-react';
+import InfoTooltip from '../common/InfoTooltip';
 
 interface SkillLevelData {
     skill: string;
@@ -60,13 +61,13 @@ const SkillsGap: React.FC<Props> = ({ data }) => {
     };
 
     return (
-        <div className="bg-white rounded-[10px] border border-slate-200 p-5 shadow-sm flex flex-col hover:shadow-lg transition-all duration-300 h-full min-h-[460px]">
+        <div className="bg-white rounded-[10px] border border-slate-200 p-6 shadow-sm h-full flex flex-col group hover:shadow-md hover:border-rose-100 transition-all duration-300 relative overflow-hidden">
             {/* Header Content */}
             <div className="shrink-0">
                 <div className="flex justify-between items-center mb-5">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center">
                         <h3 className="text-sm font-bold text-slate-800 tracking-tight">Critical Skills Gap</h3>
-                        <Info className="w-3.5 h-3.5 text-slate-400 cursor-help" />
+                        <InfoTooltip content="Analysis of skill proficiency across the organization, highlighting areas where demand for expertise exceeds availability." />
                     </div>
                     <div className="flex items-center gap-3">
                         {/* Compact Search Bar */}

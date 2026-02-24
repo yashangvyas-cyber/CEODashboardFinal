@@ -1,5 +1,6 @@
 import React from 'react';
-import { Info, Maximize2, MoreHorizontal, TrendingUp, Clock } from 'lucide-react';
+import { Maximize2, MoreHorizontal, TrendingUp, Clock } from 'lucide-react';
+import InfoTooltip from '../common/InfoTooltip';
 import type { DateRangeOption } from '../../types';
 
 interface Props {
@@ -17,11 +18,11 @@ const SalesMetrics: React.FC<Props> = ({ data }) => {
     const isSlowCycle = salesCycle.days > salesCycle.target;
 
     return (
-        <div className="bg-white rounded-[10px] border border-slate-200 p-5 shadow-sm h-full flex flex-col hover:shadow transition-shadow">
+        <div className="bg-white rounded-[10px] border border-slate-200 p-5 shadow-sm h-fit flex flex-col hover:shadow transition-shadow">
             <div className="flex justify-between items-start mb-4 shrink-0">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center">
                     <h3 className="text-sm font-bold text-slate-800 tracking-tight">Sales Performance</h3>
-                    <Info className="w-3.5 h-3.5 text-slate-400 cursor-help" />
+                    <InfoTooltip content="Key performance indicators for sales, including Average Deal Size (typical value of a won deal) and Sales Cycle (average days to close a deal)." />
                 </div>
                 <div className="flex items-center gap-2 text-slate-400">
                     <button className="hover:text-slate-600 transition-colors">
@@ -33,9 +34,9 @@ const SalesMetrics: React.FC<Props> = ({ data }) => {
                 </div>
             </div>
 
-            <div className="flex-1 flex flex-col divide-y divide-slate-100">
+            <div className="flex-1 flex flex-col items-center justify-center gap-8">
                 {/* Metric 1: Avg Deal Size */}
-                <div className="flex-1 py-4 flex items-center justify-between">
+                <div className="w-full flex items-center justify-between">
                     <div className="flex flex-col">
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Avg Deal Size</span>
                         <div className="flex items-baseline gap-1">
@@ -50,7 +51,7 @@ const SalesMetrics: React.FC<Props> = ({ data }) => {
                 </div>
 
                 {/* Metric 2: Sales Cycle */}
-                <div className="flex-1 py-4 flex items-center justify-between">
+                <div className="w-full flex items-center justify-between">
                     <div className="flex flex-col">
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Sales Cycle</span>
                         <div className="flex items-baseline gap-1">
@@ -65,11 +66,12 @@ const SalesMetrics: React.FC<Props> = ({ data }) => {
                         </span>
                     </div>
                 </div>
-            </div>
 
-            <div className="pt-3 border-t border-slate-50 flex justify-between items-center text-[10px] text-slate-400 font-bold uppercase tracking-widest">
-                <span>Pipeline Velocity</span>
-                <span className="text-emerald-500">Accelerating</span>
+                {/* Metric 3: Pipeline Velocity (Moved here to cluster) */}
+                <div className="w-full flex justify-between items-center text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+                    <span>Pipeline Velocity</span>
+                    <span className="text-emerald-500 font-black">Accelerating</span>
+                </div>
             </div>
         </div>
     );

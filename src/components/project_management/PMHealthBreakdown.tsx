@@ -1,6 +1,7 @@
 import React from 'react';
 import type { DateRangeOption } from '../../types';
 import { Activity } from 'lucide-react';
+import InfoTooltip from '../common/InfoTooltip';
 
 interface Props {
     dateRange: DateRangeOption;
@@ -52,6 +53,7 @@ const PMHealthBreakdown: React.FC<Props> = ({ data }) => {
                     <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider flex items-center">
                         <Activity className="w-4 h-4 mr-2 text-indigo-500" />
                         Project Delivery Health
+                        <InfoTooltip content="Monitors the delivery health across different billing models, including project budget consumption (Fixed Cost), billable hour leakage (Hourly), and resource billability (Hirebase)." />
                     </h3>
                     <p className="text-xs text-slate-400 mt-1">Cross-model Execution Status</p>
                 </div>

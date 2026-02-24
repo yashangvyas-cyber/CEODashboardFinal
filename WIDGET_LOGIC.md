@@ -50,6 +50,14 @@ Always visible at the top of the dashboard. Aggregates data based on the selecte
     *   **Value:** `COUNT(Requisitions)` WHERE `Priority = 'Critical'` AND `Status = 'Open'`
 *   **Executive Context:** Highlights severe talent gaps blocking delivery or sales.
 
+### 🗓️ 30-Day Cash Forecast (NEW)
+*   **Data Source / System:** Finance / Invoice Due Dates
+*   **Formula & Logic:**
+    *   **Value:** `SUM(Invoice Amount)` WHERE `Due Date - Today <= 30` AND `Status = 'Unpaid'`
+    *   **Trend %:** `(Projected Collections This Month - Projected Last Month) / Projected Last Month * 100`
+*   **Export Fields:** `Invoice_ID`, `Client_Name`, `Invoice_Amount`, `Due_Date`, `Days_Remaining`, `Status`
+*   **Executive Context:** Projected liquidity for the next 30 days. Helps the CEO anticipate cash shortfalls before they occur, rather than reacting after month-end.
+
 ---
 
 ## 2. Project Management Tab
@@ -163,4 +171,154 @@ Appears when the "People" module is selected. Focuses on retention, employee per
 
 ---
 
-*Note: CRM & Invoice and Recruitment tabs will be added to this document once their respective live reports are analyzed.*
+## 4. CRM & Invoice Tab
+Appears when the "CRM & Invoice" module is selected. Focuses on revenue performance, collection health, pipeline management, and deal analysis.
+
+### 📊 CRM Summary Cards (Top KPI Bar)
+*   **Data Source / System:** CRM (Deals) + Finance (Invoices)
+*   **Metrics Displayed:**
+    | Metric | Formula | Export Fields |
+    |---|---|---|
+    | **Total Won** | `SUM(Deal Value)` WHERE `Stage = 'Closed Won'` | `Deal ID`, `Client`, `Value`, `Close Date`, `Owner` |
+    | **Invoiced** | `SUM(Invoice Amount)` WHERE `Linked Deal = Won` | `Invoice ID`, `Deal ID`, `Amount`, `Issue Date` |
+    | **Collected** | `SUM(Payment Amount)` WHERE `Status = 'Paid'` | `Payment ID`, `Invoice ID`, `Amount`, `Pay Date` |
+    | **Outstanding** | `Invoiced - Collected` | Derived from above |
+*   **Executive Context:** The top-line financial snapshot of the revenue cycle from lead to cash in hand.
+
+### 📈 Revenue vs Target
+*   **Data Source / System:** Finance / CRM Revenue Target Settings
+*   **Formula & Logic:**
+    *   **Value:** `SUM(Revenue YTD)` — total invoiced or collected depending on config
+    *   **Achievement %:** `(YTD Revenue / Annual Target) * 100`
+    *   **Growth Forecast:** `((This Year Revenue Rate - Last Year Revenue) / Last Year Revenue) * 100`
+*   **Export Fields:** `Period`, `Revenue_YTD`, `Annual_Target`, `Achievement_Pct`, `Growth_Forecast_Pct`
+*   **Executive Context:** Single most important financial chart. Tells the CEO if the company is on track for its annual revenue goal.
+
+### 📉 Revenue Trend (Monthly Line Chart)
+*   **Data Source / System:** CRM (Won) + Finance (Invoiced, Collected)
+*   **Formula & Logic:** Monthly aggregations with 3 lines:
+    *   `Won`: `SUM(Deal Value)` grouped by `Close Date Month`
+    *   `Invoiced`: `SUM(Invoice Amount)` grouped by `Issue Date Month`
+    *   `Collected`: `SUM(Payment Amount)` grouped by `Pay Date Month`
+*   **Export Fields:** `Month`, `Won_Amount`, `Invoiced_Amount`, `Collected_Amount`
+*   **Executive Context:** Shows the revenue pipeline lag — the gap between winning deals, invoicing, and actually receiving cash. A growing gap signals collection problems.
+
+### 💡 Collection Efficiency
+*   **Data Source / System:** Finance (Invoices + Payments)
+*   **Formula & Logic:**
+    *   **Score:** `(Total Collected / Total Invoiced) * 100`
+    *   **Trend:** Month-on-month change in the efficiency score
+    *   **Sparkline:** Last 6 months of monthly efficiency scores
+*   **Export Fields:** `Month`, `Invoiced_Amount`, `Collected_Amount`, `Efficiency_Pct`
+*   **Executive Context:** Measures how well the business converts issued invoices into actual cash. Below 85% signals systemic collection issues.
+
+### 🕰️ Receivables Aging
+*   **Data Source / System:** Finance (Outstanding Invoices)
+*   **Formula & Logic:** Groups unpaid invoices by age bucket:
+    *   **1–15 Days:** `SUM(Amount)` WHERE `Overdue Days BETWEEN 1 AND 15`
+    *   **16–30 Days:** `SUM(Amount)` WHERE `Overdue Days BETWEEN 16 AND 30`
+    *   **31–45 Days:** `SUM(Amount)` WHERE `Overdue Days BETWEEN 31 AND 45`
+    *   **45+ Days:** `SUM(Amount)` WHERE `Overdue Days > 45` *(Red — high risk)*
+    *   **Unbilled:** `SUM(Deal Value)` WHERE `Stage = 'Won'` AND `Invoice Status = 'Not Raised'`
+*   **Export Fields:** `Invoice ID`, `Client`, `Amount`, `Invoice Date`, `Overdue Days`, `Age Bucket`
+*   **Executive Context:** Classic AR aging report. The 45+ bucket in red directly highlights bad debt risk and cash flow threats.
+
+### 🔀 Revenue Source Mix
+*   **Data Source / System:** CRM (Deals tagged by Client Type)
+*   **Formula & Logic:**
+    *   **New Client Revenue:** `SUM(Invoice Amount)` WHERE `Client Type = 'New'` / `Total Invoiced * 100`
+    *   **Existing Client Revenue:** `SUM(Invoice Amount)` WHERE `Client Type = 'Existing'` / `Total Invoiced * 100`
+*   **Export Fields:** `Period`, `New_Client_Revenue`, `New_Client_Pct`, `Existing_Client_Revenue`, `Existing_Client_Pct`
+*   **Executive Context:** A healthy business grows via existing clients (upsell/renewal) AND acquires new logos. Over-dependence on new clients indicates lack of retention; over-dependence on existing clients signals stagnant growth.
+
+### ❌ Lost Deal Analysis
+*   **Data Source / System:** CRM (Lost Deals + Exit Reason Tags)
+*   **Formula & Logic:** Groups lost deals by `Loss Reason` tag:
+    *   `Competitor`, `Budget`, `Timing/Delayed`, `Other`
+    *   Shows `COUNT` and `%` of total losses per reason
+*   **Export Fields:** `Deal ID`, `Client`, `Deal Value`, `Stage_Lost_At`, `Loss_Reason`, `Closed Date`, `Owner`
+*   **Executive Context:** Tells the sales team and CEO *why* deals are being lost — enabling targeted corrective action (e.g., if "Competitor" is dominant, investigate product/pricing gaps).
+
+### 🏆 Top Revenue Contributors
+*   **Data Source / System:** Finance (Invoices) + CRM (Clients)
+*   **Formula & Logic:** Top 5 clients ranked by `SUM(Invoice Amount)` for the selected period.
+    *   Each client shows: invoiced amount, collection progress bar (%), and payment status badge (`GOOD`, `PARTIAL`, `LATE`, `COMPLETED`)
+*   **Export Fields:** `Client_Name`, `Invoiced_Amount`, `Collected_Amount`, `Collection_Pct`, `Payment_Status`
+*   **Executive Context:** Identifies top revenue accounts. High-value clients with `LATE` status are priority escalation cases.
+
+### 📊 Sales Performance (Avg Deal Size + Sales Cycle)
+*   **Data Source / System:** CRM (Won Deals)
+*   **Formula & Logic:**
+    *   **Avg Deal Size:** `SUM(Won Deal Value) / COUNT(Won Deals)`
+    *   **Trend:** `(Current Period Avg - Previous Period Avg) / Previous Period Avg * 100`
+    *   **Sales Cycle:** `AVG(Close Date - Lead Created Date)` in days, compared against target SLA
+*   **Export Fields:** `Period`, `Avg_Deal_Size`, `Deal_Count`, `Avg_Sales_Cycle_Days`, `Sales_Cycle_Target_Days`
+*   **Executive Context:** Increasing deal size indicates upselling success; a shortening sales cycle means the team is qualifying leads faster. Sales Cycle exceeding target is an efficiency red flag.
+
+### 📅 Avg Days to Pay
+*   **Data Source / System:** Finance (Invoices + Payments)
+*   **Formula & Logic:** `AVG(Payment Date - Invoice Issue Date)` in days, for all Paid invoices in the period.
+*   **Export Fields:** `Client`, `Invoice ID`, `Issue Date`, `Payment Date`, `Days_to_Pay`
+*   **Executive Context:** Tracks client payment discipline. Rising averages indicate clients are stretching payment terms, which pressures cash flow.
+
+### 🔮 CRM Pipeline Summaries / Funnel Switcher
+*   **Data Source / System:** CRM (Active Deals by Stage)
+*   **Formula & Logic:**
+    *   Groups all active deals by `Stage` (e.g., Lead, Qualified, Proposal, Negotiation, Closed)
+    *   **Value:** `SUM(Deal Value)` per stage
+    *   **Count:** `COUNT(Deals)` per stage
+    *   **Win Probability:** Weighted by stage-level close probability settings
+*   **Export Fields:** `Deal_ID`, `Client`, `Stage`, `Deal_Value`, `Probability_Pct`, `Expected_Value`, `Owner`, `Close_Date`
+*   **Executive Context:** The full sales pipeline view. Allows the CEO to see how much revenue is in each stage and forecast next period's closings.
+
+---
+
+## 5. Recruitment Tab
+Appears when the "Recruitment" module is selected. Focuses on hiring funnel efficiency, sourcing effectiveness, and pipeline health.
+
+### 📊 Recruitment Summary Cards (Top KPI Bar)
+*   **Data Source / System:** ATS (Applicant Tracking System)
+*   **Metrics Displayed:**
+    | Metric | Formula | Export Fields |
+    |---|---|---|
+    | **Total Candidates** | `COUNT(Applicant ID)` in current pipeline | `Applicant_ID`, `Name`, `Role`, `Stage`, `Source` |
+    | **Total Hires** | `COUNT(Applicants)` WHERE `Stage = 'Joined'` | `Applicant_ID`, `Name`, `Role`, `Join_Date`, `Department` |
+    | **Open Roles** | `COUNT(Job Requisitions)` WHERE `Status = 'Open'` | `Req_ID`, `Role`, `Department`, `Priority`, `Posted_Date` |
+    | **Time-to-Hire** | `AVG(Offer Accept Date - Req Open Date)` in days | `Req_ID`, `Role`, `Open_Date`, `Offer_Date`, `Days_Taken` |
+    | **Accept Rate** | `(Offers Accepted / Total Offers Extended) * 100` | `Applicant_ID`, `Offer_Date`, `Status` (Accepted/Declined) |
+    | **Hire Ratio** | `(Total Hires / Total Candidates Screened) * 100` | Derived from Candidates + Hires counts |
+*   **Executive Context:** The headline metrics provide a quick assessment of recruiting velocity and efficiency.
+
+### 🔺 Stage Conversion Rate (Funnel)
+*   **Data Source / System:** ATS (Applicant Stage History)
+*   **Formula & Logic:**
+    *   **Funnel Stages:** Sourced → Screened → Assessment → Interview → Offered → Joined
+    *   **Overall %:** `(Stage Count / Top Stage Count) * 100`
+    *   **Stagewise %:** `(Stage Count / Previous Stage Count) * 100`
+*   **Export Fields:** `Stage_Name`, `Candidate_Count`, `Overall_Conversion_Pct`, `Stagewise_Conversion_Pct`
+*   **Executive Context:** Identifies exactly where in the hiring funnel candidates are being lost. A low Interview-to-Offer rate signals assessment issues; a low Offer-to-Join rate indicates a compensation or competitor problem.
+
+### 🍩 Job Status Breakdown
+*   **Data Source / System:** ATS (Job Requisitions)
+*   **Formula & Logic:**
+    *   Groups requisitions by status: `Open`, `On Hold`, `Closed`, `Filled`
+    *   Shows `COUNT` and donut chart visualization
+*   **Export Fields:** `Req_ID`, `Role_Title`, `Department`, `Status`, `Posted_Date`, `Closed_Date`
+*   **Executive Context:** Gives the CEO a full picture of open vs. paused vs. filled positions. A high "On Hold" count may indicate budget freezes or organizational indecision.
+
+### ✅ Offer Acceptance Breakdown
+*   **Data Source / System:** ATS (Offer History)
+*   **Formula & Logic:**
+    *   Groups offers by status: `Accepted`, `Declined`, `Pending`
+    *   Shows `COUNT` and donut chart visualization
+*   **Export Fields:** `Applicant_ID`, `Role`, `Offer_Date`, `Offer_Amount`, `Offer_Status`, `Decline_Reason`
+*   **Executive Context:** Tracks offer conversion quality. A high Declined % signals offers are not competitive on salary, role scope, or company perception vs. competitors.
+
+### 🎯 Overall Hire Ratio Card
+*   **Data Source / System:** ATS
+*   **Formula & Logic:** `(Total Hires / Total Applicants Screened) * 100`
+    *   Displayed as a large single KPI — a summary score for the recruitment team's efficiency.
+*   **Export Fields:** `Period`, `Total_Applicants`, `Total_Hires`, `Hire_Ratio_Pct`
+*   **Executive Context:** A single benchmark number (e.g., 9%) that measures how selective or efficient the hiring process is. An extremely low ratio may indicate poor sourcing quality or overly strict screening.
+
+---

@@ -2,6 +2,7 @@ import React from 'react';
 import type { DateRangeOption } from '../../types';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, LabelList } from 'recharts';
 import { Target } from 'lucide-react';
+import InfoTooltip from '../common/InfoTooltip';
 
 interface Props {
     dateRange: DateRangeOption;
@@ -19,13 +20,14 @@ const TopEffortConsumers: React.FC<Props> = ({ data = [] }) => {
                     <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider flex items-center">
                         <Target className="w-4 h-4 mr-2 text-indigo-500" />
                         Top Effort Consumers
+                        <InfoTooltip content="Identifies projects or clients that are consuming the most resource effort in terms of logged hours, categorized by billing model." />
                     </h3>
                     <p className="text-xs text-slate-400 mt-1">Projects taking up the most team time</p>
                 </div>
             </div>
 
-            <div className="w-full h-[240px] min-h-0">
-                <ResponsiveContainer width="100%" height="100%">
+            <div className="flex-1 min-h-0 relative z-0 mt-4">
+                <ResponsiveContainer width="100%" height="100%" minWidth={0} debounce={50}>
                     <BarChart data={chartData} layout="vertical" margin={{ top: 0, right: 30, left: -20, bottom: 0 }}>
                         <XAxis type="number" hide />
                         <YAxis

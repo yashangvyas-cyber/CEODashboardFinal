@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type { DateRangeOption } from '../../types';
-import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from 'recharts';
+import { PieChart, Pie, Cell, Tooltip } from 'recharts';
+import InfoTooltip from '../common/InfoTooltip';
 
 interface Props {
     dateRange?: DateRangeOption;
@@ -14,12 +15,14 @@ const ExitByTypeAndReason: React.FC<Props> = ({ data }) => {
     const [activeTab, setActiveTab] = useState(types[0]);
 
     const currentData = chartDataMap[activeTab] || [];
+    const total = currentData.reduce((sum: number, d: any) => sum + d.value, 0);
 
     const CustomTooltip = ({ active, payload }: any) => {
         if (active && payload && payload.length) {
+            const pct = total > 0 ? Math.round((payload[0].value / total) * 100) : 0;
             return (
-                <div className="bg-black text-white text-[11px] font-bold px-3 py-1.5 rounded-md shadow-lg">
-                    {`${payload[0].name}: ${payload[0].value}`}
+                <div className="bg-slate-900 text-white text-[11px] font-bold px-3 py-1.5 rounded-lg shadow-xl">
+                    {`${payload[0].name}: ${payload[0].value} (${pct}%)`}
                 </div>
             );
         }
@@ -27,13 +30,13 @@ const ExitByTypeAndReason: React.FC<Props> = ({ data }) => {
     };
 
     return (
-        <div className="bg-white rounded-[10px] border border-slate-200 p-5 shadow-sm h-full flex flex-col hover:shadow transition-shadow">
+        <div className="bg-white rounded-[10px] border border-slate-200 p-5 shadow-sm h-full hover:shadow transition-shadow">
             {/* Header & Tabs */}
-            <div className="flex justify-between items-center mb-6 shrink-0">
-                <h3 className="text-sm font-bold text-slate-800 tracking-tight">
-                    Exit by Type & Reason
+            <div className="flex justify-between items-center mb-5 shrink-0">
+                <h3 className="text-sm font-bold text-slate-800 tracking-tight flex items-center">
+                    Exit by Type &amp; Reason
+                    <InfoTooltip content="Distribution of employee exits based on the reason (e.g., Better Opportunity) and the nature of the exit (e.g., Resignation)." />
                 </h3>
-
                 <div className="flex bg-slate-100 p-0.5 rounded-lg border border-slate-200/60">
                     {types.map((type: string) => (
                         <button
@@ -50,41 +53,67 @@ const ExitByTypeAndReason: React.FC<Props> = ({ data }) => {
                 </div>
             </div>
 
-            {/* Chart Area */}
-            <div className="flex-1 flex flex-col justify-between min-h-0">
-                <div className="flex-1 min-h-[140px] relative flex justify-center items-center">
-                    <ResponsiveContainer width="100%" height="100%">
-                        <PieChart>
-                            <Pie
-                                data={currentData}
-                                cx="50%"
-                                cy="50%"
-                                innerRadius={45}
-                                outerRadius={75}
-                                paddingAngle={2}
-                                dataKey="value"
-                                stroke="none"
-                            >
-                                {currentData.map((entry: any, index: number) => (
-                                    <Cell key={`cell-${index}`} fill={entry.color} />
-                                ))}
-                            </Pie>
-                            <Tooltip content={<CustomTooltip />} cursor={{ fill: 'transparent' }} />
-                        </PieChart>
-                    </ResponsiveContainer>
+            {/* Body: Chart LEFT + Data-Table Legend RIGHT */}
+            <div className="flex items-center gap-6">
+
+                {/* Left: Donut with center number */}
+                <div className="relative shrink-0" style={{ width: 160, height: 160 }}>
+                    <PieChart width={160} height={160}>
+                        <Pie
+                            data={currentData}
+                            cx={75}
+                            cy={75}
+                            innerRadius={52}
+                            outerRadius={75}
+                            paddingAngle={2}
+                            dataKey="value"
+                            stroke="none"
+                            startAngle={90}
+                            endAngle={-270}
+                        >
+                            {currentData.map((entry: any, index: number) => (
+                                <Cell key={`cell-${index}`} fill={entry.color} />
+                            ))}
+                        </Pie>
+                        <Tooltip content={<CustomTooltip />} cursor={{ fill: 'transparent' }} />
+                    </PieChart>
+
+                    {/* Center label in donut hole */}
+                    <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                        <span className="text-3xl font-black text-slate-800 leading-none">{total}</span>
+                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5 text-center leading-tight">
+                            Total
+                        </span>
+                    </div>
                 </div>
 
-                {/* Legend */}
-                <div className="mt-4 shrink-0 flex flex-wrap justify-center gap-x-3 gap-y-2.5 px-2">
-                    {currentData.map((entry: any, index: number) => (
-                        <div key={index} className="flex items-center gap-1.5">
-                            <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: entry.color }}></span>
-                            <span className="text-[10px] font-bold text-slate-500 whitespace-nowrap truncate max-w-[120px]" title={entry.name}>
-                                {entry.name}
-                            </span>
-                        </div>
-                    ))}
+                {/* Right: Data Table Legend */}
+                <div className="flex-1 flex flex-col gap-2.5">
+                    {currentData.map((entry: any, index: number) => {
+                        const pct = total > 0 ? Math.round((entry.value / total) * 100) : 0;
+                        return (
+                            <div key={index} className="flex items-center gap-2">
+                                {/* Color dot */}
+                                <span
+                                    className="w-2.5 h-2.5 rounded-full shrink-0"
+                                    style={{ backgroundColor: entry.color }}
+                                />
+                                {/* Label */}
+                                <span className="text-[11px] font-bold text-slate-600 flex-1">
+                                    {entry.name}
+                                </span>
+                                {/* Dot leader line */}
+                                <span className="flex-shrink border-b border-dotted border-slate-200 w-4" />
+                                {/* Stats */}
+                                <div className="flex items-center gap-1.5 shrink-0 tabular-nums">
+                                    <span className="text-[11px] font-black text-slate-800 w-8 text-right">{pct}%</span>
+                                    <span className="text-[10px] font-bold text-slate-400">({entry.value})</span>
+                                </div>
+                            </div>
+                        );
+                    })}
                 </div>
+
             </div>
         </div>
     );

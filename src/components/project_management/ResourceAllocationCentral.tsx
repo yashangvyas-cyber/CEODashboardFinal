@@ -2,6 +2,7 @@ import React from 'react';
 import type { DateRangeOption } from '../../types';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { Network } from 'lucide-react';
+import InfoTooltip from '../common/InfoTooltip';
 
 interface Props {
     dateRange: DateRangeOption;
@@ -40,6 +41,7 @@ const ResourceAllocationCentral: React.FC<Props> = ({ data }) => {
                     <h3 className="text-sm font-bold text-slate-800 flex items-center">
                         <Network className="w-4 h-4 mr-2 text-indigo-500" />
                         Organization Resource Availability Metrics
+                        <InfoTooltip content="Visualization of how resources are allocated across various projects and departments, highlighting availability, status-wise distribution, and allocation types." />
                     </h3>
                     <p className="text-xs text-slate-500 mt-0.5">Real-time bird's eye view of all technical talent allocation</p>
                 </div>
@@ -51,7 +53,7 @@ const ResourceAllocationCentral: React.FC<Props> = ({ data }) => {
                 {/* 1. Resource Availability Donut */}
                 <div className="p-6 flex flex-col xl:flex-row items-center justify-center gap-6">
                     <div className="relative w-32 h-32 shrink-0 min-h-0">
-                        <ResponsiveContainer width="100%" height="100%">
+                        <ResponsiveContainer width="100%" height="100%" minWidth={0} debounce={50}>
                             <PieChart>
                                 <Pie
                                     data={[
@@ -96,7 +98,7 @@ const ResourceAllocationCentral: React.FC<Props> = ({ data }) => {
                 {/* 2. Allocation by Status */}
                 <div className="p-6 flex flex-col xl:flex-row items-center justify-center gap-6">
                     <div className="w-32 h-32 shrink-0 min-h-0">
-                        <ResponsiveContainer width="100%" height="100%">
+                        <ResponsiveContainer width="100%" height="100%" minWidth={0} debounce={50}>
                             <PieChart>
                                 <Pie data={statusAllocation} cx="50%" cy="50%" innerRadius={35} outerRadius={60} dataKey="hours" stroke="none">
                                     {statusAllocation.map((entry: any, index: number) => (
@@ -124,7 +126,7 @@ const ResourceAllocationCentral: React.FC<Props> = ({ data }) => {
                 {/* 3. Allocation by Type */}
                 <div className="p-6 flex flex-col xl:flex-row items-center justify-center gap-6">
                     <div className="w-32 h-32 shrink-0 min-h-0">
-                        <ResponsiveContainer width="100%" height="100%">
+                        <ResponsiveContainer width="100%" height="100%" minWidth={0} debounce={50}>
                             <PieChart>
                                 <Pie data={typeAllocation} cx="50%" cy="50%" innerRadius={35} outerRadius={60} dataKey="hours" stroke="none">
                                     {typeAllocation.map((entry: any, index: number) => (

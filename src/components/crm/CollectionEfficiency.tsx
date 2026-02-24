@@ -1,5 +1,6 @@
 import React from 'react';
 import { TrendingUp } from 'lucide-react';
+import InfoTooltip from '../common/InfoTooltip';
 import type { DateRangeOption } from '../../types';
 
 interface Props {
@@ -22,7 +23,10 @@ const CollectionEfficiency: React.FC<Props> = ({ data }) => {
                 <div className="w-48 h-48 bg-emerald-500 blur-3xl rounded-full"></div>
             </div>
 
-            <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest relative z-10 w-full text-center">Collection Efficiency</h3>
+            <div className="flex items-center justify-center relative z-10 w-full mb-1">
+                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest">Collection Efficiency</h3>
+                <InfoTooltip content="Represents the ratio of cash collected against the total amount invoiced, reflecting the effectiveness of the billing and collections process." />
+            </div>
 
             <div className="flex-1 flex flex-col justify-center items-center py-6 relative z-10">
                 <div className="text-5xl font-black text-slate-900 tracking-tight text-gradient-emerald">{score}%</div>

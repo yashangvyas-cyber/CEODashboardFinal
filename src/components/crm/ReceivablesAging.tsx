@@ -1,9 +1,14 @@
+import React from 'react';
+import { AlertOctagon } from 'lucide-react';
+import InfoTooltip from '../common/InfoTooltip';
 import type { DateRangeOption } from '../../types';
+
 
 interface Props {
     dateRange?: DateRangeOption;
     data?: {
         total: string;
+        unbilled?: string;
         items: {
             range: string;
             amount: string;
@@ -15,6 +20,7 @@ interface Props {
 
 const ReceivablesAging: React.FC<Props> = ({ data }) => {
     const total = data?.total || "₹19.5L";
+    const unbilled = data?.unbilled || "₹40L";
     const items = data?.items || [
         { range: '1-15 Days', amount: '₹12.0L', value: 100, color: 'bg-slate-300' },
         { range: '16-30 Days', amount: '₹4.5L', value: 37.5, color: 'bg-slate-400' },
@@ -23,15 +29,18 @@ const ReceivablesAging: React.FC<Props> = ({ data }) => {
     ];
 
     return (
-        <div className="premium-card p-6 h-full flex flex-col group hover-scale h-full">
-            <div className="flex justify-between items-center mb-6">
-                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest">Receivables Aging</h3>
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider bg-slate-50 px-2 py-1 rounded border border-slate-100">
+        <div className="premium-card p-6 h-full flex flex-col group hover-scale">
+            <div className="flex justify-between items-center mb-5 uppercase tracking-widest">
+                <div className="flex items-center">
+                    <h3 className="text-xs font-bold text-slate-500">Receivables Aging</h3>
+                    <InfoTooltip content="Categorizes outstanding invoices by the number of days they've been unpaid, helping track payment delays and collection risks." />
+                </div>
+                <span className="text-[10px] font-bold text-slate-400 bg-slate-50 px-2 py-1 rounded border border-slate-100">
                     Total: {total}
                 </span>
             </div>
 
-            <div className="flex-1 flex flex-col justify-center space-y-5">
+            <div className="flex-1 flex flex-col justify-center space-y-4">
                 {items.map((item, idx) => (
                     <div key={idx} className="group/bar">
                         <div className="flex justify-between text-xs mb-1.5">
@@ -47,8 +56,21 @@ const ReceivablesAging: React.FC<Props> = ({ data }) => {
                     </div>
                 ))}
             </div>
+
+            {/* Unbilled sub-stat — won but not yet invoiced */}
+            <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+                <div className="flex items-center gap-1.5 text-[10px] font-bold text-teal-700 uppercase tracking-widest">
+                    <AlertOctagon className="w-3 h-3" />
+                    Unbilled
+                </div>
+                <div className="text-right">
+                    <span className="text-sm font-black text-teal-700">{unbilled}</span>
+                    <p className="text-[8px] font-bold text-teal-600/60 uppercase tracking-wider">Won, Not Invoiced</p>
+                </div>
+            </div>
         </div>
     );
 }
 
 export default ReceivablesAging;
+

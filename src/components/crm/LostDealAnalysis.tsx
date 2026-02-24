@@ -1,5 +1,6 @@
 import React from 'react';
 import type { DateRangeOption } from '../../types';
+import InfoTooltip from '../common/InfoTooltip';
 
 interface Props {
     dateRange?: DateRangeOption;
@@ -34,10 +35,13 @@ const LostDealAnalysis: React.FC<Props> = ({ data }) => {
 
     return (
         <div className="premium-card p-6 flex flex-col h-full group hover-scale relative overflow-hidden h-full">
-            <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-6">Lost Deal Analysis</h3>
+            <div className="flex items-center mb-6">
+                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest">Lost Deal Analysis</h3>
+                <InfoTooltip content="Analysis of the primary reasons why deals were lost, such as competition, budget constraints, or timing." />
+            </div>
 
-            <div className="flex-1 flex flex-col items-center justify-center relative z-10">
-                <div className="relative w-40 h-40 mb-6 drop-shadow-xl group-hover:scale-105 transition-transform duration-500">
+            <div className="flex-1 flex flex-col items-center justify-center relative z-10 pt-6">
+                <div className="relative w-40 h-40 mb-2 drop-shadow-xl group-hover:scale-105 transition-transform duration-500">
                     <svg viewBox="-1.1 -1.1 2.2 2.2" className="w-full h-full transform -rotate-90">
                         {slices.map((slice, i) => (
                             <path
