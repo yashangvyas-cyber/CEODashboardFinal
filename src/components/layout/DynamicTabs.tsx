@@ -304,7 +304,7 @@ interface DynamicTabsProps {
     selectedBU: BusinessUnitOption;
 }
 
-export const DynamicTabs: React.FC<DynamicTabsProps> = ({ activeTab, dateRange, selectedBU }) => {
+export const DynamicTabs: React.FC<DynamicTabsProps> = ({ activeTab, dateRange }) => {
     const peopleWC = useWidgetConfig('people');
     const crmWC = useWidgetConfig('crm');
     const recruitmentWC = useWidgetConfig('recruitment');
