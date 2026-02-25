@@ -44,13 +44,13 @@ const TopRevenueContributors: React.FC<Props> = ({ data }) => {
     };
 
     return (
-        <div className="bg-white border border-slate-200 p-4 h-full flex flex-col group transition-all hover:shadow-md relative overflow-hidden rounded-lg">
-            <div className="flex justify-between items-center mb-4">
-                <div className="flex items-center mb-4">
-                    <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-tighter">Top Revenue Contributors</h3>
+        <div className="bg-white border border-slate-200 p-4 flex flex-col group transition-all hover:shadow-md relative overflow-hidden rounded-lg">
+            <div className="flex justify-between items-start mb-4 pb-4 border-b border-slate-100/80 w-full shrink-0">
+                <div className="flex items-center">
+                    <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase">Top Revenue Contributors</h3>
                     <InfoTooltip content="A list of the highest revenue-generating customers, showing their invoiced amounts and collection progression status." />
                 </div>
-                <button className="text-[9px] font-black text-indigo-600 uppercase tracking-tighter hover:text-indigo-700 transition-colors">View All</button>
+                <button className="text-[9px] font-black text-indigo-600 uppercase tracking-tighter hover:text-indigo-700 transition-colors mt-0.5">View All</button>
             </div>
 
             <div className="flex-1 overflow-auto custom-scrollbar">

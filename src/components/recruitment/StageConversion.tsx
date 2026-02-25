@@ -133,9 +133,9 @@ const StageConversion: React.FC<Props> = ({ data }) => {
     };
 
     return (
-        <div className="bg-white rounded-xl border border-slate-200 p-6 flex flex-col h-full group transition-all duration-300 relative overflow-hidden">
+        <div className="bg-white rounded-xl border border-slate-200 p-6 flex flex-col group transition-all duration-300 relative overflow-hidden">
             <div className="flex justify-between items-start mb-6 shrink-0 z-10">
-                <div className="flex items-center">
+                <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-100/80 w-full shrink-0">
                     <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase">Stage Conversion Rate</h3>
                     <InfoTooltip content="Visualizes the recruitment funnel efficiency, showing how many candidates progress through each stage from sourcing to final joining." />
                 </div>

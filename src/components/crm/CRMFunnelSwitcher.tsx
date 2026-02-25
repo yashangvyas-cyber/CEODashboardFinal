@@ -161,8 +161,8 @@ const CRMFunnelSwitcher: React.FC<Props> = ({ data }) => {
     };
 
     return (
-        <div className="bg-white rounded-xl border border-slate-200 p-6 flex flex-col h-full group transition-all duration-300 relative overflow-hidden shadow-sm">
-            <div className="flex justify-between items-start mb-6 shrink-0 z-10">
+        <div className="bg-white rounded-xl border border-slate-200 p-6 flex flex-col group transition-all duration-300 relative overflow-hidden shadow-sm">
+            <div className="flex justify-between items-start mb-6 shrink-0 z-10 w-full border-b border-slate-100/80 pb-4">
                 <div className="flex items-center">
                     <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase">{currentFunnel.title}</h3>
                     <InfoTooltip content="Visualizes the conversion funnel for Leads or Deals, showing the percentage of prospects that progress through each stage of the sales pipeline." />

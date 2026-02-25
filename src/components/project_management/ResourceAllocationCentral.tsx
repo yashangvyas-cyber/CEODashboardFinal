@@ -38,11 +38,9 @@ const ResourceAllocationCentral: React.FC<Props> = ({ data }) => {
             {/* Header */}
             <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
                 <div>
-                    <h3 className="text-sm font-bold text-slate-800 flex items-center">
-                        <Network className="w-4 h-4 mr-2 text-indigo-500" />
+                    <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase"><Network className="w-4 h-4 mr-2 text-indigo-500" />
                         Organization Resource Availability Metrics
-                        <InfoTooltip content="Visualization of how resources are allocated across various projects and departments, highlighting availability, status-wise distribution, and allocation types." />
-                    </h3>
+                        <InfoTooltip content="Visualization of how resources are allocated across various projects and departments, highlighting availability, status-wise distribution, and allocation types." /></h3>
                     <p className="text-xs text-slate-500 mt-0.5">Real-time bird's eye view of all technical talent allocation</p>
                 </div>
             </div>

@@ -13,14 +13,12 @@ const RevenueLeakage: React.FC<Props> = ({ data = [] }) => {
     const sortedLeakage = [...data].sort((a, b) => b.amount - a.amount);
 
     return (
-        <div className="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm h-full flex flex-col hover:border-rose-100 hover:shadow-md transition-all duration-300">
+        <div className="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm flex flex-col h-full hover:border-rose-100 hover:shadow-md transition-all duration-300">
             <div className="flex justify-between items-start mb-4 shrink-0">
                 <div>
-                    <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider flex items-center">
-                        <AlertTriangle className="w-4 h-4 mr-2 text-rose-500 group-hover:scale-110 transition-transform" />
+                    <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase"><AlertTriangle className="w-4 h-4 mr-2 text-rose-500 group-hover:scale-110 transition-transform" />
                         Revenue Leakage Risk
-                        <InfoTooltip content="Identifies projects where the actual hours spent exceed either the fixed-cost budget or the hours billed, representing a direct loss of potential revenue." />
-                    </h3>
+                        <InfoTooltip content="Identifies projects where the actual hours spent exceed either the fixed-cost budget or the hours billed, representing a direct loss of potential revenue." /></h3>
                     <p className="text-xs text-slate-400 mt-1">Unbilled / Over-Budget Projects</p>
                 </div>
             </div>

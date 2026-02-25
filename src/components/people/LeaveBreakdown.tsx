@@ -16,10 +16,10 @@ const LeaveBreakdown: React.FC<Props> = () => {
     ];
 
     return (
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm h-full flex flex-col">
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col h-full">
             <div className="p-6 pb-2">
-                <div className="flex justify-between items-center mb-6">
-                    <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Leave Breakdown</h3>
+                <div className="flex justify-between items-center mb-6 pb-4 border-b border-slate-100/80 w-full shrink-0">
+                    <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase">Leave Breakdown</h3>
                     <span className="text-xs font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded">Currently Away</span>
                 </div>
             </div>

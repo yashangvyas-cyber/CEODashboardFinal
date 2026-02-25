@@ -20,10 +20,10 @@ const PipelineFunnel: React.FC<Props> = ({ data }) => {
     const hasBottleneck = dropOff > 60;
 
     return (
-        <div className="bg-white rounded-[10px] border border-slate-200 p-5 shadow-sm h-full flex flex-col hover:shadow transition-shadow">
+        <div className="bg-white rounded-[10px] border border-slate-200 p-5 shadow-sm flex flex-col h-full hover:shadow transition-shadow">
             <div className="flex justify-between items-start mb-4 shrink-0">
-                <div className="flex items-center gap-2">
-                    <h3 className="text-sm font-bold text-slate-800 tracking-tight">Pipeline Funnel</h3>
+                <div className="flex items-center justify-between gap-2 mb-6 pb-4 border-b border-slate-100/80 w-full shrink-0">
+                    <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase">Pipeline Funnel</h3>
                     <Info className="w-3.5 h-3.5 text-slate-400 cursor-help" />
                 </div>
                 <div className="flex items-center gap-2 text-slate-400">

@@ -21,13 +21,11 @@ const LeaveAndDeptOverview: React.FC<Props> = ({ data }) => {
     const deptRisk = data.deptRisk || [];
 
     return (
-        <div className="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm h-full flex flex-col group hover:shadow-md hover:border-emerald-100 transition-all duration-300 relative overflow-hidden text-slate-800">
+        <div className="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm flex flex-col h-full group hover:shadow-md hover:border-emerald-100 transition-all duration-300 relative overflow-hidden text-slate-800">
             {/* Header */}
-            <div className="mb-4 shrink-0 z-10 w-full">
-                <h3 className="text-sm font-black uppercase tracking-wider text-slate-800 flex items-center mb-1">
-                    <ShieldAlert className="w-5 h-5 mr-3 text-rose-500" />
-                    Leave & Dept Overview
-                </h3>
+            <div className="mb-4 pb-4 border-b border-slate-100/80 w-full shrink-0 shrink-0 z-10 w-full">
+                <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase"><ShieldAlert className="w-5 h-5 mr-3 text-rose-500" />
+                    Leave & Dept Overview</h3>
                 <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest pl-8">Resource Availability Tracker</p>
             </div>
 
@@ -36,7 +34,7 @@ const LeaveAndDeptOverview: React.FC<Props> = ({ data }) => {
                 {/* Top Section: Company Availability Box */}
                 <div className="flex items-center p-4 border border-slate-100 bg-slate-50/50 rounded-xl mb-5 w-full shrink-0">
                     <div className="relative w-16 h-16 mr-6 shrink-0 flex items-center justify-center">
-                        <svg className="w-full h-full transform -rotate-90 drop-shadow-sm" viewBox="0 0 72 72">
+                        <svg className="w-full transform -rotate-90 drop-shadow-sm" viewBox="0 0 72 72">
                             <circle cx="36" cy="36" r={radius} fill="transparent" stroke="currentColor" strokeWidth="6" className="text-slate-200" />
                             <circle cx="36" cy="36" r={radius} fill="transparent" stroke="currentColor" strokeWidth="6" strokeDasharray={circ} strokeDashoffset={offset} strokeLinecap="round" className="text-emerald-500" />
                         </svg>

@@ -4,6 +4,8 @@ import { DashboardHeader } from './components/layout/DashboardHeader';
 import { HeroSection } from './components/hero/HeroSection';
 import { DashboardControls } from './components/layout/DashboardControls';
 import { DynamicTabs } from './components/layout/DynamicTabs';
+import { CustomizeWidgetsButton } from './components/layout/CustomizeWidgetsPanel';
+import { useWidgetConfig } from './hooks/useWidgetConfig';
 import type { ModuleOption, BusinessUnitOption, DateRangeOption } from './types';
 
 const ALL_MODULES: { id: ModuleOption; label: string }[] = [
@@ -23,8 +25,12 @@ function App() {
 
   // Section 4 state (snapshot after Apply)
   const [appliedTabs, setAppliedTabs] = useState<ModuleOption[]>([]);
-  const [activeAppliedTab, setActiveAppliedTab] = useState<ModuleOption>('crm');
+  const [lastAppliedTab, setLastAppliedTab] = useState<ModuleOption>('crm');
+  const activeAppliedTab = appliedTabs.length > 0 ? (appliedTabs.includes(lastAppliedTab) ? lastAppliedTab : appliedTabs[0]) : 'crm' as ModuleOption;
   const isApplied = appliedTabs.length > 0;
+
+  // Widget config for the active applied tab
+  const wc = useWidgetConfig(activeAppliedTab);
 
   const toggleTab = (tab: ModuleOption) => {
     setSelectedTabs(prev =>
@@ -38,15 +44,15 @@ function App() {
   const handleApply = () => {
     setAppliedTabs(selectedTabs);
     // Set active to first selected tab, or keep current if still in set
-    setActiveAppliedTab(
-      selectedTabs.includes(activeAppliedTab) ? activeAppliedTab : selectedTabs[0]
+    setLastAppliedTab(
+      selectedTabs.includes(lastAppliedTab) ? lastAppliedTab : selectedTabs[0]
     );
   };
 
   const handleClear = () => {
     setSelectedTabs(['crm']);
     setAppliedTabs([]);
-    setActiveAppliedTab('crm');
+    setLastAppliedTab('crm');
     setSelectedDate('last_year');
   };
 
@@ -77,28 +83,38 @@ function App() {
         <div className="flex-1 bg-slate-50">
           {isApplied ? (
             <div className="flex flex-col h-full">
-              {/* Applied tab switcher — pill group with spacing, inside content area */}
-              {appliedTabs.length > 1 && (
-                <div className="px-6 pt-5 pb-1 flex items-center gap-2">
+              {/* Tab Switcher & Customize Button Row */}
+              <div className="flex items-center justify-between px-6 pt-5 pb-3 border-b border-slate-200 bg-white">
+                <div className="flex items-center gap-2">
                   {ALL_MODULES.filter(m => appliedTabs.includes(m.id)).map(mod => (
                     <button
                       key={mod.id}
-                      onClick={() => setActiveAppliedTab(mod.id)}
+                      onClick={() => setLastAppliedTab(mod.id)}
                       className={`px-4 py-1.5 rounded-full text-[11px] font-bold transition-all border ${activeAppliedTab === mod.id
-                          ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
-                          : 'bg-white text-slate-600 border-slate-300 hover:border-indigo-400 hover:text-indigo-600'
+                        ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
+                        : 'bg-white text-slate-600 border-slate-300 hover:border-indigo-400 hover:text-indigo-600'
                         }`}
                     >
                       {mod.label}
                     </button>
                   ))}
                 </div>
-              )}
+
+                <div className="flex items-center">
+                  <CustomizeWidgetsButton
+                    tab={activeAppliedTab}
+                    config={wc.config}
+                    toggle={wc.toggle}
+                  />
+                </div>
+              </div>
+
               {/* Report content for the active applied tab */}
               <DynamicTabs
                 activeTab={activeAppliedTab}
                 dateRange={selectedDate}
                 selectedBU={selectedBU}
+                wc={wc}
               />
             </div>
           ) : (

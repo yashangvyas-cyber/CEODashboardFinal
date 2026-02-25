@@ -14,14 +14,12 @@ const TopEffortConsumers: React.FC<Props> = ({ data = [] }) => {
     const chartData = [...data].sort((a, b) => b.hours - a.hours).slice(0, 5);
 
     return (
-        <div className="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm h-full flex flex-col hover:border-indigo-100 hover:shadow-md transition-all duration-300">
+        <div className="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm flex flex-col h-full hover:border-indigo-100 hover:shadow-md transition-all duration-300">
             <div className="flex justify-between items-start mb-6 shrink-0">
                 <div>
-                    <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider flex items-center">
-                        <Target className="w-4 h-4 mr-2 text-indigo-500" />
+                    <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase"><Target className="w-4 h-4 mr-2 text-indigo-500" />
                         Top Effort Consumers
-                        <InfoTooltip content="Identifies projects or clients that are consuming the most resource effort in terms of logged hours, categorized by billing model." />
-                    </h3>
+                        <InfoTooltip content="Identifies projects or clients that are consuming the most resource effort in terms of logged hours, categorized by billing model." /></h3>
                     <p className="text-xs text-slate-400 mt-1">Projects taking up the most team time</p>
                 </div>
             </div>

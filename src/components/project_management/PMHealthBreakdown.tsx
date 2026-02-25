@@ -47,14 +47,12 @@ const PMHealthBreakdown: React.FC<Props> = ({ data }) => {
     const { fixedCost, hourly, hirebase } = data;
 
     return (
-        <div className="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm hover:shadow-md hover:border-indigo-100 transition-all duration-300 h-full flex flex-col">
+        <div className="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm hover:shadow-md hover:border-indigo-100 transition-all duration-300 flex flex-col h-full">
             <div className="flex justify-between items-start mb-6 shrink-0">
                 <div>
-                    <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider flex items-center">
-                        <Activity className="w-4 h-4 mr-2 text-indigo-500" />
+                    <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase"><Activity className="w-4 h-4 mr-2 text-indigo-500" />
                         Project Delivery Health
-                        <InfoTooltip content="Monitors the delivery health across different billing models, including project budget consumption (Fixed Cost), billable hour leakage (Hourly), and resource billability (Hirebase)." />
-                    </h3>
+                        <InfoTooltip content="Monitors the delivery health across different billing models, including project budget consumption (Fixed Cost), billable hour leakage (Hourly), and resource billability (Hirebase)." /></h3>
                     <p className="text-xs text-slate-400 mt-1">Cross-model Execution Status</p>
                 </div>
             </div>

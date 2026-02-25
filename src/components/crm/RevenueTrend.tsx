@@ -69,12 +69,12 @@ const RevenueTrend: React.FC<Props> = ({ data }) => {
     const chartData = data || defaultData;
 
     return (
-        <div className="bg-white rounded-[10px] border border-slate-200 p-5 shadow-sm h-full flex flex-col hover:shadow transition-shadow">
+        <div className="bg-white rounded-[10px] border border-slate-200 p-5 shadow-sm flex flex-col h-full hover:shadow transition-shadow">
             {/* Header */}
             <div className="flex items-center justify-between mb-5 shrink-0">
                 <div className="flex items-center">
                     <TrendingUp className="w-3.5 h-3.5 text-slate-400 mr-2" />
-                    <h3 className="text-sm font-bold text-slate-800 tracking-tight">Revenue Trend</h3>
+                    <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase">Revenue Trend</h3>
                     <InfoTooltip content="Monthly progression of revenue from deals won, invoiced, and collected." />
                 </div>
                 <div className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-widest">

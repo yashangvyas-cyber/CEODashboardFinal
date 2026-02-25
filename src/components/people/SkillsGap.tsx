@@ -61,12 +61,12 @@ const SkillsGap: React.FC<Props> = ({ data }) => {
     };
 
     return (
-        <div className="bg-white rounded-[10px] border border-slate-200 p-6 shadow-sm h-full flex flex-col group hover:shadow-md hover:border-rose-100 transition-all duration-300 relative overflow-hidden">
+        <div className="bg-white rounded-[10px] border border-slate-200 p-6 shadow-sm flex flex-col h-full group hover:shadow-md hover:border-rose-100 transition-all duration-300 relative overflow-hidden">
             {/* Header Content */}
             <div className="shrink-0">
-                <div className="flex justify-between items-center mb-5">
+                <div className="flex justify-between items-start mb-6 pb-4 border-b border-slate-100/80 w-full shrink-0">
                     <div className="flex items-center">
-                        <h3 className="text-sm font-bold text-slate-800 tracking-tight">Critical Skills Gap</h3>
+                        <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase">Critical Skills Gap</h3>
                         <InfoTooltip content="Analysis of skill proficiency across the organization, highlighting areas where demand for expertise exceeds availability." />
                     </div>
                     <div className="flex items-center gap-3">

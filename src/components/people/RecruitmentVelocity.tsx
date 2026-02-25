@@ -41,11 +41,11 @@ const RecruitmentVelocity: React.FC<Props> = () => {
     });
 
     return (
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm h-full flex flex-col overflow-hidden">
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col h-full overflow-hidden">
             <div className="p-6 border-b border-slate-100 bg-white z-10">
                 <div className="flex justify-between items-center">
-                    <div className="flex items-center">
-                        <h3 className="text-[11px] font-black text-slate-500 uppercase tracking-[0.25em]">Sourcing Channel Distribution</h3>
+                    <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-100/80 w-full shrink-0">
+                        <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase">Sourcing Channel Distribution</h3>
                         <InfoTooltip content="Shows the percentage of candidates sourced from different channels like LinkedIn, Referrals, and Agencies." />
                     </div>
                     <TrendingUp className="w-4 h-4 text-emerald-500" />

@@ -26,11 +26,9 @@ const MissingAllocations: React.FC<Props> = ({ data = { missingLogs: [], onBench
         <div className={`bg-white rounded-2xl border p-6 shadow-sm h-full flex flex-col group hover:shadow-md transition-all duration-300 ${isMissingView ? 'border-rose-100 hover:border-rose-200' : 'border-amber-100 hover:border-amber-200'}`}>
             <div className="flex justify-between items-start mb-4 shrink-0">
                 <div>
-                    <h3 className={`text-sm font-semibold uppercase tracking-wider flex items-center ${isMissingView ? 'text-rose-600' : 'text-amber-600'}`}>
-                        {isMissingView ? <AlertCircle className="w-4 h-4 mr-2" /> : <Users className="w-4 h-4 mr-2" />}
+                    <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase">{isMissingView ? <AlertCircle className="w-4 h-4 mr-2" /> : <Users className="w-4 h-4 mr-2" />}
                         {isMissingView ? 'Missing Logs' : 'On Bench'}
-                        <InfoTooltip content="Identifies resources either staffed on projects but not logging daily hours (Missing Logs) or completely unassigned and available for work (Bench)." />
-                    </h3>
+                        <InfoTooltip content="Identifies resources either staffed on projects but not logging daily hours (Missing Logs) or completely unassigned and available for work (Bench)." /></h3>
                     <p className="text-[10px] text-slate-400 mt-1 max-w-[150px] leading-tight">
                         {isMissingView ? 'Staffed on projects but no daily log' : 'Present but completely unassigned'}
                     </p>

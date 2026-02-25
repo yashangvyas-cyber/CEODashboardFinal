@@ -1,16 +1,15 @@
 import React from 'react';
-import { DollarSign, FileText, CheckCircle, Clock } from 'lucide-react';
+import { Briefcase, CheckCircle2, AlertTriangle, Users2 } from 'lucide-react';
 import type { DateRangeOption } from '../../types';
 import InfoTooltip from '../common/InfoTooltip';
 
 interface Props {
     dateRange: DateRangeOption;
     data?: {
-        totalWon: { value: string; count: string };
-        invoiced: { value: string; percent: string };
-        collected: { value: string; efficiency: string };
-        outstanding: { value: string; label: string };
-        unbilled: { value: string; label: string };
+        activeProjects: number;
+        onTimeDelivery: number;
+        budgetVariance: string;
+        resourceUtilization: number;
     };
 }
 
@@ -36,39 +35,47 @@ const MetricCard = ({ label, value, icon: Icon, colorClass, subtext, tooltip }: 
     </div>
 );
 
-const CRMSummaryCards: React.FC<Props> = ({ data }) => {
+const PMSummaryCards: React.FC<Props> = ({ dateRange, data }) => {
+    // Simulated date-aware logic for demo
+    const isYear = dateRange === 'this_year';
+
+    const projects = data?.activeProjects || (isYear ? 48 : 32);
+    const delivery = data?.onTimeDelivery || (isYear ? 82 : 86);
+    const variance = data?.budgetVariance || (isYear ? "+₹1.2Cr" : "+₹15L");
+    const utilization = data?.resourceUtilization || (isYear ? 78 : 92);
+
     const cards = [
         {
-            label: "Total Won",
-            value: data?.totalWon.value || "₹4.2Cr",
-            icon: CheckCircle,
-            colorClass: { bg: 'bg-indigo-50/80', text: 'text-indigo-600', border: 'border-indigo-100/50' },
-            subtext: data?.totalWon.count || "142 Deals",
-            tooltip: "Total value and volume of deals successfully closed within the selected period."
-        },
-        {
-            label: "Invoiced",
-            value: data?.invoiced.value || "₹3.8Cr",
-            icon: FileText,
+            label: "Active Projects",
+            value: projects,
+            icon: Briefcase,
             colorClass: { bg: 'bg-blue-50/80', text: 'text-blue-600', border: 'border-blue-100/50' },
-            subtext: data?.invoiced.percent || "90% of Won",
-            tooltip: "Total value of bills sent out to clients for successfully won deals."
+            subtext: isYear ? "Currently in execution" : "Executed in period",
+            tooltip: "Total number of projects that were active or ongoing during this period."
         },
         {
-            label: "Collected",
-            value: data?.collected.value || "₹3.45Cr",
-            icon: DollarSign,
+            label: "On-Time Delivery",
+            value: `${delivery}%`,
+            icon: CheckCircle2,
             colorClass: { bg: 'bg-emerald-50/80', text: 'text-emerald-600', border: 'border-emerald-100/50' },
-            subtext: data?.collected.efficiency || "90.8% Efficiency",
-            tooltip: "Actual cash received from clients, representing the real liquidity of the business."
+            subtext: "Milestones met",
+            tooltip: "Percentage of project milestones successfully completed by their target date in this window."
         },
         {
-            label: "Outstanding",
-            value: data?.outstanding.value || "₹35L",
-            icon: Clock,
+            label: "Budget Variance",
+            value: variance,
+            icon: AlertTriangle,
+            colorClass: { bg: 'bg-rose-50/80', text: 'text-rose-600', border: 'border-rose-100/50' },
+            subtext: isYear ? "Total YTD Overshoot" : "Total Period Overshoot",
+            tooltip: "Aggregate difference between planned budget and actual costs incurred in this period."
+        },
+        {
+            label: "Resource Util.",
+            value: `${utilization}%`,
+            icon: Users2,
             colorClass: { bg: 'bg-amber-50/80', text: 'text-amber-600', border: 'border-amber-100/50' },
-            subtext: data?.outstanding.label || "(Invoiced - Collected)",
-            tooltip: "The gap between what has been billed and what has been paid by clients."
+            subtext: isYear ? "Current Efficiency" : "Period Avg. Efficiency",
+            tooltip: "Percentage of available staff hours that were logged as billable in the selected period."
         }
     ];
 
@@ -81,4 +88,4 @@ const CRMSummaryCards: React.FC<Props> = ({ data }) => {
     );
 };
 
-export default CRMSummaryCards;
+export default PMSummaryCards;

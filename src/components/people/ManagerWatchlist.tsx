@@ -14,14 +14,12 @@ const ManagerWatchlist: React.FC<Props> = ({ data = [] }) => {
         .slice(0, 5);
 
     return (
-        <div className="bg-white rounded-[10px] border border-slate-200 p-6 shadow-sm h-full flex flex-col group hover:shadow-md hover:border-rose-100 transition-all duration-300 relative overflow-hidden">
+        <div className="bg-white rounded-[10px] border border-slate-200 p-6 shadow-sm flex flex-col h-full group hover:shadow-md hover:border-rose-100 transition-all duration-300 relative overflow-hidden">
             <div className="flex justify-between items-start mb-6 shrink-0 z-10">
                 <div>
-                    <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-800 flex items-center">
-                        <UserMinus className="w-4 h-4 mr-2 text-rose-500 group-hover:scale-110 transition-transform" />
+                    <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase"><UserMinus className="w-4 h-4 mr-2 text-rose-500 group-hover:scale-110 transition-transform" />
                         Manager Watchlist
-                        <InfoTooltip content="Identification of managers with the highest team attrition rates, helping to pinpoint potential leadership or cultural issues." />
-                    </h3>
+                        <InfoTooltip content="Identification of managers with the highest team attrition rates, helping to pinpoint potential leadership or cultural issues." /></h3>
                     <p className="text-[10px] text-slate-400 mt-1 uppercase tracking-widest font-medium">High-Turnover Leadership (Top 5)</p>
                 </div>
             </div>

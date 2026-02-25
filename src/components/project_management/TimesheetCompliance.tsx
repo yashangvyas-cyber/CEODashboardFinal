@@ -13,14 +13,12 @@ const TimesheetCompliance: React.FC<Props> = ({ data = [] }) => {
     const sortedIssues = [...data].sort((a, b) => (b.unapproved + b.missing) - (a.unapproved + a.missing));
 
     return (
-        <div className="bg-white rounded-[10px] border border-slate-200 p-6 shadow-sm h-full flex flex-col hover:border-indigo-100 hover:shadow-md transition-all duration-300">
+        <div className="bg-white rounded-[10px] border border-slate-200 p-6 shadow-sm flex flex-col h-full hover:border-indigo-100 hover:shadow-md transition-all duration-300">
             <div className="flex justify-between items-start mb-4 shrink-0">
                 <div>
-                    <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider flex items-center">
-                        <CalendarClock className="w-4 h-4 mr-2 text-violet-500 group-hover:scale-110 transition-transform" />
+                    <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase"><CalendarClock className="w-4 h-4 mr-2 text-violet-500 group-hover:scale-110 transition-transform" />
                         Timesheet Compliance
-                        <InfoTooltip content="Tracks pending timesheet approvals and missing logs specifically for hourly projects, highlighting departments with billing bottlenecks." />
-                    </h3>
+                        <InfoTooltip content="Tracks pending timesheet approvals and missing logs specifically for hourly projects, highlighting departments with billing bottlenecks." /></h3>
                     <p className="text-xs text-slate-400 mt-1">Pending approvals (Hourly only)</p>
                 </div>
             </div>

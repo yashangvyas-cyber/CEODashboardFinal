@@ -52,11 +52,9 @@ const AttritionAnalysis: React.FC<Props> = ({ data }) => {
 
     return (
         <div className="flex flex-col border border-slate-200 rounded-[10px] p-4 bg-white shadow-sm hover:shadow transition-shadow w-full">
-            <div className="flex justify-between items-start mb-4 shrink-0 w-full z-10 relative">
-                <h3 className="text-sm font-bold text-slate-800 tracking-tight flex items-center">
-                    Exit Trend
-                    <InfoTooltip content="Monthly trend of employee exits, categorized by regrettable and non-regrettable attrition." />
-                </h3>
+            <div className="flex justify-between items-start mb-4 pb-4 border-b border-slate-100/80 w-full shrink-0 shrink-0 w-full z-10 relative">
+                <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase">Exit Trend
+                    <InfoTooltip content="Monthly trend of employee exits, categorized by regrettable and non-regrettable attrition." /></h3>
                 <div className="absolute right-0 top-0 w-full">
                     <Legend
                         content={renderCustomLegend}

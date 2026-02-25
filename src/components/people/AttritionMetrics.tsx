@@ -10,8 +10,8 @@ const AttritionMetrics: React.FC<Props> = ({ data }) => {
     const { kpis } = data;
 
     return (
-        <div className="flex flex-col gap-3">
-            <div className="border border-slate-200 rounded-[10px] p-4 flex flex-col justify-center bg-white shadow-sm hover:shadow transition-shadow">
+        <div className="flex flex-col gap-3 h-full">
+            <div className="border border-slate-200 rounded-[10px] p-4 flex flex-col justify-center bg-white shadow-sm hover:shadow transition-shadow flex-1">
                 <h4 className="text-xs font-bold text-slate-800 mb-3 tracking-tight">Total Exits</h4>
                 <div className="flex items-baseline gap-2">
                     <span className="text-3xl font-black text-slate-900 tracking-tighter leading-none">{kpis.totalExits.percent}</span>
@@ -33,7 +33,7 @@ const AttritionMetrics: React.FC<Props> = ({ data }) => {
                 )}
             </div>
 
-            <div className="border border-slate-200 rounded-[10px] p-4 flex flex-col justify-center bg-white shadow-sm hover:shadow transition-shadow">
+            <div className="border border-slate-200 rounded-[10px] p-4 flex flex-col justify-center bg-white shadow-sm hover:shadow transition-shadow flex-1">
                 <h4 className="text-xs font-bold text-slate-800 mb-3 tracking-tight">Average Monthly Exits</h4>
                 <div className="flex items-baseline gap-2">
                     <span className="text-3xl font-black text-slate-900 tracking-tighter leading-none">{kpis.avgMonthly.percent}</span>

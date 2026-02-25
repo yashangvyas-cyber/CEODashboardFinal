@@ -1,9 +1,16 @@
 import React from 'react';
 import type { ModuleOption, DateRangeOption, BusinessUnitOption } from '../../types';
 import { useWidgetConfig } from '../../hooks/useWidgetConfig';
-import { CustomizeWidgetsButton } from './CustomizeWidgetsPanel';
+import { Responsive, WidthProvider } from 'react-grid-layout/legacy';
+import WidgetWrapper from './SortableWidget';
+import '/node_modules/react-grid-layout/css/styles.css';
+import '/node_modules/react-resizable/css/styles.css';
+import type { Layout, LayoutItem } from 'react-grid-layout/legacy';
+
+const ResponsiveGridLayout = WidthProvider(Responsive);
 
 // Gemini People Components
+import PeopleSummaryCards from '../people/PeopleSummaryCards';
 import ExitByTypeAndReason from '../people/ExitByTypeAndReason';
 import AttritionAnalysis from '../people/AttritionAnalysis';
 import TalentRiskScore from '../people/TalentRiskScore';
@@ -13,6 +20,7 @@ import SkillsGap from '../people/SkillsGap';
 import TopEmployees from '../people/TopEmployees';
 
 // Project Management Components
+import PMSummaryCards from '../project_management/PMSummaryCards';
 import PMHealthBreakdown from '../project_management/PMHealthBreakdown';
 import UpcomingExpirations from '../project_management/UpcomingExpirations';
 import RevenueLeakage from '../project_management/RevenueLeakage';
@@ -302,212 +310,104 @@ interface DynamicTabsProps {
     activeTab: ModuleOption;
     dateRange: DateRangeOption;
     selectedBU: BusinessUnitOption;
+    wc?: any;
 }
 
-export const DynamicTabs: React.FC<DynamicTabsProps> = ({ activeTab, dateRange }) => {
+export const DynamicTabs: React.FC<DynamicTabsProps> = ({ activeTab, dateRange, wc: passedWc }) => {
     const peopleWC = useWidgetConfig('people');
     const crmWC = useWidgetConfig('crm');
     const recruitmentWC = useWidgetConfig('recruitment');
     const pmWC = useWidgetConfig('project_management');
 
     // Current tab's widget config
-    const wc = activeTab === 'people' ? peopleWC
+    const wc = passedWc || (activeTab === 'people' ? peopleWC
         : activeTab === 'crm' ? crmWC
             : activeTab === 'recruitment' ? recruitmentWC
-                : pmWC;
+                : pmWC);
+
+    // The current layout state and update function for the active tab
+    const visibleLayout = wc.layout.filter((l: any) => wc.isVisible(l.i));
+
+    const renderWidget = (id: string) => {
+        if (activeTab === 'people') {
+            switch (id) {
+                case 'peopleSummaryCards': return <PeopleSummaryCards dateRange={dateRange} />;
+                case 'talentRiskScore': return <TalentRiskScore data={mockPeopleData.talentRisk} />;
+                case 'exitByTypeAndReason': return <ExitByTypeAndReason data={mockPeopleData.exitByTypeAndReason} />;
+                case 'attritionAnalysis': return <AttritionAnalysis data={mockPeopleData.exitTrend} />;
+                case 'skillsGap': return <SkillsGap data={mockPeopleData.skillsGap} />;
+                case 'attritionMetrics': return <AttritionMetrics data={mockPeopleData.exitTrend} />;
+                case 'managerWatchlist': return <ManagerWatchlist data={mockPeopleData.managerWatchlist} />;
+                case 'topEmployees': return <TopEmployees data={mockPeopleData.topEmployees} />;
+            }
+        }
+        if (activeTab === 'crm') {
+            switch (id) {
+                case 'crmSummaryCards': return <CRMSummaryCards dateRange="this_year" data={mockCRMData.summary} />;
+                case 'revenueTrend': return <RevenueTrend />;
+                case 'avgDaysToPay': return <AvgDaysToPay />;
+                case 'crmFunnelSwitcher': return <CRMFunnelSwitcher data={mockCRMData.pipelineFunnel} />;
+                case 'salesMetrics': return <SalesMetrics dateRange="this_year" data={mockCRMData.salesMetrics} />;
+                case 'receivablesAging': return <ReceivablesAging dateRange="this_year" data={mockCRMData.receivablesAging} />;
+                case 'crmPipelineSummaries': return <CRMPipelineSummaries data={mockCRMData.pipelineSummaries} />;
+                case 'collectionEfficiency': return <CollectionEfficiency dateRange="this_year" data={mockCRMData.collectionEfficiency} />;
+                case 'collectionGoalCard': return <CollectionGoalCard dateRange="this_year" data={mockCRMData.collectionGoal} />;
+                case 'revenueSourceMix': return <RevenueSourceMix data={mockCRMData.sourceMix} />;
+                case 'lostDealAnalysis': return <LostDealAnalysis data={mockCRMData.lostDealAnalysis} />;
+                case 'topRevenueContributors': return <TopRevenueContributors data={mockCRMData.topContributors} />;
+            }
+        }
+        if (activeTab === 'recruitment') {
+            switch (id) {
+                case 'recruitmentSummaryCards': return <RecruitmentSummaryCards data={mockRecruitmentData} />;
+                case 'stageConversion': return <StageConversion data={mockRecruitmentData.stageConversion} />;
+                case 'recruitmentVelocity': return <RecruitmentVelocity dateRange="last_year" />;
+                case 'jobStatus': return <JobStatus data={mockRecruitmentData.jobStatus} />;
+                case 'offerAcceptance': return <OfferAcceptance data={mockRecruitmentData.offerAcceptance} />;
+            }
+        }
+        if (activeTab === 'project_management') {
+            switch (id) {
+                case 'pmSummaryCards': return <PMSummaryCards dateRange={dateRange} />;
+                case 'resourceAllocationCentral': return <ResourceAllocationCentral dateRange="this_year" data={mockPMData.resourceCentral} />;
+                case 'pmHealthBreakdown': return <PMHealthBreakdown dateRange="this_year" data={mockPMData.healthBreakdown} />;
+                case 'revenueLeakage': return <RevenueLeakage dateRange="this_year" data={mockPMData.leakage} />;
+                case 'topEffortConsumers': return <TopEffortConsumers dateRange="this_year" data={mockPMData.effortConsumers} />;
+                case 'upcomingExpirations': return <UpcomingExpirations dateRange="this_year" data={mockPMData.expirations} metricData={mockPMData.hireVsExpire} />;
+                case 'timesheetCompliance': return <TimesheetCompliance dateRange={dateRange} data={mockPMData.compliance} />;
+                case 'missingAllocations': return <MissingAllocations dateRange={dateRange} data={mockPMData.dailyAllocations} />;
+            }
+        }
+        return null; // Fallback
+    };
 
     return (
         <div className="w-full flex-1 flex flex-col pt-1 bg-slate-50/50">
-
-            {/* ── Tab Header Bar with Customize Widgets ── */}
-            <div className="px-6 pt-3 pb-2 flex items-center justify-end">
-                <div className="relative">
-                    <CustomizeWidgetsButton
-                        tab={activeTab}
-                        config={wc.config}
-                        toggle={wc.toggle}
-                    />
-                </div>
-            </div>
-
             {/* Tab Content Area */}
-            <div className="flex-1">
-                {activeTab === 'people' && (
-                    <div className="animate-in fade-in slide-in-from-bottom-2 duration-500 px-6 pb-12">
-                        <div className="flex flex-col space-y-6">
-                            {/* 3-COLUMN VERTICAL STACKING ARCHITECTURE */}
-                            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-
-                                {/* Column 1: The Trigger (3/12) */}
-                                <div className="lg:col-span-3 flex flex-col gap-6">
-                                    {peopleWC.isVisible('talentRiskScore') && <TalentRiskScore data={mockPeopleData.talentRisk} />}
-                                    {peopleWC.isVisible('exitByTypeAndReason') && <ExitByTypeAndReason data={mockPeopleData.exitByTypeAndReason} />}
-                                </div>
-
-                                {/* Column 2: The Trend (6/12) */}
-                                <div className="lg:col-span-6 flex flex-col gap-6">
-                                    {peopleWC.isVisible('attritionAnalysis') && <AttritionAnalysis data={mockPeopleData.exitTrend} />}
-                                    {peopleWC.isVisible('skillsGap') && <SkillsGap data={mockPeopleData.skillsGap} />}
-                                </div>
-
-                                {/* Column 3: The Impact (3/12) */}
-                                <div className="lg:col-span-3 flex flex-col gap-6">
-                                    {peopleWC.isVisible('attritionMetrics') && <AttritionMetrics data={mockPeopleData.exitTrend} />}
-                                    {peopleWC.isVisible('managerWatchlist') && <ManagerWatchlist data={mockPeopleData.managerWatchlist} />}
-                                    {peopleWC.isVisible('topEmployees') && <TopEmployees data={mockPeopleData.topEmployees} />}
-                                </div>
-                            </div>
+            <div className="flex-1 px-4 pt-4 pb-12">
+                <ResponsiveGridLayout
+                    key={activeTab} // CRITICAL FIX: Forces deep remount on tab switch, preventing layout crossover scrambling!
+                    className="layout"
+                    layouts={{ lg: visibleLayout, md: visibleLayout, sm: visibleLayout }}
+                    breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+                    cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
+                    rowHeight={30} // Restored standard sizing
+                    margin={[16, 16]} // Restored standard gaps so things don't kiss
+                    draggableHandle=".dashboard-drag-handle"
+                    onDragStop={(newLayout: Layout) => wc.updateLayout(newLayout)}
+                    onResizeStop={(newLayout: Layout) => wc.updateLayout(newLayout)}
+                    compactType="vertical"
+                    useCSSTransforms={true}
+                    isResizable={false}
+                >
+                    {visibleLayout.map((item: LayoutItem) => (
+                        <div key={item.i}>
+                            <WidgetWrapper>
+                                {renderWidget(item.i)}
+                            </WidgetWrapper>
                         </div>
-                    </div>
-                )}
-
-                {activeTab === 'crm' && (
-                    <div className="animate-in fade-in slide-in-from-bottom-2 duration-500 px-6 pb-12">
-                        <div className="flex flex-col space-y-6">
-
-                            {crmWC.isVisible('crmSummaryCards') && <CRMSummaryCards dateRange="this_year" data={mockCRMData.summary} />}
-
-                            {crmWC.isVisible('revenueTrend') && (
-                                <div className="h-[340px]"><RevenueTrend /></div>
-                            )}
-
-                            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                                {crmWC.isVisible('crmFunnelSwitcher') && (
-                                    <div className="lg:col-span-8 flex flex-col min-h-[580px]">
-                                        <CRMFunnelSwitcher data={mockCRMData.pipelineFunnel} />
-                                    </div>
-                                )}
-                                <div className="lg:col-span-4 flex flex-col gap-4">
-                                    {crmWC.isVisible('crmPipelineSummaries') && <CRMPipelineSummaries data={mockCRMData.pipelineSummaries} />}
-                                    {crmWC.isVisible('salesMetrics') && <SalesMetrics dateRange="this_year" data={mockCRMData.salesMetrics} />}
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                                {crmWC.isVisible('receivablesAging') && (
-                                    <div className="lg:col-span-4 flex flex-col min-h-[380px]">
-                                        <ReceivablesAging dateRange="this_year" data={mockCRMData.receivablesAging} />
-                                    </div>
-                                )}
-                                {crmWC.isVisible('avgDaysToPay') && (
-                                    <div className="lg:col-span-4 flex flex-col min-h-[380px]">
-                                        <AvgDaysToPay />
-                                    </div>
-                                )}
-                                {crmWC.isVisible('collectionEfficiency') && (
-                                    <div className="lg:col-span-2 flex flex-col min-h-[380px]">
-                                        <CollectionEfficiency dateRange="this_year" data={mockCRMData.collectionEfficiency} />
-                                    </div>
-                                )}
-                                {crmWC.isVisible('collectionGoalCard') && (
-                                    <div className="lg:col-span-2 flex flex-col min-h-[380px]">
-                                        <CollectionGoalCard dateRange="this_year" data={mockCRMData.collectionGoal} />
-                                    </div>
-                                )}
-                            </div>
-
-                            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                                {crmWC.isVisible('revenueSourceMix') && (
-                                    <div className="lg:col-span-6 flex flex-col min-h-[400px]">
-                                        <RevenueSourceMix data={mockCRMData.sourceMix} />
-                                    </div>
-                                )}
-                                {crmWC.isVisible('lostDealAnalysis') && (
-                                    <div className="lg:col-span-6 flex flex-col min-h-[400px]">
-                                        <LostDealAnalysis data={mockCRMData.lostDealAnalysis} />
-                                    </div>
-                                )}
-                            </div>
-
-                            {crmWC.isVisible('topRevenueContributors') && (
-                                <div className="min-h-[450px]">
-                                    <TopRevenueContributors data={mockCRMData.topContributors} />
-                                </div>
-                            )}
-
-                        </div>
-                    </div>
-                )}
-
-
-                {activeTab === 'recruitment' && (
-                    <div className="animate-in fade-in slide-in-from-bottom-2 duration-500 px-6 pb-12">
-                        <div className="flex flex-col space-y-6">
-
-                            {recruitmentWC.isVisible('recruitmentSummaryCards') && (
-                                <div className="grid grid-cols-12 gap-6 items-start">
-                                    <RecruitmentSummaryCards data={mockRecruitmentData} />
-                                </div>
-                            )}
-
-                            <div className="grid grid-cols-12 gap-6 items-start">
-                                {recruitmentWC.isVisible('stageConversion') && (
-                                    <div className="col-span-12 lg:col-span-4 flex flex-col h-fit">
-                                        <StageConversion data={mockRecruitmentData.stageConversion} />
-                                    </div>
-                                )}
-                                {recruitmentWC.isVisible('recruitmentVelocity') && (
-                                    <div className="col-span-12 lg:col-span-4 flex flex-col h-full">
-                                        <RecruitmentVelocity dateRange="last_year" />
-                                    </div>
-                                )}
-                                <div className="col-span-12 lg:col-span-4 flex flex-col gap-6 h-fit">
-                                    {recruitmentWC.isVisible('jobStatus') && <JobStatus data={mockRecruitmentData.jobStatus} />}
-                                    {recruitmentWC.isVisible('offerAcceptance') && <OfferAcceptance data={mockRecruitmentData.offerAcceptance} />}
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                )}
-
-
-                {activeTab === 'project_management' && (
-                    <div className="animate-in fade-in slide-in-from-bottom-2 duration-500 px-6 pb-12">
-                        <div className="flex flex-col space-y-6">
-                            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 auto-rows-max">
-
-                                {pmWC.isVisible('resourceAllocationCentral') && (
-                                    <div className="lg:col-span-8 flex flex-col h-full">
-                                        <ResourceAllocationCentral dateRange="this_year" data={mockPMData.resourceCentral} />
-                                    </div>
-                                )}
-                                {pmWC.isVisible('missingAllocations') && (
-                                    <div className="lg:col-span-4 flex flex-col h-full">
-                                        <MissingAllocations dateRange={dateRange} data={mockPMData.dailyAllocations} />
-                                    </div>
-                                )}
-
-                                {pmWC.isVisible('pmHealthBreakdown') && (
-                                    <div className="lg:col-span-4 flex flex-col">
-                                        <PMHealthBreakdown dateRange="this_year" data={mockPMData.healthBreakdown} />
-                                    </div>
-                                )}
-                                {pmWC.isVisible('topEffortConsumers') && (
-                                    <div className="lg:col-span-4 flex flex-col">
-                                        <TopEffortConsumers dateRange="this_year" data={mockPMData.effortConsumers} />
-                                    </div>
-                                )}
-                                {pmWC.isVisible('upcomingExpirations') && (
-                                    <div className="lg:col-span-4 flex flex-col">
-                                        <UpcomingExpirations dateRange="this_year" data={mockPMData.expirations} metricData={mockPMData.hireVsExpire} />
-                                    </div>
-                                )}
-
-                                {pmWC.isVisible('revenueLeakage') && (
-                                    <div className="lg:col-span-6 flex flex-col">
-                                        <RevenueLeakage dateRange="this_year" data={mockPMData.leakage} />
-                                    </div>
-                                )}
-                                {pmWC.isVisible('timesheetCompliance') && (
-                                    <div className="lg:col-span-6 flex flex-col">
-                                        <TimesheetCompliance dateRange={dateRange} data={mockPMData.compliance} />
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                )}
+                    ))}
+                </ResponsiveGridLayout>
             </div>
         </div>
     );

@@ -14,14 +14,12 @@ const UpcomingExpirations: React.FC<Props> = ({ data = [], metricData }) => {
     const sortedExpirations = [...data].sort((a, b) => a.daysRemaining - b.daysRemaining);
 
     return (
-        <div className="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm h-full flex flex-col hover:border-amber-100 hover:shadow-md transition-all duration-300">
+        <div className="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm flex flex-col h-full hover:border-amber-100 hover:shadow-md transition-all duration-300">
             <div className="flex justify-between items-start mb-4 shrink-0">
                 <div>
-                    <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider flex items-center">
-                        <Clock className="w-4 h-4 mr-2 text-amber-500 group-hover:scale-110 transition-transform" />
+                    <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase"><Clock className="w-4 h-4 mr-2 text-amber-500 group-hover:scale-110 transition-transform" />
                         Upcoming Expirations
-                        <InfoTooltip content="Tracks upcoming project completions or resource contract renewals, highlighting those at risk of expiring soon." />
-                    </h3>
+                        <InfoTooltip content="Tracks upcoming project completions or resource contract renewals, highlighting those at risk of expiring soon." /></h3>
                     <p className="text-xs text-slate-400 mt-1">Hirebase & Hourly Renewals</p>
                 </div>
                 <span className="text-[10px] font-bold bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">

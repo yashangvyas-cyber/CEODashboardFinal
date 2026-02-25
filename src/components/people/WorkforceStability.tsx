@@ -30,11 +30,11 @@ const WorkforceStability: React.FC<Props> = () => {
   ];
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 shadow-sm h-full flex flex-col overflow-hidden">
+    <div className="bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col h-full overflow-hidden">
       {/* Header */}
       <div className="p-6 pb-2 flex justify-between items-start">
         <div>
-          <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Workforce Stability</h3>
+          <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase">Workforce Stability</h3>
           <p className="text-xs text-slate-400 mt-1">Attrition Analysis & Risk</p>
         </div>
         <div className="flex items-center space-x-1.5 bg-rose-50 px-2.5 py-1.5 rounded-lg border border-rose-100">

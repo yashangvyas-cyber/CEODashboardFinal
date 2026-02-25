@@ -16,17 +16,15 @@ const EarlyAttrition: React.FC<Props> = ({ data }) => {
 
 
     return (
-        <div className="bg-white rounded-[10px] border border-slate-200 p-5 shadow-sm flex flex-col hover:shadow transition-shadow">
-            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center">
-                Early Attrition
-                <InfoTooltip content="Percentage of employees who left the company within their first 90 days of employment." />
-            </h3>
+        <div className="bg-white rounded-[10px] border border-slate-200 p-5 shadow-sm flex flex-col h-full hover:shadow transition-shadow pb-4 w-full h-full">
+            <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase">Early Attrition
+                <InfoTooltip content="Percentage of employees who left the company within their first 90 days of employment." /></h3>
 
-            <div className="flex-1 flex flex-col justify-center">
-                <div className="flex items-center justify-between w-full px-6 mb-8">
-                    {/* Visual Circle - Increased Scale to fill width */}
-                    <div className="relative w-36 h-36 shrink-0">
-                        <svg className="w-full h-full transform -rotate-90">
+            <div className="flex-1 flex flex-col justify-center min-h-[160px]">
+                <div className="flex items-center justify-between w-full px-4 sm:px-6">
+                    {/* Visual Circle - Scaled appropriately without squashing */}
+                    <div className="relative w-28 h-28 sm:w-32 sm:h-32 shrink-0">
+                        <svg className="w-full h-full transform -rotate-90 origin-center" viewBox="0 0 144 144">
                             {/* Background Track */}
                             <circle
                                 cx="72"

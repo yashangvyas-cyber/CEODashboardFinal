@@ -13,8 +13,13 @@ const OfferAcceptance: React.FC<Props> = ({ data }) => {
     if (!data) return null;
 
     return (
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all h-full p-6">
-            <div className="flex flex-row items-center justify-center gap-10">
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all p-6 flex flex-col h-full relative">
+            <div className="mb-1 flex items-center justify-between mb-6 pb-4 border-b border-slate-100/80 w-full shrink-0">
+                <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase">Offer Acceptance</h3>
+                <InfoTooltip content="Analysis of how many extended job offers were accepted versus declined or pending." />
+            </div>
+
+            <div className="flex flex-row items-center justify-center gap-10 flex-1 min-h-0">
                 {/* Left Child: Donut Chart */}
                 <div className="relative shrink-0 w-40 h-40">
                     <ResponsiveContainer width="100%" height="100%" minWidth={0} debounce={50}>
@@ -48,10 +53,6 @@ const OfferAcceptance: React.FC<Props> = ({ data }) => {
 
                 {/* Right Child: Vertically Stacked Legend */}
                 <div className="flex flex-col justify-center gap-3">
-                    <div className="mb-1 flex items-center">
-                        <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Offer Acceptance</h3>
-                        <InfoTooltip content="Analysis of how many extended job offers were accepted versus declined or pending." />
-                    </div>
                     {data.chartData.map((entry, index) => (
                         <div key={index} className="flex items-center justify-start gap-4 border-b border-slate-50 pb-2 last:border-0 last:pb-0">
                             <div className="flex items-center gap-3 min-w-[70px]">

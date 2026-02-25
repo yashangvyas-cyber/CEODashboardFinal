@@ -12,10 +12,10 @@ const TopEmployees: React.FC<Props> = ({ data }) => {
     if (!data) return null;
 
     return (
-        <div className="bg-white rounded-[10px] border border-slate-200 p-5 shadow-sm h-full flex flex-col hover:shadow transition-shadow">
+        <div className="bg-white rounded-[10px] border border-slate-200 p-5 shadow-sm flex flex-col h-full hover:shadow transition-shadow">
             <div className="flex justify-between items-center mb-4 shrink-0 border-b border-slate-100 pb-4">
-                <div className="flex items-center">
-                    <h3 className="text-sm font-bold text-slate-800 tracking-tight">Top Recognized</h3>
+                <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-100/80 w-full shrink-0">
+                    <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase">Top Recognized</h3>
                     <div className="ml-1.5 flex items-center">
                         <InfoTooltip content="Recognition of top-performing employees based on contribution, peer recognition, and key performance indicators." />
                     </div>
