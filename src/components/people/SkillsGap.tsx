@@ -111,9 +111,9 @@ const SkillsGap: React.FC<Props> = ({ data }) => {
                                 <div className="col-span-8 flex flex-col gap-1.5">
                                     {renderLevelBar(item.levels)}
                                     <div className="flex justify-between text-[9px] font-black tracking-tight opacity-40 group-hover:opacity-100 transition-opacity">
-                                        <span className="text-red-500 font-bold">{bPct}%</span>
-                                        <span className="text-amber-500 font-bold">{iPct}%</span>
-                                        <span className="text-emerald-500 font-bold">{ePct}%</span>
+                                        <span className="text-red-500 font-bold">{item.levels.beginner} ({bPct}%)</span>
+                                        <span className="text-amber-500 font-bold">{item.levels.intermediate} ({iPct}%)</span>
+                                        <span className="text-emerald-500 font-bold">{item.levels.experienced} ({ePct}%)</span>
                                     </div>
                                 </div>
                             </div>
