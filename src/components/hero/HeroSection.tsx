@@ -1,5 +1,5 @@
 import React from 'react';
-import { FileText, Users, CalendarClock, Loader2 } from 'lucide-react';
+import { FileText, CalendarClock, Loader2 } from 'lucide-react';
 import InfoTooltip from '../common/InfoTooltip';
 import { useDashboardMetrics } from '../../hooks/useDashboardMetrics';
 import type { BusinessUnitOption } from '../../types';
@@ -55,7 +55,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ selectedBU }) => {
                 <div className="bg-white border border-slate-200 rounded-lg shadow-sm flex-1 grid grid-cols-1 md:grid-cols-6 items-stretch overflow-hidden">
 
                     {/* Revenue Pulse */}
-                    <div className="md:col-span-2 p-3 md:p-4 border-b md:border-b-0 md:border-r border-slate-100 flex flex-col justify-center">
+                    <div className="md:col-span-3 p-3 md:p-4 border-b md:border-b-0 md:border-r border-slate-100 flex flex-col justify-center">
                         <div className="flex justify-between items-end mb-2">
                             <div className="flex items-center text-[10px] font-bold text-slate-500 uppercase tracking-wider">
                                 <FileText className="w-3 h-3 mr-1.5 text-slate-400" />
@@ -70,11 +70,28 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ selectedBU }) => {
                                 )}
                             </div>
                         </div>
-                        <div className="w-full bg-slate-100 h-1 rounded-full overflow-hidden mb-1">
-                            <div className="h-full bg-amber-500 rounded-full" style={{ width: `${employeeData?.revenueTargetPct || 0}%` }}></div>
+                        {/* Progress Bar with Inline Percentage */}
+                        <div className="flex items-center gap-2 mb-1">
+                            <div className="flex-1 bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                                <div
+                                    className="h-full bg-amber-500 rounded-full"
+                                    style={{ width: `${Math.min(employeeData?.revenueTargetPct || 0, 100)}%` }}
+                                ></div>
+                            </div>
+                            <span className="text-[10px] font-black text-slate-600 w-8 text-right">
+                                {employeeData?.revenueTargetPct || 0}%
+                            </span>
                         </div>
-                        <div className="text-right text-[9px] font-bold text-slate-400 lowercase italic">
-                            {employeeData?.revenueTargetPct || 0}% of target
+
+                        {/* Target Value Footer */}
+                        <div className="flex items-center justify-between text-[10px] font-bold mt-1.5 border-t border-slate-50 pt-1.5">
+                            <span className="text-slate-400">Annual Target</span>
+                            <div className="flex items-center gap-1">
+                                <span className="w-3 h-3 rounded-full bg-rose-50 flex items-center justify-center">
+                                    <svg className="w-2 h-2 text-rose-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" /></svg>
+                                </span>
+                                <span className="text-rose-600">₹{((employeeData?.revenueYTD || 0) > 0 ? (employeeData?.revenueYTD || 0) * 1.15 : 1000000).toLocaleString()} <span className="text-[9px] text-slate-400 font-normal uppercase">(INR)</span></span>
+                            </div>
                         </div>
                     </div>
 
@@ -101,26 +118,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ selectedBU }) => {
                         </div>
                     </div>
 
-                    {/* Billable */}
-                    <div className="col-span-1 p-3 md:p-4 border-b md:border-b-0 md:border-r border-slate-100 flex flex-col justify-center min-w-[130px]">
-                        <div className="flex justify-between items-center mb-1.5">
-                            <div className="flex items-center">
-                                <span className="text-[10px] font-bold text-slate-500 uppercase">Billable</span>
-                                <InfoTooltip content="Percentage of technical staff currently assigned to revenue-generating projects." />
-                            </div>
-                            <div className="flex justify-end mb-1.5 items-center">
-                                {employeeLoading ? (
-                                    <Loader2 className="w-4 h-4 text-amber-500 animate-spin" />
-                                ) : (
-                                    <span className="text-sm font-black text-amber-500">{employeeData?.billablePct || 0}%</span>
-                                )}
-                            </div>
-                        </div>
-                        <div className="w-full bg-slate-100 h-1 rounded-full overflow-hidden">
-                            <div className="h-full bg-amber-500 rounded-full" style={{ width: `${employeeData?.billablePct || 0}%` }}></div>
-                        </div>
-                    </div>
-
                     {/* Open Roles */}
                     <div className="col-span-1 p-3 md:p-4 border-b md:border-b-0 md:border-r border-slate-100 flex flex-col justify-center min-w-[130px]">
                         <div className="flex justify-between items-center mb-0.5">
@@ -135,10 +132,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ selectedBU }) => {
                                     <span className="text-sm font-black text-rose-500">{employeeData?.openRoles || 0}</span>
                                 )}
                             </div>
-                        </div>
-                        <div className="text-[9px] font-bold text-slate-400 flex items-center mt-1 italic">
-                            <Users className="w-2.5 h-2.5 mr-1" />
-                            critical hires pending
                         </div>
                     </div>
 
