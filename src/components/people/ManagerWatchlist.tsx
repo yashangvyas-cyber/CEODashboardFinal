@@ -18,9 +18,9 @@ const ManagerWatchlist: React.FC<Props> = ({ data = [] }) => {
             <div className="flex justify-between items-start mb-6 shrink-0 z-10">
                 <div>
                     <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase"><UserMinus className="w-4 h-4 mr-2 text-rose-500 group-hover:scale-110 transition-transform" />
-                        Manager Watchlist
-                        <InfoTooltip content="Identification of managers with the highest team attrition rates, helping to pinpoint potential leadership or cultural issues." /></h3>
-                    <p className="text-[10px] text-slate-400 mt-1 uppercase tracking-widest font-medium">High-Turnover Leadership (Top 5)</p>
+                        Exit by Reporting Manager
+                        <InfoTooltip content="Overview of employee exits grouped by their reporting manager." /></h3>
+                    <p className="text-[10px] text-slate-400 mt-1 uppercase tracking-widest font-medium">Exits by Manager (Top 5)</p>
                 </div>
             </div>
 
