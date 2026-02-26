@@ -17,9 +17,9 @@ export const WIDGET_REGISTRY: Record<ModuleOption, WidgetDefinition[]> = {
         { id: 'talentRiskScore', label: 'Early Attrition', description: 'Tracks early attrition rate of employees who left within 90 days.' },
         { id: 'exitByTypeAndReason', label: 'Exit by Type & Reason', description: 'Breakdown of exits by resignation vs termination and root cause.' },
         { id: 'attritionAnalysis', label: 'Exit Trend', description: 'Monthly trend of employee exits categorized by regrettable/non-regrettable.' },
-        { id: 'skillsGap', label: 'Critical Skills Gap', description: 'Heatmap of skill proficiency levels across domains.' },
+        { id: 'skillsGap', label: 'Skill Proficiency Distribution', description: 'Heatmap of skill proficiency levels across domains.' },
         { id: 'managerWatchlist', label: 'Manager Watchlist', description: 'Managers with the highest turnover in their teams.' },
-        { id: 'topEmployees', label: 'Top Recognized', description: 'Top performing employees ranked by peer recognition badges.' },
+        { id: 'topEmployees', label: 'Top Recognized', description: 'The employees who as we will only consider, badges and recognitions.' },
     ],
     crm: [
         { id: 'crmSummaryCards', label: 'CRM Summary Cards', description: 'Top-line KPIs: Won, Invoiced, Collected, Outstanding, Unbilled.' },

@@ -16,7 +16,7 @@ const TopEmployees: React.FC<Props> = ({ data }) => {
             <div className="flex justify-between items-center mb-4 shrink-0 border-b border-slate-100 pb-4">
                 <div className="flex items-center gap-2 w-full shrink-0">
                     <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase">Top Recognized</h3>
-                    <InfoTooltip content="Recognition of top-performing employees based on contribution, peer recognition, and key performance indicators." />
+                    <InfoTooltip content="The employees who as we will only consider, badges and recognitions." />
                 </div>
                 <div className="flex items-center gap-2 text-slate-400">
                     <button className="hover:text-slate-600 transition-colors"><Maximize2 className="w-3.5 h-3.5" /></button>

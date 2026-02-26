@@ -66,7 +66,7 @@ const SkillsGap: React.FC<Props> = ({ data }) => {
             <div className="shrink-0">
                 <div className="flex justify-between items-start mb-6 pb-4 border-b border-slate-100/80 w-full shrink-0">
                     <div className="flex items-center">
-                        <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase">Critical Skills Gap</h3>
+                        <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase">Skill Proficiency Distribution</h3>
                         <InfoTooltip content="Analysis of skill proficiency across the organization, highlighting areas where demand for expertise exceeds availability." />
                     </div>
                     <div className="flex items-center gap-3">
@@ -89,9 +89,8 @@ const SkillsGap: React.FC<Props> = ({ data }) => {
 
                 {/* Simplified Table Header */}
                 <div className="grid grid-cols-12 gap-5 px-3 mb-3 text-[10px] font-black text-slate-400 uppercase tracking-[0.1em]">
-                    <div className="col-span-5">Skill Profile</div>
-                    <div className="col-span-5 text-center">Proficiency Mix</div>
-                    <div className="col-span-2 text-right">Yield</div>
+                    <div className="col-span-4">Skill Profile</div>
+                    <div className="col-span-8 text-center">Proficiency Mix</div>
                 </div>
             </div>
 
@@ -100,28 +99,21 @@ const SkillsGap: React.FC<Props> = ({ data }) => {
                 <div className="space-y-2 py-1">
                     {displayData.map((item, idx) => {
                         const total = item.levels.beginner + item.levels.intermediate + item.levels.experienced;
-                        const expPct = Math.round((item.levels.experienced / total) * 100);
+                        const bPct = Math.round((item.levels.beginner / total) * 100);
+                        const iPct = Math.round((item.levels.intermediate / total) * 100);
+                        const ePct = Math.round((item.levels.experienced / total) * 100);
 
                         return (
                             <div key={idx} className="grid grid-cols-12 gap-5 items-center group px-3 py-2.5 rounded-xl hover:bg-slate-50 border border-transparent hover:border-slate-100 transition-all duration-200 cursor-default">
-                                <div className="col-span-5 flex flex-col min-w-0 pr-2">
+                                <div className="col-span-4 flex flex-col min-w-0 pr-2">
                                     <span className="text-[12px] font-bold text-slate-700 truncate group-hover:text-slate-900 transition-colors">{item.skill}</span>
-                                    <span className="text-[9px] font-bold text-slate-400 truncate uppercase tracking-tighter mt-0.5">{item.domain}</span>
                                 </div>
-                                <div className="col-span-5 flex flex-col gap-1.5">
+                                <div className="col-span-8 flex flex-col gap-1.5">
                                     {renderLevelBar(item.levels)}
                                     <div className="flex justify-between text-[9px] font-black tracking-tight opacity-40 group-hover:opacity-100 transition-opacity">
-                                        <span className="text-red-500 font-bold">{item.levels.beginner}b</span>
-                                        <span className="text-amber-500 font-bold">{item.levels.intermediate}i</span>
-                                        <span className="text-emerald-500 font-bold">{item.levels.experienced}e</span>
-                                    </div>
-                                </div>
-                                <div className="col-span-2 text-right">
-                                    <div className="flex flex-col items-end">
-                                        <span className={`text-[13px] font-black tracking-tighter ${expPct < 30 ? 'text-red-500' : expPct < 60 ? 'text-amber-500' : 'text-emerald-500'}`}>
-                                            {expPct}%
-                                        </span>
-                                        <span className="text-[8px] font-bold text-slate-300 uppercase tracking-widest leading-none">Exp.</span>
+                                        <span className="text-red-500 font-bold">{bPct}%</span>
+                                        <span className="text-amber-500 font-bold">{iPct}%</span>
+                                        <span className="text-emerald-500 font-bold">{ePct}%</span>
                                     </div>
                                 </div>
                             </div>
