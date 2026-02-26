@@ -63,9 +63,6 @@ const EarlyAttrition: React.FC<Props> = ({ data }) => {
                             <div className="text-[10px] font-bold text-amber-600 uppercase tracking-widest bg-amber-50 px-2 py-1 rounded border border-amber-100 w-fit">
                                 &lt;90 Days Exit Trend
                             </div>
-                            <div className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
-                                Critical Attrition Zone
-                            </div>
                         </div>
                     </div>
                 </div>
