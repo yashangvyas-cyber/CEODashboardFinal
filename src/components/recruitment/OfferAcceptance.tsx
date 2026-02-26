@@ -14,7 +14,7 @@ const OfferAcceptance: React.FC<Props> = ({ data }) => {
 
     return (
         <div className="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all p-6 flex flex-col h-full relative">
-            <div className="mb-1 flex items-center justify-between mb-6 pb-4 border-b border-slate-100/80 w-full shrink-0">
+            <div className="flex items-center gap-2 mb-6 pb-4 border-b border-slate-100/80 w-full shrink-0">
                 <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase">Offer Acceptance</h3>
                 <InfoTooltip content="Analysis of how many extended job offers were accepted versus declined or pending." />
             </div>

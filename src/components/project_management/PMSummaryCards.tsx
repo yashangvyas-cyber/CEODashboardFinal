@@ -1,5 +1,5 @@
 import React from 'react';
-import { Briefcase, CheckCircle2, AlertTriangle, Users2 } from 'lucide-react';
+import { Briefcase, FolderCheck, Users2 } from 'lucide-react';
 import type { DateRangeOption } from '../../types';
 import InfoTooltip from '../common/InfoTooltip';
 
@@ -7,8 +7,7 @@ interface Props {
     dateRange: DateRangeOption;
     data?: {
         activeProjects: number;
-        onTimeDelivery: number;
-        budgetVariance: string;
+        projectsClosed: number;
         resourceUtilization: number;
     };
 }
@@ -40,8 +39,7 @@ const PMSummaryCards: React.FC<Props> = ({ dateRange, data }) => {
     const isYear = dateRange === 'this_year';
 
     const projects = data?.activeProjects || (isYear ? 48 : 32);
-    const delivery = data?.onTimeDelivery || (isYear ? 82 : 86);
-    const variance = data?.budgetVariance || (isYear ? "+₹1.2Cr" : "+₹15L");
+    const closed = data?.projectsClosed || (isYear ? 21 : 14);
     const utilization = data?.resourceUtilization || (isYear ? 78 : 92);
 
     const cards = [
@@ -54,20 +52,12 @@ const PMSummaryCards: React.FC<Props> = ({ dateRange, data }) => {
             tooltip: "Total number of projects that were active or ongoing during this period."
         },
         {
-            label: "On-Time Delivery",
-            value: `${delivery}%`,
-            icon: CheckCircle2,
+            label: "Projects Closed",
+            value: closed,
+            icon: FolderCheck,
             colorClass: { bg: 'bg-emerald-50/80', text: 'text-emerald-600', border: 'border-emerald-100/50' },
-            subtext: "Milestones met",
-            tooltip: "Percentage of project milestones successfully completed by their target date in this window."
-        },
-        {
-            label: "Budget Variance",
-            value: variance,
-            icon: AlertTriangle,
-            colorClass: { bg: 'bg-rose-50/80', text: 'text-rose-600', border: 'border-rose-100/50' },
-            subtext: isYear ? "Total YTD Overshoot" : "Total Period Overshoot",
-            tooltip: "Aggregate difference between planned budget and actual costs incurred in this period."
+            subtext: "Reached final status",
+            tooltip: "Number of projects that moved to a completed or signed-off status during the selected period. Measures delivery throughput without requiring dates to be set."
         },
         {
             label: "Resource Util.",
@@ -80,7 +70,7 @@ const PMSummaryCards: React.FC<Props> = ({ dateRange, data }) => {
     ];
 
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">
             {cards.map((card, idx) => (
                 <MetricCard key={idx} {...card} />
             ))}

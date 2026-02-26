@@ -35,7 +35,7 @@ const LostDealAnalysis: React.FC<Props> = ({ data }) => {
 
     return (
         <div className="premium-card p-6 flex flex-col h-full group hover-scale relative overflow-hidden h-full">
-            <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-100/80 w-full shrink-0">
+            <div className="flex items-center gap-2 mb-6 pb-4 border-b border-slate-100/80 w-full shrink-0">
                 <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase">Lost Deal Analysis</h3>
                 <InfoTooltip content="Analysis of the primary reasons why deals were lost, such as competition, budget constraints, or timing." />
             </div>

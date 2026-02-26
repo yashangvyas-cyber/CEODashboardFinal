@@ -9,10 +9,10 @@ interface DashboardHeaderProps {
 
 const BU_OPTIONS: { value: BusinessUnitOption; label: string }[] = [
     { value: 'all', label: 'All Business Units' },
-    { value: 'bu_a', label: 'Engineering' },
-    { value: 'bu_b', label: 'Sales & Marketing' },
-    { value: 'bu_c', label: 'Finance & Admin' },
-    { value: 'bu_d', label: 'Legal & HR' },
+    { value: 'Engineering', label: 'Engineering' },
+    { value: 'Sales & Marketing', label: 'Sales & Marketing' },
+    { value: 'Finance & Admin', label: 'Finance & Admin' },
+    { value: 'Legal & HR', label: 'Legal & HR' },
 ];
 
 export const DashboardHeader: React.FC<DashboardHeaderProps> = ({ selectedBU, onChangeBU }) => {

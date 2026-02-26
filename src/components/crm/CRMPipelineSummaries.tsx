@@ -1,13 +1,13 @@
 import React from 'react';
-import { Users, Briefcase, Filter, XCircle, CheckCircle2 } from 'lucide-react';
+import { Users, Briefcase, Filter, XCircle, CheckCircle2, Clock } from 'lucide-react';
 import InfoTooltip from '../common/InfoTooltip';
 import type { DateRangeOption } from '../../types';
 
 interface Props {
     dateRange?: DateRangeOption;
     data?: {
-        leads: { total: number; qualified: number; unqualified: number; qPercent: number; uPercent: number };
-        deals: { total: number; won: number; lost: number; wPercent: number; lPercent: number };
+        leads: { total: number; qualified: number; unqualified: number; qPercent: number; uPercent: number; avgConversionTime: number };
+        deals: { total: number; won: number; lost: number; wPercent: number; lPercent: number; avgConversionTime: number };
     };
 }
 
@@ -50,8 +50,8 @@ const PipelineCard = ({ title, total, subItems, icon: Icon, colorClass, tooltip 
 );
 
 const CRMPipelineSummaries: React.FC<Props> = ({ data }) => {
-    const leads = data?.leads || { total: 1240, qualified: 850, unqualified: 390, qPercent: 68, uPercent: 32 };
-    const deals = data?.deals || { total: 345, won: 142, lost: 203, wPercent: 41, lPercent: 59 };
+    const leads = data?.leads || { total: 1240, qualified: 850, unqualified: 390, qPercent: 68, uPercent: 32, avgConversionTime: 12 };
+    const deals = data?.deals || { total: 345, won: 142, lost: 203, wPercent: 41, lPercent: 59, avgConversionTime: 18 };
 
     return (
         <div className="flex flex-col gap-2 w-full h-full min-h-0">
@@ -63,7 +63,8 @@ const CRMPipelineSummaries: React.FC<Props> = ({ data }) => {
                     colorClass={{ bg: 'bg-blue-50/80', text: 'text-blue-600', border: 'border-blue-100/50' }}
                     subItems={[
                         { label: "Qualified", value: leads.qualified, percent: leads.qPercent, icon: Filter, color: 'text-emerald-500' },
-                        { label: "Unqualified", value: leads.unqualified, percent: leads.uPercent, icon: XCircle, color: 'text-slate-400' }
+                        { label: "Unqualified", value: leads.unqualified, percent: leads.uPercent, icon: XCircle, color: 'text-slate-400' },
+                        { label: "Avg Conversion", value: `${leads.avgConversionTime} Days`, percent: null, icon: Clock, color: 'text-amber-500' }
                     ]}
                     tooltip="Total potential customers who have shown interest but haven't been qualified as a deal yet."
                 />
@@ -76,7 +77,8 @@ const CRMPipelineSummaries: React.FC<Props> = ({ data }) => {
                     colorClass={{ bg: 'bg-indigo-50/80', text: 'text-indigo-600', border: 'border-indigo-100/50' }}
                     subItems={[
                         { label: "Won", value: deals.won, percent: deals.wPercent, icon: CheckCircle2, color: 'text-emerald-500' },
-                        { label: "Lost", value: deals.lost, percent: deals.lPercent, icon: XCircle, color: 'text-rose-500' }
+                        { label: "Lost", value: deals.lost, percent: deals.lPercent, icon: XCircle, color: 'text-rose-500' },
+                        { label: "Avg Conversion", value: `${deals.avgConversionTime} Days`, percent: null, icon: Clock, color: 'text-amber-500' }
                     ]}
                     tooltip="Number of qualified opportunities currently being pursued or settled in the sales pipeline."
                 />

@@ -20,6 +20,9 @@ function App() {
   const [selectedBU, setSelectedBU] = useState<BusinessUnitOption>('all');
   const [selectedDate, setSelectedDate] = useState<DateRangeOption>('last_year');
 
+  const [appliedBU, setAppliedBU] = useState<BusinessUnitOption>('all');
+  const [appliedDate, setAppliedDate] = useState<DateRangeOption>('last_year');
+
   // Section 3 multi-select tabs (pending selection before Apply)
   const [selectedTabs, setSelectedTabs] = useState<ModuleOption[]>(['crm']);
 
@@ -41,8 +44,16 @@ function App() {
     );
   };
 
+  // Check if pending selections differ from applied state
+  const isDirty =
+    selectedBU !== appliedBU ||
+    selectedDate !== appliedDate ||
+    JSON.stringify(selectedTabs) !== JSON.stringify(appliedTabs);
+
   const handleApply = () => {
     setAppliedTabs(selectedTabs);
+    setAppliedBU(selectedBU);
+    setAppliedDate(selectedDate);
     // Set active to first selected tab, or keep current if still in set
     setLastAppliedTab(
       selectedTabs.includes(lastAppliedTab) ? lastAppliedTab : selectedTabs[0]
@@ -53,7 +64,10 @@ function App() {
     setSelectedTabs(['crm']);
     setAppliedTabs([]);
     setLastAppliedTab('crm');
+    setSelectedBU('all');
+    setAppliedBU('all');
     setSelectedDate('last_year');
+    setAppliedDate('last_year');
   };
 
   return (
@@ -77,6 +91,7 @@ function App() {
           onSearch={handleApply}
           onClear={handleClear}
           isApplied={isApplied}
+          isDirty={isDirty}
         />
 
         {/* ── SECTION 4: Applied report content with in-section tab switcher ── */}
@@ -112,8 +127,8 @@ function App() {
               {/* Report content for the active applied tab */}
               <DynamicTabs
                 activeTab={activeAppliedTab}
-                dateRange={selectedDate}
-                selectedBU={selectedBU}
+                dateRange={appliedDate}
+                selectedBU={appliedBU}
                 wc={wc}
               />
             </div>

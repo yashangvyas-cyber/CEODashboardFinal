@@ -61,47 +61,75 @@ Always visible at the top of the dashboard. Aggregates data based on the selecte
 ---
 
 ## 2. Project Management Tab
-Appears when the "Project Management" module is selected. Focuses on financial health, contract risk, and resource utilization across Fixed Cost, Hourly, and Hirebase.
+Appears when the "Project Management" module is selected. All widgets respect the **Date Range** filter. This tab is a strictly **historical performance review** — it answers *"How did our delivery teams perform during the selected time period?"*
 
 ### PM Summary Cards
 *   **Data Source / System:** PM Reports & Project Tracking
 *   **Metrics Displayed:**
     *   **Active Projects**: Count of projects starting or ongoing in the selected period.
-    *   **On-Time Delivery**: % of project milestones successfully completed by their target date in this window.
-    *   **Budget Variance**: Aggregate difference between planned budget and actual costs incurred in this period.
+    *   **Projects Closed**: Count of projects that moved to a final status (e.g., Signed Off / Done) during the period. *Note: Replaces the original "On-Time Delivery %" because both Milestone Estimated Dates and Project End Dates are optional fields in the SaaS product — making a true "on-time" calculation unreliable.*
     *   **Resource Utilization**: % of available staff hours that were logged as billable in the selected period.
-*   **Purpose:** Provides the CEO with an immediate gauge of operational velocity, delivery reliability, and financial leakage across the entire delivery portfolio.
+*   **Purpose:** Provides the CEO with an immediate gauge of operational velocity, delivery throughput, and financial efficiency across the portfolio.
 
-### Organization Resource Availability
-*   **Data Source / System:** Resource Allocation Report (Occupancy & Availability views)
-*   **Formula & Logic:** 
-    *   **Availability Donut:** `(Total Unallocated Hours / Total Capacity Hours) * 100`.
-    *   **By Status Donut:** Sums allocated hours grouped by project status (In Development, Paused, etc.).
-    *   **By Type Donut:** Sums allocated hours grouped by assignment type (Dedicated, Fixed-Price, T&M).
-    *   *Note: Detailed employee-level lists are removed from this widget to maintain a high-level executive view.*
-*   **Purpose:** Answers the critical question "Where is our technical talent right now?" Helps the CEO balance the bench vs active billable work.
+### Project Portfolio Status *(replaces "Organization Resource Availability")*
+*   **Data Source / System:** PM Reports — Projects table
+*   **Visual:** Horizontal stacked bar chart (mirroring the "Projects by Type & Status" report in the SaaS product).
+*   **Formula & Logic:**
+    *   **Rows (Y-Axis):** The 3 core Project Types: `Fixed-Price`, `Dedicated (Hirebase)`, `Time & Material` + `Inhouse`.
+    *   **Segments (Stacked Bars):** Project status counts grouped by type. Status names are **100% dynamic** — the widget accepts a `statuses` array from the API so any custom status names defined by the tenant will be rendered.
+    *   **Filter:** Only includes projects where the `Start Date` or any active date range overlaps the selected dashboard period.
+    *   **Color Palette:** Statuses are auto-assigned colors from an 8-color palette by their order in the statuses array.
+*   **Purpose:** Answers *"What was the state of our project portfolio during that specific period?"* A CEO-level view of how much work the delivery teams were juggling and how it was distributed.
 
 ### Project Delivery Health
-*   **Data Source / System:** PM Reports (All 3 types)
-*   **Formula & Logic:** 
-    *   **Fixed Cost Portfolio Burn %:** `(Sum of Actual Spent / Sum of Total Purchased Hours) * 100` across all active projects. (Lower is better, indicates remaining aggregate budget).
-    *   **Hourly Portfolio Billed %:** `(Sum of Total Billed / Sum of Actual Spent) * 100` across all active hourly projects. (Prevents small projects from skewing a simple average. Higher is better).
-    *   **Hirebase Billable %:** `(Count of Billable = 'Yes' / Total active contracts) * 100`.
-*   **Warning Thresholds & Color Logic (Traffic Light System):**
-    *   **Fixed Cost (Red / Green):** Hard capital risk. If burn > 80%, the gauge turns **Red** (Warning) because profit margins are actively bleeding. Otherwise, it is **Green** (Healthy).
-        * *Example:* If your team has logged 850 hours against a 1000-hour fixed budget (85%), it turns Red. The budget is nearly exhausted before delivery.
-    *   **Hourly (Orange / Green):** Efficiency risk. If billed hours < 80% of worked hours, the gauge turns **Orange** (Warning) indicating revenue leakage (unbilled time). Otherwise, it is **Green**.
-        * *Example:* If developers logged 100 hours but PMs only invoiced the client for 39 hours (39%), it turns Orange. You paid for 100 hours of labor but barely billed any of it.
-    *   **Hirebase (Orange / Green):** Utilization risk. If active/billable contracts < 85%, the gauge turns **Orange** (Warning) because dedicated resources are sitting idle on the bench. Otherwise, it is **Green**.
-        * *Example:* If you have 25 Hirebase staff, but only 20 are currently assigned to active paying clients (80%), it turns Orange. 5 staff are eating payroll without generating monthly revenue.
-*   **Purpose:** A single-glance traffic light system for the 3 core revenue streams. Red flags indicate a direct loss of capital (burning fixed budgets), while Orange flags indicate lost potential revenue (unbilled hours or benched talent).
+*   **Data Source / System:** PM Reports — Fixed-Price, Time & Material (Hourly), and Hirebase report types.
+*   **Three Gauges — one per billing model:**
 
-### Upcoming Expirations
+#### 🔵 Gauge 1: Fixed-Price Portfolio Burn %
+> *Data available in the SaaS: **Estimated Hours** + **Top-Up Hours** (change requests) = **Total Hours**. Plus **Spent Hours** logged against the project.*
+
+| What to Extract | Formula | CEO Interpretation |
+|---|---|---|
+| **Burn %** | `Spent Hours ÷ (Estimated Hours + Top-Up Hours)` | How much of the total approved budget has been consumed |
+| **Revenue Leakage signal** | Projects where `Spent > Total Hours` | Over-budget = margin erosion on a fixed deal |
+| **Top Effort signal** | Highest Spent Hours project | Fixed Cost projects at top of effort list = profit risk |
+
+*   **CEO reads it as:** *"Are we overspending our scope? Burning past 80% on a Fixed Cost deal = shrinking margin."*
+*   **Threshold:** Burn > 80% → gauge turns **Red**. Otherwise **Green**.
+
+#### 🟡 Gauge 2: T&M (Time & Material) Portfolio Billed %
+> *Data available in the SaaS: **Initial Purchase** + **Additional Top-Ups** = **Total Purchased Hours**. Plus **Total Billed Hours** (hours actually invoiced to the client).*
+
+| What to Extract | Formula | CEO Interpretation |
+|---|---|---|
+| **Billing Efficiency %** | `Total Billed Hours ÷ Total Purchased Hours` | How much of the client's pre-paid hours are we invoicing |
+| **Revenue Leakage signal** | Projects where `Actual Spent > Total Purchased` | Scope creep without billing = unbilled work |
+| **Remaining Balance** | `Total Purchased − Total Billed` | Hours client has paid for but not yet received |
+
+*   **CEO reads it as:** *"Are we billing all the hours the client already paid for? Low billed % = unbilled revenue sitting on the table."*
+*   **Threshold:** Billed < 80% of purchased → gauge turns **Amber**. Otherwise **Green**.
+
+#### 🟢 Gauge 3: Hirebase Billable %
+> *Data available in the SaaS: Each Hirebase contract has a `Billable` flag (Yes/No) set at the contract level.*
+
+| What to Extract | Formula | CEO Interpretation |
+|---|---|---|
+| **Billable %** | `COUNT(Billable = Yes) ÷ Total Active Contracts` | Share of Hirebase resources currently billing to a client |
+
+*   **CEO reads it as:** *"What fraction of our placed resources are actually generating revenue?"*
+*   **Threshold:** Billable % < 85% → gauge turns **Amber**. Otherwise **Green**.
+
+*   **Purpose:** Single-glance traffic light for all 3 revenue streams in the PM tab. A CEO glancing at this widget immediately knows if the delivery engine is burning budget, leaving money unbilled, or has idle resources.
+
+### Contract Adjustments *(replaces "Upcoming Expirations")*
 *   **Data Source / System:** Hirebase & Hourly Reports
 *   **Formula & Logic:** 
-    *   **Net Growth (Top):** Shows `# Newly Hired` vs `# Expired` Hirebase contracts this month.
-    *   **Expirations List:** Lists Hirebase contracts where `End Date - Today <= 30` AND Hourly buckets where `Remaining Balance <= (Average Burn Rate * 7)` OR `Expiry Date - Today <= 30`. Sorted by least days remaining.
-*   **Purpose:** Proactive churn/revenue loss prevention. Tells Account Managers exactly who needs a renewal push this week.
+    *   Fetches contracts where `Start Date` OR `End Date` falls within the selected date range.
+    *   If `Start Date` is in range → tagged **Hired** (green).
+    *   If `End Date` is in range → tagged **Expired** (red).
+    *   If both are in range → tagged **Hired & Expired** (amber).
+    *   **Summary:** Shows aggregate count of Hired, Expired, and Net Change at the top.
+*   **Purpose:** Historical contract lifecycle report. Tells the CEO how many Hirebase/Hourly contracts were started or ended in the selected period — replacing the previous forward-looking "who expires in 30 days" view.
 
 ### Revenue Leakage Risk
 *   **Data Source / System:** Fixed Cost & Hourly Reports
@@ -111,23 +139,36 @@ Appears when the "Project Management" module is selected. Focuses on financial h
     *   Sorted by highest leakage amount.
 *   **Purpose:** Identifies specific projects eating into profit margins or suffering from unbilled scope creep.
 
-### Organization Capacity
-*   **Data Source / System:** Resource Allocation Report
-*   **Formula & Logic:** 
-    *   **Available %:** `(Available Bandwidth / Total Capacity) * 100`.
-    *   **Missing Allocation List:** Lists employees with 100% availability and no daily allocation logs.
-*   **Purpose:** Shows the exact volume of "Bench Capacity" waiting to be sold, and flags employees slacking on daily planning.
-
 ### Top Effort Consumers
 *   **Data Source / System:** Time Spent Report
-*   **Metric:** Top 5 projects consuming the most tracked hours across the company.
-*   **Purpose:** "Where is our team spending the most time?" Shows where your team is working the most hours. Be careful if **Fixed Cost (Red)** projects are at the top—spending too much time on them kills your profit margin. Hourly projects (Yellow) at the top are good, assuming those hours are actually being billed.
+*   **Metric:** Top 5 projects consuming the most tracked hours across the company in the period.
 *   **Formula & Logic:** Aggregates `Time Spent` by project over the selected date range. Top 5 highest sum projects.
+*   **Purpose:** Shows where the team is spending the most time. Fixed Cost projects at the top are a margin risk.
 
 ### Timesheet Compliance
 *   **Data Source / System:** Timesheet Reports
 *   **Formula & Logic:** Aggregates `Unapproved` hours (for Hourly projects only) and `Missing` (00:00) timesheet logs by Department.
-*   **Purpose:** Highlights administrative bottlenecks that will delay client invoicing at the end of the month.
+*   **Purpose:** Highlights administrative bottlenecks that will delay client invoicing.
+
+### Top Skills Demand
+*   **Data Source / System:** Hirebase Report — `Hired For` column
+*   **Formula & Logic:**
+    *   Parses every active contract's `Hired For` field (comma-separated skill tags) into individual skills.
+    *   Counts total occurrences per unique skill across all active contracts in the date range.
+    *   Sorts descending by count. Displays Top 8–10 skills as horizontal ranked bars.
+    *   **Bar Width:** `(Skill Count / Max Count) * 100%` — relative to the highest-ranked skill.
+    *   **Percentage shown:** `(Skill Count / Total Contracts) * 100` — share of all active contracts requiring this skill.
+*   **Purpose:** Tells the CEO what skills clients are most frequently hiring for via Hirebase — directly informing internal hiring priorities and training investments. High demand for a skill with low internal supply = delivery risk.
+
+### Hirebase by Department
+*   **Data Source / System:** Hirebase Report — `Department` + `Billable` columns
+*   **Formula & Logic:**
+    *   Groups all active Hirebase contracts by the `Department` field of each resource.
+    *   Per department: `COUNT(Billable = Yes)` → Billable bar segment (emerald); `COUNT(Billable = No)` → Non-Billable bar segment (rose).
+    *   Departments sorted descending by total contract count.
+    *   **Summary Badges:** Total resources, total billable, total non-billable shown at the top.
+    *   **Overall Billability %:** `SUM(all Billable) / SUM(all resources) * 100`.
+*   **Purpose:** Shows which departments house the most Hirebase resources and what fraction of each department is actually billing to a client. Departments with high non-billable counts are cost centers warranting CEO scrutiny.
 
 ---
 

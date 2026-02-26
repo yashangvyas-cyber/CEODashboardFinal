@@ -1,5 +1,4 @@
 import React from 'react';
-import { Clock } from 'lucide-react';
 import InfoTooltip from '../common/InfoTooltip';
 import type { DateRangeOption } from '../../types';
 
@@ -39,10 +38,9 @@ const AvgDaysToPay: React.FC<Props> = ({ data }) => {
         <div className="bg-white rounded-[10px] border border-slate-200 p-5 shadow-sm flex flex-col h-full hover:shadow transition-shadow">
             {/* Header */}
             <div className="flex items-center justify-between mb-5 shrink-0">
-                <div className="flex items-center">
-                    <Clock className="w-3.5 h-3.5 text-slate-400 mr-2" />
+                <div className="flex items-center gap-2">
                     <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase">Avg. Days to Pay</h3>
-                    <InfoTooltip content="The average number of days it takes for clients to pay their invoices after they are issued, indicating the speed of cash inflow." />
+                    <InfoTooltip content="Historical breakdown of invoice settlement speeds by client segment." />
                 </div>
                 <div className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-black border ${isFaster
                     ? 'bg-emerald-50 border-emerald-100 text-emerald-600'

@@ -69,7 +69,7 @@ const CRMFunnelSwitcher: React.FC<Props> = ({ data }) => {
     const renderFunnel = () => {
         const segments = currentFunnel.segments;
         const width = 400;
-        const height = 450;
+        const height = 280;
         const gapHeight = 10;
         const totalGapHeight = (segments.length - 1) * gapHeight;
         const segmentHeight = (height - totalGapHeight) / segments.length;
@@ -161,8 +161,9 @@ const CRMFunnelSwitcher: React.FC<Props> = ({ data }) => {
     };
 
     return (
-        <div className="bg-white rounded-xl border border-slate-200 p-6 flex flex-col group transition-all duration-300 relative overflow-hidden shadow-sm">
-            <div className="flex justify-between items-start mb-6 shrink-0 z-10 w-full border-b border-slate-100/80 pb-4">
+        <div className="bg-white rounded-[10px] border border-slate-200 p-4 shadow-sm flex flex-col h-full hover:shadow transition-shadow">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-2 shrink-0 z-10 w-full border-b border-slate-100/80 pb-3">
                 <div className="flex items-center">
                     <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase">{currentFunnel.title}</h3>
                     <InfoTooltip content="Visualizes the conversion funnel for Leads or Deals, showing the percentage of prospects that progress through each stage of the sales pipeline." />
@@ -185,19 +186,20 @@ const CRMFunnelSwitcher: React.FC<Props> = ({ data }) => {
                 </div>
             </div>
 
-            <div className="flex justify-between px-8 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">
+            <div className="flex justify-between px-8 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">
                 <span>Overall</span>
                 <span>Stagewise</span>
             </div>
 
-            <div className="flex-1 min-h-0 py-4 flex items-center justify-center">
+            {/* Chart */}
+            <div className="flex-1 w-full min-h-0 mt-2 flex items-center justify-center overflow-hidden">
                 <div className="w-full max-w-[340px]">
                     {renderFunnel()}
                 </div>
             </div>
 
             {/* Legend */}
-            <div className="mt-6 flex flex-wrap justify-center gap-x-4 gap-y-2 z-10 border-t border-slate-50 pt-5">
+            <div className="mt-2 flex flex-wrap justify-center gap-x-4 gap-y-2 z-10 border-t border-slate-50 pt-3">
                 {currentFunnel.segments.map((s, i) => (
                     <div key={i} className="flex items-center gap-2">
                         <div className="w-2 h-2 rounded-full" style={{ backgroundColor: vibrantColors[i % vibrantColors.length] }} />

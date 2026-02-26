@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import type { DateRangeOption } from '../../types';
-import { AlertCircle, Users } from 'lucide-react';
 import InfoTooltip from '../common/InfoTooltip';
 
 interface Props {
@@ -26,11 +25,22 @@ const MissingAllocations: React.FC<Props> = ({ data = { missingLogs: [], onBench
         <div className={`bg-white rounded-2xl border p-6 shadow-sm h-full flex flex-col group hover:shadow-md transition-all duration-300 ${isMissingView ? 'border-rose-100 hover:border-rose-200' : 'border-amber-100 hover:border-amber-200'}`}>
             <div className="flex justify-between items-start mb-4 shrink-0">
                 <div>
-                    <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase">{isMissingView ? <AlertCircle className="w-4 h-4 mr-2" /> : <Users className="w-4 h-4 mr-2" />}
-                        {isMissingView ? 'Missing Logs' : 'On Bench'}
-                        <InfoTooltip content="Identifies resources either staffed on projects but not logging daily hours (Missing Logs) or completely unassigned and available for work (Bench)." /></h3>
+                    <div className="flex items-center gap-2 mb-1">
+                        <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase">
+                            {isMissingView ? 'Missing Logs' : 'On Bench'}
+                        </h3>
+                        {/* Live pulsating badge */}
+                        <div className="flex items-center gap-1.5 px-1.5 py-0.5 bg-rose-50 border border-rose-100 rounded text-[9px] font-black tracking-widest text-rose-600 uppercase">
+                            <span className="relative flex h-2 w-2">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+                            </span>
+                            Live
+                        </div>
+                        <InfoTooltip content="Real-time operational status. Identifies resources either staffed on projects but not logging daily hours (Missing Logs) or completely unassigned and available for work (Bench). This metric always shows current data regardless of the dashboard date range." />
+                    </div>
                     <p className="text-[10px] text-slate-400 mt-1 max-w-[150px] leading-tight">
-                        {isMissingView ? 'Staffed on projects but no daily log' : 'Present but completely unassigned'}
+                        {isMissingView ? 'Staffed on projects but no daily log today' : 'Present but currently unassigned'}
                     </p>
                 </div>
                 <div className="flex flex-col items-end">

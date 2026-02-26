@@ -44,7 +44,7 @@ const CircularProgress = ({ value, label, text, colorClass, statusClass }: any) 
 const PMHealthBreakdown: React.FC<Props> = ({ data }) => {
     if (!data) return null;
 
-    const { fixedCost, hourly, hirebase } = data;
+    const { fixedCost, timeAndMaterial, hirebase } = data;
 
     return (
         <div className="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm hover:shadow-md hover:border-indigo-100 transition-all duration-300 flex flex-col h-full">
@@ -52,7 +52,7 @@ const PMHealthBreakdown: React.FC<Props> = ({ data }) => {
                 <div>
                     <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase"><Activity className="w-4 h-4 mr-2 text-indigo-500" />
                         Project Delivery Health
-                        <InfoTooltip content="Monitors the delivery health across different billing models, including project budget consumption (Fixed Cost), billable hour leakage (Hourly), and resource billability (Hirebase)." /></h3>
+                        <InfoTooltip content="Traffic-light view across 3 revenue streams. Fixed Cost: % of total hours (Estimated + Top-Ups) already spent. T&M: % of purchased hours that have been billed. Hirebase: % of contracts currently billable." /></h3>
                     <p className="text-xs text-slate-400 mt-1">Cross-model Execution Status</p>
                 </div>
             </div>
@@ -66,11 +66,11 @@ const PMHealthBreakdown: React.FC<Props> = ({ data }) => {
                     statusClass={fixedCost.status === 'Warning' ? 'text-rose-600' : 'text-emerald-600'}
                 />
                 <CircularProgress
-                    value={hourly.value}
-                    label="Hourly Portfolio Billed"
-                    text={hourly.text}
-                    colorClass={hourly.status === 'Warning' ? 'stroke-amber-500' : 'stroke-emerald-500'}
-                    statusClass={hourly.status === 'Warning' ? 'text-amber-600' : 'text-emerald-600'}
+                    value={timeAndMaterial?.value ?? 0}
+                    label="T&M Portfolio Billed"
+                    text={timeAndMaterial?.text ?? ''}
+                    colorClass={timeAndMaterial?.status === 'Warning' ? 'stroke-amber-500' : 'stroke-emerald-500'}
+                    statusClass={timeAndMaterial?.status === 'Warning' ? 'text-amber-600' : 'text-emerald-600'}
                 />
                 <CircularProgress
                     value={hirebase.value}
@@ -82,7 +82,7 @@ const PMHealthBreakdown: React.FC<Props> = ({ data }) => {
             </div>
 
             <div className="mt-4 pt-4 border-t border-slate-50 text-[10px] text-slate-400 bg-slate-50/50 p-2 rounded-lg italic leading-tight">
-                <strong>Logic:</strong> Fixed (Aggregate % of total budget burned), Hourly (Aggregate % of worked hours billed), and Hirebase (% of contracts active/billable).
+                <strong>Logic:</strong> Fixed Cost burn = <em>Spent ÷ (Estimated + Top-Up hours)</em>. T&amp;M billed = <em>Total Billed ÷ Total Purchased hours</em>. Hirebase = <em>% of contracts flagged Billable</em>.
             </div>
         </div>
     );

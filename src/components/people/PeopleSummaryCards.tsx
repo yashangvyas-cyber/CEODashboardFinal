@@ -13,10 +13,11 @@ interface Props {
         shadows?: number;
         experts?: number;
         totalManagers?: number;
+        headcountTrend?: { value: number, percent: number };
     };
 }
 
-const MetricCard = ({ label, value, icon: Icon, colorClass, subtext, tooltip }: any) => (
+const MetricCard = ({ label, value, icon: Icon, colorClass, subtext, tooltip, trend }: any) => (
     <div className="bg-white border border-slate-200 p-3 rounded-lg flex flex-col justify-between group hover:shadow-md transition-all relative overflow-hidden">
         <div className={`absolute -right-2 -top-2 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity transform group-hover:rotate-12 duration-500 ${colorClass.text}`}>
             <Icon className="w-16 h-16" />
@@ -32,7 +33,14 @@ const MetricCard = ({ label, value, icon: Icon, colorClass, subtext, tooltip }: 
             </div>
         </div>
         <div className="z-10 relative">
-            <div className="text-xl font-black text-slate-900 tracking-tighter leading-none">{value}</div>
+            <div className="flex items-baseline justify-between w-full pr-1">
+                <div className="text-xl font-black text-slate-900 tracking-tighter leading-none">{value}</div>
+                {trend && (
+                    <div className={`text-[10px] font-bold ${trend.value > 0 ? 'text-emerald-500' : trend.value < 0 ? 'text-rose-500' : 'text-slate-400'}`}>
+                        {trend.value > 0 ? '+' : ''}{trend.value} ({trend.value > 0 ? '+' : ''}{trend.percent}%)
+                    </div>
+                )}
+            </div>
             {subtext && <div className="text-[8px] font-bold text-slate-400 mt-0.5 uppercase tracking-tighter">{subtext}</div>}
         </div>
     </div>
@@ -60,8 +68,9 @@ const PeopleSummaryCards: React.FC<Props> = ({ dateRange, data }) => {
             value: headcount.toLocaleString(),
             icon: Users,
             colorClass: { bg: 'bg-indigo-50/80', text: 'text-indigo-600', border: 'border-indigo-100/50' },
-            subtext: isYear ? "Current Active Staff" : "Headcount at Period End",
-            tooltip: "Total number of active employees on the payroll at the end of the selected period."
+            subtext: "Headcount at Period End",
+            tooltip: "Total number of active employees on the payroll at the end of the selected period.",
+            trend: data?.headcountTrend
         },
         {
             label: "Net Change",
@@ -76,8 +85,8 @@ const PeopleSummaryCards: React.FC<Props> = ({ dateRange, data }) => {
             value: `${attrition}%`,
             icon: UserMinus,
             colorClass: { bg: 'bg-rose-50/80', text: 'text-rose-600', border: 'border-rose-100/50' },
-            subtext: isYear ? "YTD Annualized" : "Period Rate",
-            tooltip: "The percentage of employees who left the organization during this period."
+            subtext: `${exits} Total Exits`,
+            tooltip: "The percentage and count of employees who left the organization during this period."
         },
         {
             label: "Shadow-Expert Ratio",
