@@ -1,5 +1,5 @@
 import React from 'react';
-import { Users, UserPlus, UserMinus, TrendingUp, Network } from 'lucide-react';
+import { Users, UserMinus } from 'lucide-react';
 import type { DateRangeOption } from '../../types';
 import InfoTooltip from '../common/InfoTooltip';
 
@@ -50,17 +50,10 @@ const PeopleSummaryCards: React.FC<Props> = ({ dateRange, data }) => {
     // Simulated date-aware logic for demo
     const isYear = dateRange === 'this_year';
     const headcount = data?.totalHeadcount || (isYear ? 1240 : 1245);
-    const joins = data?.newJoins || (isYear ? 85 : 12);
     const exits = data?.exits || (isYear ? 42 : 5);
-    const netChange = joins - exits;
     const attrition = data?.attritionRate || (isYear ? 3.4 : 0.4);
 
-    const shadows = data?.shadows || (isYear ? 120 : 124);
-    const experts = data?.experts || (isYear ? 340 : 345);
-    const ratio = shadows > 0 ? (experts / shadows).toFixed(1) : "0";
 
-    const managers = data?.totalManagers || (isYear ? 150 : 155);
-    const spanOfControl = managers > 0 ? (headcount / managers).toFixed(1) : "0";
 
     const cards = [
         {
@@ -69,17 +62,10 @@ const PeopleSummaryCards: React.FC<Props> = ({ dateRange, data }) => {
             icon: Users,
             colorClass: { bg: 'bg-indigo-50/80', text: 'text-indigo-600', border: 'border-indigo-100/50' },
             subtext: "Headcount at Period End",
-            tooltip: "Total number of active employees on the payroll at the end of the selected period.",
+            tooltip: "Total number of active employees at the end of the selected period.",
             trend: data?.headcountTrend
         },
-        {
-            label: "Net Change",
-            value: (netChange > 0 ? "+" : "") + netChange,
-            icon: netChange >= 0 ? UserPlus : UserMinus,
-            colorClass: { bg: 'bg-blue-50/80', text: 'text-blue-600', border: 'border-blue-100/50' },
-            subtext: `${joins} Joins / ${exits} Exits`,
-            tooltip: "The difference between new hires and employees who left during the selected period."
-        },
+
         {
             label: "Attrition Rate",
             value: `${attrition}%`,
@@ -88,26 +74,11 @@ const PeopleSummaryCards: React.FC<Props> = ({ dateRange, data }) => {
             subtext: `${exits} Total Exits`,
             tooltip: "The percentage and count of employees who left the organization during this period."
         },
-        {
-            label: "Shadow-Expert Ratio",
-            value: `1:${ratio}`,
-            icon: TrendingUp,
-            colorClass: { bg: 'bg-amber-50/80', text: 'text-amber-600', border: 'border-amber-100/50' },
-            subtext: `${shadows} Shadows / ${experts} Experts`,
-            tooltip: "The balance of junior staff (Shadows) to senior talent (Experts). High ratios indicate a strong talent pipeline."
-        },
-        {
-            label: "Span of Control",
-            value: `1:${spanOfControl}`,
-            icon: Network,
-            colorClass: { bg: 'bg-teal-50/80', text: 'text-teal-600', border: 'border-teal-100/50' },
-            subtext: `Across ${managers} Managers`,
-            tooltip: "The average number of employees reporting to each manager. Optimal ratios vary by role but generally sit around 1:7."
-        }
+
     ];
 
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 mb-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 xl:grid-cols-6 gap-3 mb-4">
             {cards.map((card, idx) => (
                 <MetricCard key={idx} {...card} />
             ))}
