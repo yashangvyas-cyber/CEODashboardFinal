@@ -22,18 +22,12 @@ interface Props {
 }
 
 const CRMFunnelSwitcher: React.FC<Props> = ({ data }) => {
-    const [activeMode, setActiveMode] = useState<'leads' | 'deals'>('deals');
+    const [activeMode, setActiveMode] = useState<'deals' | 'leads' | 'both'>('deals');
 
     // Reference vibrant color palette from screenshot
     const vibrantColors = [
-        '#d9435e', // Red/Pink
-        '#e18ac1', // Light Pink
-        '#a8d672', // Lime Green
-        '#4da6ff', // Sky Blue
-        '#fef3c7', // Cream/Yellow
-        '#633ebb', // Indigo/Purple
-        '#cbd16e', // Olive/Gold
-        '#b186da'  // Lavender
+        '#d9435e', '#e18ac1', '#a8d672', '#4da6ff',
+        '#fef3c7', '#633ebb', '#cbd16e', '#b186da'
     ];
 
     const defaultData = {
@@ -64,10 +58,8 @@ const CRMFunnelSwitcher: React.FC<Props> = ({ data }) => {
         }
     };
 
-    const currentFunnel = activeMode === 'deals' ? (data?.deals || defaultData.deals) : (data?.leads || defaultData.leads);
-
-    const renderFunnel = () => {
-        const segments = currentFunnel.segments;
+    const renderFunnelData = (targetFunnel: FunnelData) => {
+        const segments = targetFunnel.segments;
         const width = 400;
         const height = 280;
         const gapHeight = 10;
@@ -160,12 +152,20 @@ const CRMFunnelSwitcher: React.FC<Props> = ({ data }) => {
         );
     };
 
+    const isBoth = activeMode === 'both';
+    const mainTitle = isBoth ? "Deal & Lead Funnel" : activeMode === 'deals' ? "Deal Funnel" : "Lead Funnel";
+    const funnelsToRender = isBoth
+        ? [data?.deals || defaultData.deals, data?.leads || defaultData.leads]
+        : activeMode === 'deals'
+            ? [data?.deals || defaultData.deals]
+            : [data?.leads || defaultData.leads];
+
     return (
-        <div className="bg-white rounded-[10px] border border-slate-200 p-4 shadow-sm flex flex-col h-full hover:shadow transition-shadow">
+        <div className={`bg-white rounded-[10px] border border-slate-200 p-4 shadow-sm flex flex-col h-full hover:shadow transition-shadow ${isBoth ? 'col-span-1 lg:col-span-2' : ''}`}>
             {/* Header */}
-            <div className="flex items-center justify-between mb-2 shrink-0 z-10 w-full border-b border-slate-100/80 pb-3">
+            <div className="flex items-center justify-between mb-4 flex-wrap gap-3 shrink-0 z-10 w-full border-b border-slate-100/80 pb-3">
                 <div className="flex items-center">
-                    <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase">{currentFunnel.title}</h3>
+                    <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase">{mainTitle}</h3>
                     <InfoTooltip content="Visualizes the conversion funnel for Leads or Deals, showing the percentage of prospects that progress through each stage of the sales pipeline." />
                 </div>
 
@@ -183,27 +183,40 @@ const CRMFunnelSwitcher: React.FC<Props> = ({ data }) => {
                     >
                         LEADS
                     </button>
+                    <button
+                        onClick={() => setActiveMode('both')}
+                        className={`px-4 py-1.5 rounded-lg text-[10px] font-black tracking-widest transition-all duration-300 ${activeMode === 'both' ? 'bg-white shadow-sm text-emerald-600' : 'text-slate-500 hover:text-slate-700'}`}
+                    >
+                        BOTH
+                    </button>
                 </div>
             </div>
 
-            <div className="flex justify-between px-8 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">
-                <span>Overall</span>
-                <span>Stagewise</span>
-            </div>
-
-            {/* Chart */}
-            <div className="flex-1 w-full min-h-0 mt-2 flex items-center justify-center overflow-hidden">
-                <div className="w-full max-w-[340px]">
-                    {renderFunnel()}
-                </div>
-            </div>
-
-            {/* Legend */}
-            <div className="mt-2 flex flex-wrap justify-center gap-x-4 gap-y-2 z-10 border-t border-slate-50 pt-3">
-                {currentFunnel.segments.map((s, i) => (
-                    <div key={i} className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: vibrantColors[i % vibrantColors.length] }} />
-                        <span className="text-[10px] font-bold text-slate-500 whitespace-nowrap uppercase tracking-tighter">{s.label}</span>
+            <div className={`flex flex-1 w-full gap-6 ${isBoth ? 'flex-col md:flex-row' : 'flex-col'}`}>
+                {funnelsToRender.map((funnel, index) => (
+                    <div key={index} className="flex-1 flex flex-col h-full w-full">
+                        {isBoth && (
+                            <h4 className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-3 text-center">{funnel.title}</h4>
+                        )}
+                        <div className="flex justify-between px-8 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">
+                            <span>Overall</span>
+                            <span>Stagewise</span>
+                        </div>
+                        {/* Chart */}
+                        <div className="flex-1 w-full min-h-0 mt-2 flex items-center justify-center overflow-hidden">
+                            <div className="w-full max-w-[340px]">
+                                {renderFunnelData(funnel)}
+                            </div>
+                        </div>
+                        {/* Legend */}
+                        <div className="mt-4 flex flex-wrap justify-center gap-x-4 gap-y-2 z-10 border-t border-slate-50 pt-3">
+                            {funnel.segments.map((s, i) => (
+                                <div key={i} className="flex items-center gap-2">
+                                    <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: vibrantColors[i % vibrantColors.length] }} />
+                                    <span className="text-[10px] font-bold text-slate-500 whitespace-nowrap uppercase tracking-tighter">{s.label}</span>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 ))}
             </div>
