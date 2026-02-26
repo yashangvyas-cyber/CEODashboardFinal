@@ -1,6 +1,5 @@
 import React from 'react';
 import { Users, Briefcase, Filter, XCircle, CheckCircle2, Clock } from 'lucide-react';
-import InfoTooltip from '../common/InfoTooltip';
 import type { DateRangeOption } from '../../types';
 
 interface Props {
@@ -11,7 +10,7 @@ interface Props {
     };
 }
 
-const PipelineCard = ({ title, total, subItems, icon: Icon, colorClass, tooltip }: any) => (
+const PipelineCard = ({ title, total, subItems, icon: Icon, colorClass }: any) => (
     <div className="bg-white border border-slate-200 p-2 flex flex-col group transition-all hover:shadow-md relative overflow-hidden rounded-lg h-full justify-between">
         <div className={`absolute -right-4 -top-4 opacity-[0.03] group-hover:opacity-[0.06] transition-opacity transform group-hover:rotate-12 duration-500 ${colorClass.text}`}>
             <Icon className="w-16 h-16" />
@@ -21,9 +20,6 @@ const PipelineCard = ({ title, total, subItems, icon: Icon, colorClass, tooltip 
             <div className="flex flex-col">
                 <div className="flex items-center mb-1">
                     <span className="text-slate-500 text-[10px] font-black uppercase tracking-wider leading-none">{title}</span>
-                    <div className="ml-1">
-                        <InfoTooltip content={tooltip} />
-                    </div>
                 </div>
                 <div className="text-2xl font-black text-slate-900 tracking-tighter leading-none">{total.toLocaleString()}</div>
             </div>

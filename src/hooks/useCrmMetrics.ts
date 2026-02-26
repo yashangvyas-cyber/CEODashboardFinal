@@ -243,14 +243,15 @@ export function useCrmMetrics(dateRange: DateRangeOption, businessUnit: Business
                 const newSourcePct = totalMixCount > 0 ? Math.round((newSource / totalMixCount) * 100) : 0;
                 const existingSourcePct = totalMixCount > 0 ? 100 - newSourcePct : 0;
 
-                // --- MOCK BUILD OUT to match structure exactly ---
                 const result: CrmMetrics = {
                     summary: {
                         totalWon: { value: formatCurrency(totalWonValue), count: `${totalWonCount} Deals` },
                         invoiced: { value: formatCurrency(totalInvoiced), percent: `${totalWonValue > 0 ? Math.round((totalInvoiced / totalWonValue) * 100) : 0}% of Won` },
                         collected: { value: formatCurrency(totalCollected), efficiency: `${efficiency.toFixed(1)}% Efficiency` },
                         outstanding: { value: formatCurrency(outstanding), label: "(Invoiced - Collected)" },
-                        unbilled: { value: formatCurrency(unbilled), label: "Won but not Invoiced" }
+                        unbilled: { value: formatCurrency(unbilled), label: "Won but not Invoiced" },
+                        avgDealSize: { value: `₹${avgDealFormatted.value}${avgDealFormatted.unit}`, label: "Avg per deal" },
+                        salesCycle: { value: `${avgDealConversionDays}`, unit: "Days" }
                     },
                     pipelineSummaries: {
                         leads: { total: 1240, qualified: 850, unqualified: 390, qPercent: 68, uPercent: 32, avgConversionTime: 12 }, // Keeping some mock struct for leads if not in DB

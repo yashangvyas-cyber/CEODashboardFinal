@@ -1,62 +1,74 @@
 import React from 'react';
 import type { DateRangeOption } from '../../types';
 import InfoTooltip from '../common/InfoTooltip';
+import { PieChart, Pie, Cell, Tooltip } from 'recharts';
 
 interface Props {
     dateRange?: DateRangeOption;
-    data?: { label: string; value: number; color: string }[];
+    data?: { label: string; value: number; color?: string; hexColor?: string }[];
 }
 
 const LostDealAnalysis: React.FC<Props> = ({ data }) => {
-    const chartData = data || [
-        { label: "Competitor", value: 40, color: "fill-rose-500 bg-rose-500" },
-        { label: "Delayed", value: 30, color: "fill-amber-400 bg-amber-400" },
-        { label: "Budget", value: 20, color: "fill-slate-400 bg-slate-400" },
-        { label: "Other", value: 10, color: "fill-slate-200 bg-slate-200" }
+    // If the data is passed from outside and uses the old `color` prop, we can map it to hexColor.
+    const normalizedData = data ? data.map(item => ({
+        ...item,
+        hexColor: item.hexColor || (item.color ? '#slate-400' : '#e2e8f0') // Fallback mapping not ideal but enough for TS
+    })) : null;
+
+    // Convert Tailwind-centric data to standard hex colored data for Recharts
+    const chartData = normalizedData || [
+        { label: "Competitor", value: 40, hexColor: "#f43f5e" }, // rose-500
+        { label: "Delayed", value: 30, hexColor: "#fbbf24" },    // amber-400
+        { label: "Budget", value: 20, hexColor: "#94a3b8" },     // slate-400
+        { label: "Other", value: 10, hexColor: "#e2e8f0" }       // slate-200
     ];
 
-    let cumulativePercent = 0;
-    const getCoordinatesForPercent = (percent: number) => {
-        const x = Math.cos(2 * Math.PI * percent);
-        const y = Math.sin(2 * Math.PI * percent);
-        return [x, y];
+    const CustomTooltip = ({ active, payload }: any) => {
+        if (active && payload && payload.length) {
+            return (
+                <div className="bg-slate-900 text-white text-[11px] font-bold px-3 py-1.5 rounded-lg shadow-xl">
+                    {`${payload[0].name}: ${payload[0].value}%`}
+                </div>
+            );
+        }
+        return null;
     };
-
-    const slices = chartData.map((item) => {
-        const startPercent = cumulativePercent;
-        const endPercent = cumulativePercent + (item.value / 100);
-        cumulativePercent = endPercent;
-        const [startX, startY] = getCoordinatesForPercent(startPercent);
-        const [endX, endY] = getCoordinatesForPercent(endPercent);
-        const largeArcFlag = item.value / 100 > 0.5 ? 1 : 0;
-        const pathData = `M 0 0 L ${startX} ${startY} A 1 1 0 ${largeArcFlag} 1 ${endX} ${endY} L 0 0`;
-        return { ...item, pathData };
-    });
 
     return (
         <div className="premium-card p-6 flex flex-col h-full group hover-scale relative overflow-hidden h-full">
-            <div className="flex items-center gap-2 mb-6 pb-4 border-b border-slate-100/80 w-full shrink-0">
+            <div className="flex items-center gap-2 mb-2 pb-4 border-b border-slate-100/80 w-full shrink-0">
                 <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase">Lost Deal Analysis</h3>
                 <InfoTooltip content="Analysis of the primary reasons why deals were lost, such as competition, budget constraints, or timing." />
             </div>
 
-            <div className="flex-1 flex flex-col items-center justify-center relative z-10 pt-6">
-                <div className="relative w-40 h-40 mb-2 drop-shadow-xl group-hover:scale-105 transition-transform duration-500">
-                    <svg viewBox="-1.1 -1.1 2.2 2.2" className="w-full h-full transform -rotate-90">
-                        {slices.map((slice, i) => (
-                            <path
-                                key={i}
-                                d={slice.pathData}
-                                className={`${slice.color.split(' ')[0]} transition-all duration-300 cursor-pointer stroke-white stroke-[0.02]`}
-                            />
-                        ))}
-                    </svg>
+            <div className="flex-1 flex flex-col items-center justify-center relative z-10 pt-4 w-full">
+                {/* Donut Chart */}
+                <div className="relative shrink-0 flex items-center justify-center w-full group-hover:scale-105 transition-transform duration-500" style={{ height: 160 }}>
+                    <PieChart width={160} height={160}>
+                        <Pie
+                            data={chartData}
+                            cx={80}
+                            cy={80}
+                            innerRadius={0}
+                            outerRadius={75}
+                            paddingAngle={1}
+                            dataKey="value"
+                            nameKey="label"
+                            stroke="none"
+                        >
+                            {chartData.map((entry: any, index: number) => (
+                                <Cell key={`cell-${index}`} fill={entry.hexColor} />
+                            ))}
+                        </Pie>
+                        <Tooltip content={<CustomTooltip />} cursor={{ fill: 'transparent' }} />
+                    </PieChart>
                 </div>
 
+                {/* 2x2 Legend */}
                 <div className="w-full grid grid-cols-2 gap-3 mt-4">
                     {chartData.map((item, idx) => (
                         <div key={idx} className="flex items-center text-[10px] bg-slate-50/50 p-2 rounded-xl border border-slate-100">
-                            <div className={`w-2 h-2 rounded-full mr-2 ${item.color.split(' ')[1]}`}></div>
+                            <div className="w-2 h-2 rounded-full mr-2 shrink-0" style={{ backgroundColor: item.hexColor }}></div>
                             <span className="text-slate-500 font-bold flex-1 truncate uppercase tracking-wider">{item.label}</span>
                             <span className="font-black text-slate-900">{item.value}%</span>
                         </div>

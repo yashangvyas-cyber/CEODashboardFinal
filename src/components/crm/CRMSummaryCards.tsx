@@ -1,5 +1,5 @@
 import React from 'react';
-import { DollarSign, FileText, CheckCircle, Clock } from 'lucide-react';
+import { DollarSign, FileText, CheckCircle, Clock, TrendingUp, Calendar } from 'lucide-react';
 import type { DateRangeOption } from '../../types';
 import InfoTooltip from '../common/InfoTooltip';
 
@@ -11,6 +11,8 @@ interface Props {
         collected: { value: string; efficiency: string };
         outstanding: { value: string; label: string };
         unbilled: { value: string; label: string };
+        avgDealSize: { value: string; label: string };
+        salesCycle: { value: string; unit: string };
     };
 }
 
@@ -68,11 +70,27 @@ const CRMSummaryCards: React.FC<Props> = ({ data }) => {
             colorClass: { bg: 'bg-amber-50/80', text: 'text-amber-600', border: 'border-amber-100/50' },
             subtext: data?.outstanding.label || "(Invoiced - Collected)",
             tooltip: "The gap between what has been billed and what has been paid by clients."
+        },
+        {
+            label: "Avg. Deal Size",
+            value: data?.avgDealSize.value || "₹1.5L",
+            icon: TrendingUp,
+            colorClass: { bg: 'bg-violet-50/80', text: 'text-violet-600', border: 'border-violet-100/50' },
+            subtext: data?.avgDealSize.label || "Avg per deal",
+            tooltip: "The average revenue generated per closed-won deal."
+        },
+        {
+            label: "Sales Cycle",
+            value: data?.salesCycle.value || "18",
+            icon: Calendar,
+            colorClass: { bg: 'bg-orange-50/80', text: 'text-orange-600', border: 'border-orange-100/50' },
+            subtext: data?.salesCycle.unit || "Days",
+            tooltip: "The average number of days it takes to close a deal from lead creation to closed-won."
         }
     ];
 
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-4">
             {cards.map((card, idx) => (
                 <MetricCard key={idx} {...card} />
             ))}
