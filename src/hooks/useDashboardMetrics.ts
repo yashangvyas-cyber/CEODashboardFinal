@@ -28,6 +28,7 @@ export function useDashboardMetrics(businessUnit: BusinessUnitOption) {
 
             try {
                 // 1. Employees Query
+                if (!supabase) throw new Error("Supabase client not initialized.");
                 let empQuery = supabase.from('employees').select('status, exit_date');
                 if (businessUnit !== 'all') empQuery = empQuery.eq('business_unit', businessUnit);
 

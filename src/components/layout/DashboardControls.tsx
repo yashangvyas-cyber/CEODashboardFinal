@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import type { DateRangeOption, ModuleOption } from '../../types';
-import { Search, X } from 'lucide-react';
+import { Search, X, Calendar, ChevronDown } from 'lucide-react';
 
 interface DashboardControlsProps {
     selectedTabs: ModuleOption[];
@@ -20,10 +20,11 @@ const MODULES: { id: ModuleOption; label: string }[] = [
     { id: 'project_management', label: 'Project Management' },
 ];
 
-const DATE_OPTIONS: { value: DateRangeOption; label: string }[] = [
+const PRESET_DATES: { value: DateRangeOption; label: string }[] = [
+    { value: 'this_month', label: 'This Month' },
+    { value: 'last_month', label: 'Last Month' },
     { value: 'this_quarter', label: 'This Quarter' },
     { value: 'last_quarter', label: 'Last Quarter' },
-    { value: 'ytd', label: 'Year to Date' },
     { value: 'this_year', label: 'This Year' },
     { value: 'last_year', label: 'Last Year' },
 ];
@@ -38,6 +39,30 @@ export const DashboardControls: React.FC<DashboardControlsProps> = ({
     isApplied,
     isDirty,
 }) => {
+    const [isDateOpen, setIsDateOpen] = useState(false);
+    const [pendingDate, setPendingDate] = useState<DateRangeOption>(selectedDate);
+    const dateRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dateRef.current && !dateRef.current.contains(event.target as Node)) {
+                setIsDateOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    // Sync internal state when external changes
+    useEffect(() => {
+        setPendingDate(selectedDate);
+    }, [selectedDate, isDateOpen]);
+
+    const handleApplyDate = () => {
+        onChangeDate(pendingDate);
+        setIsDateOpen(false);
+    };
+
     return (
         <div className="bg-white border-b border-slate-200 px-6 py-2.5 flex items-center gap-3">
             {/* Multi-select module pills */}
@@ -65,18 +90,52 @@ export const DashboardControls: React.FC<DashboardControlsProps> = ({
             {/* Divider */}
             <div className="w-px h-5 bg-slate-200 mx-1 flex-shrink-0" />
 
-            {/* Date Range Selector */}
-            <div className="relative flex-shrink-0">
-                <select
-                    value={selectedDate}
-                    onChange={(e) => onChangeDate(e.target.value as DateRangeOption)}
-                    className="appearance-none pl-3 pr-7 py-1.5 bg-white border border-slate-300 rounded-md text-[11px] font-bold text-slate-600 outline-none focus:ring-2 focus:ring-indigo-400/20 focus:border-indigo-400 hover:border-slate-400 transition-colors cursor-pointer"
+            {/* Custom Date Range Popover */}
+            <div className="relative flex-shrink-0" ref={dateRef}>
+                <button
+                    onClick={() => setIsDateOpen(!isDateOpen)}
+                    className="flex flex-row items-center gap-2 px-3 py-1.5 bg-white border border-slate-300 rounded-md text-[11px] font-bold text-slate-600 hover:border-slate-400 transition-colors"
                 >
-                    {DATE_OPTIONS.map(opt => (
-                        <option key={opt.value} value={opt.value}>{opt.label}</option>
-                    ))}
-                </select>
-                <svg className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="m6 9 6 6 6-6" /></svg>
+                    {(PRESET_DATES.find(d => d.value === selectedDate)?.label) || 'Custom Date'}
+                    <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${isDateOpen ? 'rotate-180' : ''}`} />
+                </button>
+
+                {isDateOpen && (
+                    <div className="absolute top-10 left-0 z-50 bg-white border border-slate-200 rounded-lg shadow-xl p-3 w-80 mt-1 cursor-default">
+                        <div className="text-[11px] font-bold text-slate-700 mb-2.5">Date Range</div>
+
+                        <div className="grid grid-cols-2 gap-2 mb-3">
+                            {PRESET_DATES.map(opt => (
+                                <button
+                                    key={opt.value}
+                                    onClick={() => setPendingDate(opt.value)}
+                                    className={`px-3 py-1.5 rounded text-[11px] font-bold transition-all border outline-none ${pendingDate === opt.value
+                                            ? 'bg-[#4f46e5] text-white border-[#4f46e5]' // Indigo-600 matching screenshot
+                                            : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                                        }`}
+                                >
+                                    {opt.label}
+                                </button>
+                            ))}
+                        </div>
+
+                        <div className="flex gap-2">
+                            <button className="flex-1 flex justify-between items-center border border-slate-200 rounded px-2.5 py-1.5 bg-white text-[11px] text-slate-400 font-medium hover:border-slate-300 outline-none">
+                                Select custom range
+                                <Calendar className="w-3.5 h-3.5 text-slate-300" />
+                            </button>
+                            <button
+                                onClick={handleApplyDate}
+                                className={`px-4 py-1.5 rounded text-[11px] font-bold transition-all ${pendingDate !== selectedDate
+                                        ? 'bg-[#c7d2fe] text-white hover:bg-indigo-400' // Indigo-200 / 400
+                                        : 'bg-[#e0e7ff] text-indigo-300 cursor-not-allowed' // Indigo-100 disabled look
+                                    }`}
+                            >
+                                Apply
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
 
             {/* Spacer pushes actions to the right */}
@@ -110,3 +169,4 @@ export const DashboardControls: React.FC<DashboardControlsProps> = ({
         </div>
     );
 };
+

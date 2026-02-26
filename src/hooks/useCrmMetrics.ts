@@ -29,6 +29,7 @@ export function useCrmMetrics(dateRange: DateRangeOption, businessUnit: Business
                 setLoading(true);
 
                 // Fetch Deals
+                if (!supabase) throw new Error("Supabase client not initialized.");
                 let dealsQuery = supabase.from('deals').select('*');
                 if (businessUnit !== 'all') {
                     dealsQuery = dealsQuery.eq('business_unit', businessUnit);
@@ -49,6 +50,15 @@ export function useCrmMetrics(dateRange: DateRangeOption, businessUnit: Business
                 let endDate = new Date();
 
                 switch (dateRange) {
+                    case 'this_month': {
+                        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+                        break;
+                    }
+                    case 'last_month': {
+                        startDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+                        endDate = new Date(now.getFullYear(), now.getMonth(), 0);
+                        break;
+                    }
                     case 'this_quarter': {
                         const currentQuarter = Math.floor(now.getMonth() / 3);
                         startDate = new Date(now.getFullYear(), currentQuarter * 3, 1);

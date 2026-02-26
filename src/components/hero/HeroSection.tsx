@@ -22,7 +22,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ selectedBU }) => {
                         <div>
                             <div className="flex items-center">
                                 <p className="text-xs font-bold text-slate-500 uppercase tracking-tight">Total Employees</p>
-                                <InfoTooltip content="The total number of employees currently employed across all business units." />
+                                <InfoTooltip content="Total Number of active employees across all business units." />
                             </div>
                             <div className="flex items-baseline gap-2 mt-0.5">
                                 {employeeLoading ? (

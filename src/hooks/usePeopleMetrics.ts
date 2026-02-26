@@ -43,6 +43,7 @@ export function usePeopleMetrics(dateRange: DateRangeOption, businessUnit: Busin
                 setLoading(true);
 
                 // Fetch all employees (apply BU filter if needed)
+                if (!supabase) throw new Error("Supabase client not initialized.");
                 let empQuery = supabase.from('employees').select('*');
                 if (businessUnit !== 'all') {
                     empQuery = empQuery.eq('business_unit', businessUnit);
@@ -56,6 +57,17 @@ export function usePeopleMetrics(dateRange: DateRangeOption, businessUnit: Busin
                 let prevEndDate = new Date();
 
                 switch (dateRange) {
+                    case 'this_month': {
+                        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+                        prevEndDate = new Date(now.getFullYear(), now.getMonth(), 0);
+                        break;
+                    }
+                    case 'last_month': {
+                        startDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+                        endDate = new Date(now.getFullYear(), now.getMonth(), 0); // Last day of last month
+                        prevEndDate = new Date(now.getFullYear(), now.getMonth() - 1, 0); // Last day of two months ago
+                        break;
+                    }
                     case 'this_quarter': {
                         const currentQuarter = Math.floor(now.getMonth() / 3);
                         startDate = new Date(now.getFullYear(), currentQuarter * 3, 1);

@@ -15,11 +15,14 @@ interface Props {
 }
 
 const PERIOD_LABELS: Record<DateRangeOption, string> = {
+    this_month: 'This Month',
+    last_month: 'Last Month',
     this_quarter: 'This Quarter',
     this_year: 'This Year',
     last_quarter: 'Last Quarter',
     last_year: 'Last Year',
     ytd: 'Year to Date',
+    custom: 'Custom Date',
 };
 
 const TimesheetCompliance: React.FC<Props> = ({ dateRange, data = [] }) => {

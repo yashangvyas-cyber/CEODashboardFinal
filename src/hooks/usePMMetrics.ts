@@ -108,7 +108,7 @@ export interface PMMetrics {
 // snapshot so the CEO sees meaningful diffs when switching periods.
 // ---------------------------------------------------------------------------
 
-const DATASETS: Record<DateRangeOption, PMMetrics> = {
+const DATASETS: Partial<Record<DateRangeOption, PMMetrics>> = {
 
     // ---- THIS YEAR (most data, current running period) --------------------
     this_year: {
@@ -566,8 +566,14 @@ export function usePMMetrics(
     // useMemo ensures the object reference only changes when inputs change,
     // preventing unnecessary child re-renders.
     const data = useMemo<PMMetrics>(() => {
+        // Map new ranges to existing mock data sets for prototype
+        let effectiveRange = dateRange;
+        if (dateRange === 'this_month') effectiveRange = 'this_quarter';
+        if (dateRange === 'last_month') effectiveRange = 'last_quarter';
+        if (dateRange === 'custom') effectiveRange = 'this_year';
+
         // Fall back to this_year if an unsupported range is passed.
-        return DATASETS[dateRange] ?? DATASETS['this_year'];
+        return DATASETS[effectiveRange] ?? DATASETS['this_year']!;
     }, [dateRange]);
 
     // loading is always false since this is mock/structured data.
