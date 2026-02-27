@@ -62,7 +62,7 @@ const DEFAULT_LAYOUTS: Record<ModuleOption, LayoutItem[]> = {
         { i: 'exitByTypeAndReason', x: 0, y: 13, w: 4, h: 11, minW: 3, minH: 8 },
         { i: 'skillsGap', x: 5, y: 13, w: 7, h: 12, minW: 4, minH: 8 },
         { i: 'managerWatchlist', x: 0, y: 20, w: 4, h: 10, minW: 3, minH: 7 },
-        { i: 'topEmployees', x: 4, y: 20, w: 8, h: 10, minW: 6, minH: 7 },
+        { i: 'topEmployees', x: 4, y: 20, w: 4, h: 10, minW: 3, minH: 7 },
     ],
     crm: [
         { i: 'crmSummaryCards', x: 0, y: 0, w: 12, h: 3, minW: 6, minH: 3 },
