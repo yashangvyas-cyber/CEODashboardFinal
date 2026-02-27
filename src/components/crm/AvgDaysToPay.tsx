@@ -32,35 +32,32 @@ const defaultData = {
 
 const AvgDaysToPay: React.FC<Props> = ({ data }) => {
     const d = data || defaultData;
-    const isFaster = d.trend <= 0;
 
     return (
         <div className="bg-white rounded-[10px] border border-slate-200 p-5 shadow-sm flex flex-col h-full hover:shadow transition-shadow">
-            {/* Header */}
-            <div className="flex items-center justify-between mb-5 shrink-0">
+            {/* Header & Main Value aligned horizontally */}
+            <div className="flex items-start justify-between mb-4 shrink-0">
                 <div className="flex items-center gap-2">
-                    <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase">Avg. Days to Pay</h3>
-                    <InfoTooltip content="Historical breakdown of invoice settlement speeds by client segment." />
+                    <div className="bg-emerald-50 rounded-lg p-1.5 flex items-center justify-center">
+                        <svg className="w-4 h-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <h3 className="text-base font-black text-slate-700 tracking-tight">
+                        Avg. Days to Pay
+                    </h3>
+                    <InfoTooltip content="Distribution of collected invoices by days taken to pay." />
                 </div>
-                <div className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-black border ${isFaster
-                    ? 'bg-emerald-50 border-emerald-100 text-emerald-600'
-                    : 'bg-rose-50 border-rose-100 text-rose-600'
-                    }`}>
-                    {isFaster ? '▼' : '▲'} {Math.abs(d.trend)}d vs last period
-                </div>
-            </div>
 
-            {/* Big Number */}
-            <div className="flex items-baseline gap-1.5 mb-6">
-                <span className="text-6xl font-black text-slate-800 tracking-tighter leading-none">{d.avgDays}</span>
-                <span className="text-lg font-bold text-slate-400">days</span>
-                <span className={`ml-2 text-xs font-black uppercase tracking-widest ${isFaster ? 'text-emerald-500' : 'text-rose-500'}`}>
-                    {isFaster ? 'Faster' : 'Slower'}
-                </span>
+                <div className="flex flex-col items-end">
+                    <div className="text-2xl font-black text-amber-500 leading-none">
+                        {d.avgDays}d
+                    </div>
+                </div>
             </div>
 
             {/* Segmented Bar */}
-            <div className="w-full flex h-2.5 rounded-full overflow-hidden gap-0.5 mb-4">
+            <div className="w-full flex h-3.5 rounded-full overflow-hidden gap-1 mb-5">
                 {d.buckets.map((bucket, i) => (
                     <div
                         key={i}
@@ -71,15 +68,12 @@ const AvgDaysToPay: React.FC<Props> = ({ data }) => {
                 ))}
             </div>
 
-            {/* Legend */}
-            <div className="grid grid-cols-2 gap-x-4 gap-y-2 mt-auto">
+            {/* Legend Grid */}
+            <div className="flex justify-between items-center w-full mt-auto text-[11px] font-bold text-slate-400 uppercase tracking-wider">
                 {d.buckets.map((bucket, i) => (
-                    <div key={i} className="flex items-center justify-between">
-                        <div className="flex items-center gap-1.5">
-                            <div className={`w-2 h-2 rounded-full ${bucket.bgColor}`} />
-                            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">{bucket.label}</span>
-                        </div>
-                        <span className={`text-[11px] font-black ${bucket.textColor}`}>{bucket.percent}%</span>
+                    <div key={i} className="flex items-center gap-1.5">
+                        <div className={`w-1.5 h-1.5 rounded-full ${bucket.bgColor}`} />
+                        <span>{bucket.label}</span>
                     </div>
                 ))}
             </div>
