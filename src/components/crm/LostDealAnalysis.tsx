@@ -37,20 +37,20 @@ const LostDealAnalysis: React.FC<Props> = ({ data }) => {
     return (
         <div className="premium-card p-6 flex flex-col h-full group hover-scale relative overflow-hidden h-full">
             <div className="flex items-center gap-2 mb-2 pb-4 border-b border-slate-100/80 w-full shrink-0">
-                <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase">Lost Deal Analysis</h3>
+                <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase">Lost Deal Reasons</h3>
                 <InfoTooltip content="Analysis of the primary reasons why deals were lost, such as competition, budget constraints, or timing." />
             </div>
 
             <div className="flex-1 flex flex-col items-center justify-center relative z-10 pt-4 w-full">
                 {/* Donut Chart */}
-                <div className="relative shrink-0 flex items-center justify-center w-full group-hover:scale-105 transition-transform duration-500" style={{ height: 160 }}>
-                    <PieChart width={160} height={160}>
+                <div className="relative shrink-0 flex items-center justify-center w-full group-hover:scale-105 transition-transform duration-500" style={{ height: 130 }}>
+                    <PieChart width={140} height={140}>
                         <Pie
                             data={chartData}
-                            cx={80}
-                            cy={80}
+                            cx={70}
+                            cy={70}
                             innerRadius={0}
-                            outerRadius={75}
+                            outerRadius={65}
                             paddingAngle={1}
                             dataKey="value"
                             nameKey="label"
@@ -65,14 +65,13 @@ const LostDealAnalysis: React.FC<Props> = ({ data }) => {
                 </div>
 
                 {/* Dynamically Sized Legend */}
-                <div className="w-full mt-4 flex-1 min-h-0 relative">
+                <div className="w-full mt-2 flex-1 min-h-0 relative">
                     <div className="absolute inset-0 overflow-y-auto custom-scrollbar pr-2 pb-2">
                         <div className="grid grid-cols-2 gap-2">
                             {chartData.map((item, idx) => (
                                 <div key={idx} className="flex items-center text-[10px] bg-slate-50/50 p-2 rounded-lg border border-slate-100 hover:bg-slate-50 transition-colors">
                                     <div className="w-2 h-2 rounded-full mr-2 shrink-0" style={{ backgroundColor: item.hexColor }}></div>
                                     <span className="text-slate-500 font-bold flex-1 truncate uppercase tracking-wider pr-1" title={item.label}>{item.label}</span>
-                                    <span className="font-black text-slate-900 shrink-0">{item.value}%</span>
                                 </div>
                             ))}
                         </div>

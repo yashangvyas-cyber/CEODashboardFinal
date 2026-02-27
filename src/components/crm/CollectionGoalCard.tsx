@@ -25,7 +25,7 @@ const CollectionGoalCard: React.FC<Props> = ({ data }) => {
         <div className="bg-white border border-slate-200 p-4 flex flex-col h-full justify-between group transition-all hover:shadow-md relative overflow-hidden rounded-lg">
             <div className="flex items-center gap-2 w-full mb-1 relative z-10 mb-6 pb-4 border-b border-slate-100/80 w-full shrink-0">
                 <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase">Collection Goal</h3>
-                <InfoTooltip content="Tracks the progress towards the collection target for the current period, showing how much of the target has been achieved in percentage." />
+                <InfoTooltip content="Tracks the progress towards the collection target for the selected period, showing how much of the target has been achieved in percentage." />
             </div>
 
             <div className="relative flex items-center justify-center my-2 z-10 group/gauge flex-1">

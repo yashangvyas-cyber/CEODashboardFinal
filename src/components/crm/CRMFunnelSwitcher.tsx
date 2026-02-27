@@ -61,15 +61,15 @@ const CRMFunnelSwitcher: React.FC<Props> = ({ data }) => {
     const renderFunnelData = (targetFunnel: FunnelData) => {
         const segments = targetFunnel.segments;
         const width = 400;
-        const height = 280;
-        const gapHeight = 10;
+        const height = isBoth ? 200 : 250;
+        const gapHeight = isBoth ? 5 : 10;
         const totalGapHeight = (segments.length - 1) * gapHeight;
         const segmentHeight = (height - totalGapHeight) / segments.length;
         const topWidth = 320;
         const bottomWidth = 100;
 
         return (
-            <svg viewBox={`0 0 ${width} ${height + 40}`} className="w-full h-full overflow-visible">
+            <svg viewBox={`0 0 ${width} ${height + 20}`} className="w-full h-full overflow-visible">
                 <defs>
                     <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
                         <feDropShadow dx="0" dy="4" stdDeviation="4" floodOpacity="0.1" />
@@ -102,10 +102,10 @@ const CRMFunnelSwitcher: React.FC<Props> = ({ data }) => {
                             {/* Center Value (if available, else label center) */}
                             <text
                                 x={width / 2}
-                                y={y1 + segmentHeight / 2 + 5}
+                                y={y1 + segmentHeight / 2 + 4}
                                 textAnchor="middle"
                                 className="font-black fill-white drop-shadow-md"
-                                style={{ fontSize: '14px' }}
+                                style={{ fontSize: isBoth ? '12px' : '14px' }}
                             >
                                 {segment.value || ''}
                             </text>
@@ -114,10 +114,10 @@ const CRMFunnelSwitcher: React.FC<Props> = ({ data }) => {
                             <g>
                                 <text
                                     x={x1 - 40}
-                                    y={y1 + segmentHeight / 2 + 5}
+                                    y={y1 + segmentHeight / 2 + 4}
                                     textAnchor="end"
                                     className="font-bold fill-slate-500 tracking-tighter"
-                                    style={{ fontSize: '11px' }}
+                                    style={{ fontSize: isBoth ? '10px' : '11px' }}
                                 >
                                     {segment.overall}
                                 </text>
@@ -132,10 +132,10 @@ const CRMFunnelSwitcher: React.FC<Props> = ({ data }) => {
                             <g>
                                 <text
                                     x={x4 + 40}
-                                    y={y1 + segmentHeight / 2 + 5}
+                                    y={y1 + segmentHeight / 2 + 4}
                                     textAnchor="start"
                                     className="font-bold fill-slate-500 tracking-tighter"
-                                    style={{ fontSize: '11px' }}
+                                    style={{ fontSize: isBoth ? '10px' : '11px' }}
                                 >
                                     {segment.stagewise}
                                 </text>
@@ -209,11 +209,11 @@ const CRMFunnelSwitcher: React.FC<Props> = ({ data }) => {
                             </div>
                         </div>
                         {/* Legend */}
-                        <div className="mt-4 flex flex-wrap justify-center gap-x-4 gap-y-2 z-10 border-t border-slate-50 pt-3">
+                        <div className={`mt-2 flex flex-wrap justify-center gap-x-3 gap-y-1.5 z-10 border-t border-slate-50 pt-2 ${isBoth ? 'px-2' : ''}`}>
                             {funnel.segments.map((s, i) => (
-                                <div key={i} className="flex items-center gap-2">
-                                    <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: vibrantColors[i % vibrantColors.length] }} />
-                                    <span className="text-[10px] font-bold text-slate-500 whitespace-nowrap uppercase tracking-tighter">{s.label}</span>
+                                <div key={i} className="flex items-center gap-1.5">
+                                    <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: vibrantColors[i % vibrantColors.length] }} />
+                                    <span className={`${isBoth ? 'text-[8px]' : 'text-[10px]'} font-bold text-slate-500 whitespace-nowrap uppercase tracking-tighter`}>{s.label}</span>
                                 </div>
                             ))}
                         </div>

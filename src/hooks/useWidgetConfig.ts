@@ -14,7 +14,7 @@ export type { Layout, LayoutItem };
 export const WIDGET_REGISTRY: Record<ModuleOption, WidgetDefinition[]> = {
     people: [
         { id: 'peopleSummaryCards', label: 'People Snapshot', description: 'Top-line KPIs: Headcount, Growth, Attrition, Experience Ratio, Span of Control.' },
-        { id: 'talentRiskScore', label: 'Early Attrition', description: 'Tracks early attrition rate of employees who left within 90 days.' },
+        { id: 'talentRiskScore', label: 'Early Attrition Analysis', description: 'Tracks early attrition rate of employees who left within 90 days.' },
         { id: 'exitByTypeAndReason', label: 'Exit by Type & Reason', description: 'Breakdown of exits by resignation vs termination and root cause.' },
         { id: 'attritionAnalysis', label: 'Exit Trend', description: 'Monthly trend of employee exits categorized by regrettable/non-regrettable.' },
         { id: 'skillsGap', label: 'Skill Proficiency Distribution', description: 'Heatmap of skill proficiency levels across domains.' },
@@ -26,11 +26,11 @@ export const WIDGET_REGISTRY: Record<ModuleOption, WidgetDefinition[]> = {
         { id: 'revenueTrend', label: 'Revenue Trend', description: 'Monthly revenue trend line chart.' },
         { id: 'avgDaysToPay', label: 'Avg. Days to Pay', description: 'Average collection cycle time and payment efficiency.' },
         { id: 'crmFunnelSwitcher', label: 'Pipeline Funnel', description: 'Lead and deal funnel stage conversion visualization.' },
-        { id: 'salesMetrics', label: 'Sales Metrics', description: 'Average deal size and sales cycle length.' },
         { id: 'crmPipelineSummaries', label: 'Pipeline Summaries', description: 'Aggregated lead and deal counts with win/loss ratios.' },
         { id: 'collectionGoalCard', label: 'Collection Goal', description: 'Progress towards the annual collection target.' },
+        { id: 'collectionGoalCard', label: 'Collection Goal', description: 'Progress towards the annual collection target.' },
         { id: 'revenueSourceMix', label: 'Revenue Source Mix', description: 'Split between new vs existing client revenue.' },
-        { id: 'lostDealAnalysis', label: 'Lost Deal Analysis', description: 'Root causes for deals that were lost in the pipeline.' },
+        { id: 'lostDealAnalysis', label: 'Lost Deal Reasons', description: 'Root causes for deals that were lost in the pipeline.' },
         { id: 'recentLargeInflows', label: 'Key Recent Collections', description: 'Top 5 largest recent payment inflows.' },
         { id: 'multiCurrencyCashFlow', label: 'Multi-Currency Flow', description: 'Cash inflows consolidated by foreign currency.' },
         { id: 'topRevenueContributors', label: 'Top Revenue Contributors', description: 'Client-wise breakdown of revenue contributions.' },
@@ -46,7 +46,7 @@ export const WIDGET_REGISTRY: Record<ModuleOption, WidgetDefinition[]> = {
         { id: 'pmSummaryCards', label: 'PM Snapshot', description: 'Top-line KPIs: Projects, On-Time %, Budget Var, Resource Util.' },
         { id: 'projectPortfolioStatus', label: 'Project Portfolio Status', description: 'Historical view of project allocation by type and status.' },
         { id: 'pmHealthBreakdown', label: 'Project Delivery Health', description: 'Health scores across Fixed Cost, Hourly, and Hirebase projects.' },
-        { id: 'revenueLeakage', label: 'Revenue Leakage Risk', description: 'Projects exceeding budget targets, flagged by leakage amount.' },
+        { id: 'revenueLeakage', label: 'Revenue Leakage Analysis', description: 'Projects exceeding budget targets, flagged by leakage amount.' },
         { id: 'topEffortConsumers', label: 'Top Effort Consumers', description: 'Projects consuming the most team hours this period.' },
         { id: 'contractAdjustments', label: 'Contract Adjustments', description: 'Historical view of Hired/Expired resource contracts.' },
         { id: 'timesheetCompliance', label: 'Timesheet Compliance', description: 'Departments with unapproved or missing timesheet logs.' },
@@ -67,16 +67,15 @@ const DEFAULT_LAYOUTS: Record<ModuleOption, LayoutItem[]> = {
     crm: [
         { i: 'crmSummaryCards', x: 0, y: 0, w: 12, h: 3, minW: 6, minH: 3 },
         { i: 'revenueTrend', x: 0, y: 3, w: 8, h: 11, minW: 6, minH: 6 },
-        { i: 'crmFunnelSwitcher', x: 8, y: 3, w: 4, h: 11, minW: 4, minH: 6 },
-        { i: 'crmPipelineSummaries', x: 0, y: 14, w: 4, h: 8, minW: 3, minH: 5 },
-        { i: 'salesMetrics', x: 4, y: 14, w: 3, h: 8, minW: 3, minH: 4 },
-        { i: 'lostDealAnalysis', x: 7, y: 14, w: 5, h: 10, minW: 4, minH: 6 },
-        { i: 'avgDaysToPay', x: 0, y: 22, w: 6, h: 5, minW: 3, minH: 5 },
-        { i: 'revenueSourceMix', x: 6, y: 22, w: 6, h: 5, minW: 4, minH: 5 },
-        { i: 'collectionGoalCard', x: 0, y: 27, w: 6, h: 9, minW: 4, minH: 6 },
-        { i: 'multiCurrencyCashFlow', x: 6, y: 27, w: 6, h: 7, minW: 4, minH: 6 },
-        { i: 'recentLargeInflows', x: 0, y: 36, w: 6, h: 8, minW: 4, minH: 6 },
-        { i: 'topRevenueContributors', x: 6, y: 36, w: 6, h: 8, minW: 6, minH: 6 },
+        { i: 'crmFunnelSwitcher', x: 8, y: 3, w: 4, h: 14, minW: 4, minH: 6 },
+        { i: 'crmPipelineSummaries', x: 0, y: 14, w: 4, h: 6, minW: 3, minH: 5 },
+        { i: 'lostDealAnalysis', x: 8, y: 14, w: 4, h: 11, minW: 3, minH: 6 },
+        { i: 'avgDaysToPay', x: 0, y: 25, w: 4, h: 9, minW: 3, minH: 5 },
+        { i: 'revenueSourceMix', x: 8, y: 25, w: 4, h: 9, minW: 4, minH: 5 },
+        { i: 'collectionGoalCard', x: 0, y: 34, w: 4, h: 9, minW: 4, minH: 6 },
+        { i: 'multiCurrencyCashFlow', x: 4, y: 34, w: 4, h: 7, minW: 4, minH: 6 },
+        { i: 'recentLargeInflows', x: 0, y: 36, w: 4, h: 8, minW: 4, minH: 6 },
+        { i: 'topRevenueContributors', x: 4, y: 36, w: 8, h: 8, minW: 6, minH: 6 },
     ],
     recruitment: [
         { i: 'recruitmentSummaryCards', x: 0, y: 0, w: 12, h: 3, minW: 6, minH: 3 },
@@ -113,7 +112,7 @@ function getInitialConfig(tab: ModuleOption): WidgetConfig {
 
 function getInitialLayout(tab: ModuleOption): Layout {
     try {
-        const stored = localStorage.getItem(`widgetLayout_v34_${tab}`);
+        const stored = localStorage.getItem(`widgetLayout_v40_${tab}`);
         if (stored) {
             const parsed = JSON.parse(stored) as LayoutItem[];
             const defaultLayout = DEFAULT_LAYOUTS[tab] || [];
@@ -148,12 +147,12 @@ export function useWidgetConfig(tab: ModuleOption) {
 
     const updateLayout = useCallback((newLayout: Layout) => {
         setLayout(newLayout);
-        try { localStorage.setItem(`widgetLayout_v34_${tab}`, JSON.stringify(newLayout)); } catch (_) { /* ignore */ }
+        try { localStorage.setItem(`widgetLayout_v40_${tab}`, JSON.stringify(newLayout)); } catch (_) { /* ignore */ }
     }, [tab]);
 
     const resetLayout = useCallback(() => {
         try {
-            ['v1', 'v2', 'v3', 'v4', 'v5', 'v6', 'v7', 'v8', 'v9', 'v10', 'v11', 'v12', 'v13', 'v14', 'v15', 'v16', 'v17', 'v18', 'v19', 'v20', 'v21', 'v22', 'v23', 'v24', 'v25', 'v26', 'v27', 'v28', 'v29', 'v30', 'v31', 'v32', 'v33', 'v34'].forEach(v => {
+            ['v1', 'v2', 'v3', 'v4', 'v5', 'v6', 'v7', 'v8', 'v9', 'v10', 'v11', 'v12', 'v13', 'v14', 'v15', 'v16', 'v17', 'v18', 'v19', 'v20', 'v21', 'v22', 'v23', 'v24', 'v25', 'v26', 'v27', 'v28', 'v29', 'v30', 'v31', 'v32', 'v33', 'v34', 'v35', 'v36', 'v37', 'v38', 'v39', 'v40'].forEach(v => {
                 localStorage.removeItem(`widgetLayout_${v}_${tab}`);
             });
             localStorage.removeItem(`widgetLayout_${tab}`);

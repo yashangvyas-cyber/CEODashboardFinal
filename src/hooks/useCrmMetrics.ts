@@ -320,17 +320,13 @@ export function useCrmMetrics(dateRange: DateRangeOption, businessUnit: Business
                             if (label === 'Competitor') match = dynamicPalette[0];
                             else if (label === 'Delayed') match = dynamicPalette[1];
                             else if (label === 'Budget') match = dynamicPalette[2];
-
-                            // If it's a dynamic custom reason, assign from palette based on index
-                            if (!match) {
-                                match = dynamicPalette[index % dynamicPalette.length];
-                            }
+                            else match = dynamicPalette[(index + 3) % dynamicPalette.length];
 
                             return {
                                 label,
-                                value: lostCount > 0 ? Math.round(((value as number) / lostCount) * 100) : 0,
-                                color: match.color,
-                                hexColor: match.hexColor
+                                value: Math.round(((value as number) / lostCount) * 100),
+                                hexColor: match.hexColor,
+                                color: match.color
                             };
                         }),
                     sourceMix: { new: newSourcePct, existing: existingSourcePct },

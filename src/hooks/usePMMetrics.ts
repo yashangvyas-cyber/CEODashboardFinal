@@ -33,6 +33,8 @@ interface ContractItem {
     type: string;
     manager: string;
     status: 'Hired' | 'Expired' | 'Hired & Expired';
+    startDate?: string;
+    endDate?: string;
 }
 
 interface HireVsExpire {
@@ -166,10 +168,9 @@ export function usePMMetrics(dateRange: DateRangeOption, businessUnit: BusinessU
 
                     return d >= startDate && d <= endDate;
                 });
-                console.log("PM METRICS DATA:", { allProjects: allProjects?.length, startDate, endDate, filteredProjects: projects.length, firstProjectDate: allProjects?.[0]?.created_at });
 
                 // 1. Summary
-                const activeProjects = projects.filter(p => ['Active', 'At Risk'].includes(p.status)).length;
+                const activeProjects = projects.filter(p => ['Active', 'Needs Attention'].includes(p.status)).length;
                 const projectsClosed = projects.filter(p => p.status === 'Completed').length;
 
                 // Calculate Resource Utilization (Spent / Budget overall)
@@ -178,7 +179,7 @@ export function usePMMetrics(dateRange: DateRangeOption, businessUnit: BusinessU
                 const resourceUtilization = totalBudget > 0 ? Math.round((totalSpent / totalBudget) * 100) : 0;
 
                 // 2. Project Portfolio (Grouping by type and status)
-                const statuses = ['Active', 'Paused', 'Completed', 'At Risk'];
+                const statuses = ['Active', 'Paused', 'Completed', 'Needs Attention'];
                 const types = ['Fixed Cost', 'Hourly', 'Hirebase'];
                 const portfolioData = types.map(type => {
                     const typeProjs = projects.filter(p => p.type === type);
@@ -300,10 +301,10 @@ export function usePMMetrics(dateRange: DateRangeOption, businessUnit: BusinessU
                     // Mocks for highly specific UI components where schema doesn't match
                     // We seed them with projects.length so they visibly fluctuate when the date range changes!
                     contractAdjustments: [
-                        { resourceOrProject: 'A. Patel (Assoc. SW Eng)', type: 'Hirebase', manager: 'Admin', status: 'Hired' },
-                        { resourceOrProject: 'A. Suthar (Accountant)', type: 'Hirebase', manager: 'Admin', status: 'Expired' },
-                        { resourceOrProject: 'D. Mehta (QA)', type: 'Hirebase', manager: 'BD', status: 'Hired' },
-                        { resourceOrProject: 'MI Hire (Hire Base)', type: 'Hirebase', manager: 'C. Patel', status: 'Hired & Expired' as any }
+                        { resourceOrProject: 'A. Patel (Assoc. SW Eng)', type: 'Hirebase', manager: 'Admin', status: 'Hired', startDate: '01 Feb 2024', endDate: 'Present' },
+                        { resourceOrProject: 'A. Suthar (Accountant)', type: 'Hirebase', manager: 'Admin', status: 'Expired', startDate: '15 Jan 2023', endDate: '31 Jan 2024' },
+                        { resourceOrProject: 'D. Mehta (QA)', type: 'Hirebase', manager: 'BD', status: 'Hired', startDate: '10 Feb 2024', endDate: 'Present' },
+                        { resourceOrProject: 'MI Hire (Hire Base)', type: 'Hirebase', manager: 'C. Patel', status: 'Hired & Expired' as any, startDate: '01 Jan 2024', endDate: '15 Feb 2024' }
                     ].slice(0, Math.max(1, (projects.length % 4) + 1)),
                     hireVsExpire: { newlyHired: projects.length + 2, expired: Math.floor(projects.length / 3) + 1, netChange: projects.length - Math.floor(projects.length / 3) + 1 },
                     compliance: [

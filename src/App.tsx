@@ -95,11 +95,11 @@ function App() {
         />
 
         {/* ── SECTION 4: Applied report content with in-section tab switcher ── */}
-        <div className="flex-1 bg-slate-50">
+        <div className="flex-1 bg-white">
           {isApplied ? (
             <div className="flex flex-col h-full">
               {/* Tab Switcher & Customize Button Row */}
-              <div className="flex items-center justify-between px-6 pt-5 pb-3 border-b border-slate-200 bg-white">
+              <div className="flex items-center justify-between px-6 pt-5 pb-3 bg-white">
                 <div className="flex items-center gap-2">
                   {ALL_MODULES.filter(m => appliedTabs.includes(m.id)).map(mod => (
                     <button

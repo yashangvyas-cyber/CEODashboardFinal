@@ -81,7 +81,7 @@ const PMHealthBreakdown: React.FC<Props> = ({ data }) => {
                 />
             </div>
 
-            <div className="mt-4 pt-4 border-t border-slate-50 text-[10px] text-slate-400 bg-slate-50/50 p-2 rounded-lg italic leading-tight">
+            <div className="mt-4 pt-4 border-t border-slate-100 text-[10px] text-slate-400 bg-slate-50 p-2 rounded italic leading-tight">
                 <strong>Logic:</strong> Fixed Cost burn = <em>Spent ÷ (Estimated + Top-Up hours)</em>. T&amp;M billed = <em>Total Billed ÷ Total Purchased hours</em>. Hirebase = <em>% of contracts flagged Billable</em>.
             </div>
         </div>

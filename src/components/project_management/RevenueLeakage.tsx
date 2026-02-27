@@ -112,7 +112,7 @@ const RevenueLeakage: React.FC<Props> = ({ data = [] }) => {
                 <div>
                     <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase flex items-center gap-1.5">
                         <AlertTriangle className="w-4 h-4 text-rose-500" />
-                        Revenue Leakage Risk
+                        Revenue Leakage Analysis
                         <InfoTooltip content="Identifies projects where actual hours exceed either the fixed-cost purchased budget or the billed hours on hourly projects. Fixed Cost shown in red, Hourly in amber." />
                     </h3>
                     <p className="text-xs text-slate-400 mt-1">Unbilled / Over-Budget Projects</p>

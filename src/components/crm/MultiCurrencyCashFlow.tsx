@@ -24,24 +24,24 @@ const MultiCurrencyCashFlow: React.FC<Props> = ({ data }) => {
     const reserves = data || defaultData;
 
     return (
-        <div className="premium-card p-6 flex flex-col h-full hover-scale relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-50/50 rounded-bl-full -z-10 blur-xl"></div>
+        <div className="premium-card p-4 flex flex-col h-full hover-scale relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-50/30 rounded-bl-full -z-10 blur-xl"></div>
 
-            <div className="flex items-center gap-2 mb-5 pb-3 border-b border-slate-100/80 shrink-0">
-                <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase">Multi-Currency Cash Flow</h3>
+            <div className="flex items-center gap-2 mb-3 pb-2 border-b border-slate-100/80 shrink-0 relative z-10">
+                <h3 className="text-[9px] font-black text-slate-400 tracking-widest uppercase">Multi-Currency Cash Flow</h3>
                 <InfoTooltip content="Consolidated cash inflows grouped by foreign currency reserves." />
             </div>
 
-            <div className="flex-1 grid grid-cols-2 gap-4">
+            <div className="flex-1 grid grid-cols-2 gap-2 relative z-10">
                 {reserves.map((reserve, i) => (
-                    <div key={i} className="flex flex-col justify-center p-3 rounded-2xl border border-slate-100 bg-white shadow-sm shadow-slate-200/20">
-                        <div className="flex items-center gap-2 mb-1">
-                            <div className="w-5 h-5 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center text-[10px] font-black border border-indigo-100 shadow-sm shadow-indigo-600/10">
+                    <div key={i} className="flex flex-col justify-center p-2 rounded-xl border border-slate-100 bg-white/50 shadow-sm backdrop-blur-sm">
+                        <div className="flex items-center gap-1.5 mb-0.5">
+                            <div className="w-4 h-4 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center text-[9px] font-black border border-indigo-100 shadow-sm">
                                 {reserve.symbol}
                             </div>
-                            <span className="text-[10px] font-bold text-slate-500 tracking-wider w-8">{reserve.currency}</span>
+                            <span className="text-[8px] font-bold text-slate-500 tracking-wider truncate">{reserve.currency}</span>
                         </div>
-                        <span className="text-lg font-black text-slate-800 leading-none tracking-tight ml-7">
+                        <span className="text-sm font-black text-slate-800 leading-none tracking-tight ml-5">
                             {reserve.amountFormatted}
                         </span>
                     </div>

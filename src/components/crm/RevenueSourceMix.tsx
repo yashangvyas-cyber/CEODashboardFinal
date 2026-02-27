@@ -18,35 +18,35 @@ const RevenueSourceMix: React.FC<Props> = ({ data }) => {
             </div>
 
             <div className="flex-1 flex flex-col justify-center relative z-10">
-                <div className="flex h-12 w-full rounded-2xl overflow-hidden shadow-sm border border-slate-100">
+                <div className="flex h-6 w-full rounded-lg overflow-hidden shadow-sm border border-slate-100">
                     <div
-                        className="h-full bg-indigo-500 transition-all duration-1000 ease-out flex items-center justify-center text-white text-[10px] font-black"
+                        className="h-full bg-indigo-500 transition-all duration-1000 ease-out flex items-center justify-center text-white text-[8px] font-black"
                         style={{ width: `${sourceMix.new}%` }}
                     >
                         {sourceMix.new}%
                     </div>
                     <div
-                        className="h-full bg-blue-400 transition-all duration-1000 ease-out flex items-center justify-center text-white text-[10px] font-black"
+                        className="h-full bg-blue-400 transition-all duration-1000 ease-out flex items-center justify-center text-white text-[8px] font-black"
                         style={{ width: `${sourceMix.existing}%` }}
                     >
                         {sourceMix.existing}%
                     </div>
                 </div>
 
-                <div className="flex justify-between mt-6">
+                <div className="grid grid-cols-2 gap-2 mt-3">
                     <div className="flex flex-col">
-                        <div className="flex items-center space-x-2 mb-1">
-                            <div className="w-2.5 h-2.5 rounded-full bg-indigo-500 shadow-sm shadow-indigo-500/20" />
-                            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">New Client Revenue</span>
+                        <div className="flex items-center space-x-1 mb-0.5">
+                            <div className="w-1.5 rounded-full bg-indigo-500 h-1.5" />
+                            <span className="text-[8px] font-bold text-slate-400 uppercase tracking-wider truncate">New Client</span>
                         </div>
-                        <span className="text-xl font-black text-slate-900 ml-4.5">₹1.8Cr</span>
+                        <span className="text-base font-black text-slate-800 ml-2.5 opacity-90">₹1.8Cr</span>
                     </div>
                     <div className="flex flex-col items-end text-right">
-                        <div className="flex items-center space-x-2 mb-1">
-                            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Existing Client Revenue</span>
-                            <div className="w-2.5 h-2.5 rounded-full bg-blue-400 shadow-sm shadow-blue-400/20" />
+                        <div className="flex items-center space-x-1 mb-0.5">
+                            <span className="text-[8px] font-bold text-slate-400 uppercase tracking-wider truncate">Existing Client</span>
+                            <div className="w-1.5 rounded-full bg-blue-400 h-1.5" />
                         </div>
-                        <span className="text-xl font-black text-slate-900 mr-4.5">₹2.4Cr</span>
+                        <span className="text-base font-black text-slate-800 mr-2.5 opacity-90">₹2.4Cr</span>
                     </div>
                 </div>
             </div>

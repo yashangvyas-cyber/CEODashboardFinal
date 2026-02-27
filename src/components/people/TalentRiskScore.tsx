@@ -58,7 +58,7 @@ const EarlyAttrition: React.FC<Props> = ({ data }) => {
 
                     {/* Score Context */}
                     <div className="flex flex-col justify-center gap-2 pl-2">
-                        <div className="text-sm font-black text-slate-800 leading-tight">High Risk</div>
+                        <div className="text-sm font-black text-slate-800 leading-tight">Immediate Review</div>
                         <div className="flex flex-col gap-1">
                             <div className="text-[10px] font-bold text-amber-600 uppercase tracking-widest bg-amber-50 px-2 py-1 rounded border border-amber-100 w-fit">
                                 &lt;90 Days Exit Trend

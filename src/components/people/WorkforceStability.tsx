@@ -35,7 +35,7 @@ const WorkforceStability: React.FC<Props> = () => {
       <div className="p-6 pb-2 flex justify-between items-start">
         <div>
           <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase">Workforce Stability</h3>
-          <p className="text-xs text-slate-400 mt-1">Attrition Analysis & Risk</p>
+          <p className="text-xs text-slate-400 mt-1">Attrition Analysis & Stability</p>
         </div>
         <div className="flex items-center space-x-1.5 bg-rose-50 px-2.5 py-1.5 rounded-lg border border-rose-100">
           <UserMinus className="w-4 h-4 text-rose-500" />

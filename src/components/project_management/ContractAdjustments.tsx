@@ -21,7 +21,7 @@ const ContractAdjustments: React.FC<Props> = ({ data = [], metricData }) => {
                         </h3>
                         <InfoTooltip content="Historical view of resource contract changes within the selected date range, showing who was hired, whose contracts expired, or both." />
                     </div>
-                    <p className="text-[10px] text-slate-400 mt-1">Hirebase & Hourly Headcount Changes</p>
+                    <p className="text-[10px] text-slate-400 mt-1">Hirebase Headcount Changes</p>
                 </div>
                 <span className="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full border border-slate-200">
                     {data.length} Resources
@@ -47,7 +47,7 @@ const ContractAdjustments: React.FC<Props> = ({ data = [], metricData }) => {
             )}
 
             <div className="flex-1 flex flex-col justify-start min-h-0 space-y-2 pb-1 overflow-y-auto custom-scrollbar">
-                {data.map((item, idx) => {
+                {data.filter(item => item.type !== 'Hourly').map((item, idx) => {
                     let statusColor = 'text-slate-500 bg-slate-100';
                     let label = item.status;
                     if (item.status === 'Hired') statusColor = 'text-emerald-700 bg-emerald-100 border-emerald-200';
@@ -59,6 +59,11 @@ const ContractAdjustments: React.FC<Props> = ({ data = [], metricData }) => {
                             <div className="flex flex-col">
                                 <span className="text-sm font-bold text-slate-800 leading-tight">{item.resourceOrProject}</span>
                                 <span className="text-[10px] text-slate-500 font-medium mt-0.5">{item.type} | {item.manager}</span>
+                                {item.startDate && (
+                                    <span className="text-[9px] font-black text-indigo-500 uppercase tracking-tighter mt-1 bg-indigo-50 px-2 py-0.5 rounded w-fit border border-indigo-100/50">
+                                        Billable: {item.startDate} — {item.endDate || 'Present'}
+                                    </span>
+                                )}
                             </div>
                             <div className={`px-2 py-1 rounded-full text-[9px] font-black uppercase tracking-wider border ${statusColor}`}>
                                 {label}
@@ -69,7 +74,7 @@ const ContractAdjustments: React.FC<Props> = ({ data = [], metricData }) => {
             </div>
 
             <div className="mt-3 pt-3 border-t border-slate-100 text-[10px] text-slate-400 bg-slate-50 p-2 rounded italic">
-                <strong>Logic:</strong> Displays exactly who was added or removed from Hirebase and Hourly billing in the selected period.
+                <strong>Logic:</strong> Displays exactly who was added or removed from Hirebase billing in the selected period.
             </div>
         </div>
     );

@@ -59,7 +59,7 @@ const LeaveAndDeptOverview: React.FC<Props> = ({ data }) => {
                             <div className="flex justify-between items-center mb-2">
                                 <span className="text-sm font-bold text-slate-700">{dept.name}</span>
                                 <span className={`text-xs font-black uppercase tracking-widest ${dept.riskPercent > 50 ? 'text-rose-500' : 'text-amber-500'}`}>
-                                    {dept.riskPercent}% ON LEAVE
+                                    {dept.riskPercent}% COVERAGE NEEDED
                                 </span>
                             </div>
                             <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden shadow-inner">

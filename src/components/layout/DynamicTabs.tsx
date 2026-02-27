@@ -35,7 +35,6 @@ import HirebaseByDepartment from '../project_management/HirebaseByDepartment';
 // CRM Components
 import CRMSummaryCards from '../crm/CRMSummaryCards';
 import CRMFunnelSwitcher from '../crm/CRMFunnelSwitcher';
-import SalesMetrics from '../crm/SalesMetrics';
 import CollectionGoalCard from '../crm/CollectionGoalCard';
 import CRMPipelineSummaries from '../crm/CRMPipelineSummaries';
 import TopRevenueContributors from '../crm/TopRevenueContributors';
@@ -113,7 +112,6 @@ export const DynamicTabs: React.FC<DynamicTabsProps> = ({ activeTab, dateRange, 
                 case 'revenueTrend': return <RevenueTrend data={crmData.revenueTrend} />;
                 case 'avgDaysToPay': return <AvgDaysToPay />;
                 case 'crmFunnelSwitcher': return <CRMFunnelSwitcher data={crmData.pipelineFunnel} />;
-                case 'salesMetrics': return <SalesMetrics dateRange={dateRange} data={crmData.salesMetrics} />;
                 case 'crmPipelineSummaries': return <CRMPipelineSummaries data={crmData.pipelineSummaries} />;
                 case 'collectionGoalCard': return <CollectionGoalCard dateRange={dateRange} data={crmData.collectionGoal} />;
                 case 'revenueSourceMix': return <RevenueSourceMix data={crmData.sourceMix} />;

@@ -34,15 +34,9 @@ Always visible at the top of the dashboard. Aggregates data based on the selecte
 ### Collection
 *   **Data Source / System:** Finance
 *   **Formula & Logic:** 
-    *   **Value:** `(Total Invoices Paid / Total Invoices Sent) * 100`
+    *   **Value:** `(Total Invoices Paid Revenue / Total Invoices Sent Revenue) * 100`
     *   *(Segmented bar represents health tiers)*
 *   **Purpose:** Cash flow indicator; highlights if revenue is stuck in receivables.
-
-### Billable %
-*   **Data Source / System:** PM Timesheets
-*   **Formula & Logic:** 
-    *   **Value:** `(Total Billable Hours Logged / Total Hours Logged) * 100`
-*   **Purpose:** Core profitability metric for a service business.
 
 ### Open Roles
 *   **Data Source / System:** ATS / Recruitment
