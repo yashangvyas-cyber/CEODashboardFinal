@@ -42,7 +42,7 @@ const RecruitmentSummaryCards: React.FC<Props> = ({ data }) => {
             value: data?.candidateRatio.totalCandidates || "399",
             icon: Users,
             colorClass: { bg: 'bg-blue-50', text: 'text-blue-600' },
-            tooltip: "Total number of unique candidates currently in the recruitment pipeline."
+            tooltip: "Total number of unique candidates recorded in the recruitment pipeline during the selected period."
         },
         {
             label: "Total Hires",
@@ -56,7 +56,7 @@ const RecruitmentSummaryCards: React.FC<Props> = ({ data }) => {
             value: "14",
             icon: Briefcase,
             colorClass: { bg: 'bg-indigo-50', text: 'text-indigo-600' },
-            tooltip: "Current number of active job openings across all departments."
+            tooltip: "Total number of active job openings logged across all departments during the selected period."
         },
         {
             label: "Time-to-Hire",

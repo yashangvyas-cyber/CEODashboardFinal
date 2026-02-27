@@ -138,8 +138,9 @@ export function useRecruitmentMetrics(dateRange: DateRangeOption, businessUnit: 
                 const offerAcceptance = {
                     totalOffers: offered,
                     chartData: [
-                        { name: 'Accepted', value: acceptedOffers, color: '#10b981' },
-                        { name: 'Declined/Pending', value: declinedOffers + pendingOffers, color: '#f43f5e' }
+                        { name: 'Accepted', value: acceptedOffers, color: '#10b981' }, // emerald-500
+                        { name: 'Pending', value: pendingOffers, color: '#f59e0b' },   // amber-500
+                        { name: 'Declined', value: declinedOffers, color: '#f43f5e' }  // rose-500
                     ]
                 };
 

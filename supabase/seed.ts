@@ -106,6 +106,7 @@ async function seedProjects(count = 50) {
         const budget = faker.number.int({ min: 100, max: 2000 });
         const spent = faker.number.int({ min: 0, max: budget * 1.2 }); // allow some over-budget
         const type = faker.helpers.arrayElement(['Fixed Cost', 'Hourly', 'Hirebase']);
+        const createdAt = faker.date.past({ years: 2 }).toISOString();
 
         return {
             name: `${faker.company.catchPhraseAdjective()} ${faker.hacker.noun()}`,
@@ -115,6 +116,7 @@ async function seedProjects(count = 50) {
             spent_hours: spent,
             billed_hours: type === 'Hourly' ? Math.floor(spent * faker.number.float({ min: 0.6, max: 1.0 })) : 0,
             business_unit: faker.helpers.arrayElement(BUSINESS_UNITS),
+            created_at: createdAt
         };
     });
 
@@ -147,6 +149,7 @@ async function seedJobRequisitions(count = 50) {
             priority: faker.helpers.arrayElement(['Low', 'Medium', 'High', 'Critical']),
             posted_date: postedDate.toISOString(),
             closed_date: isClosed ? faker.date.between({ from: postedDate, to: new Date() }).toISOString() : null,
+            created_at: postedDate.toISOString()
         };
     });
 
@@ -163,7 +166,10 @@ async function seedCandidates(reqRecords: any[], count = 300) {
         const req = faker.helpers.arrayElement(reqRecords);
         const stage = faker.helpers.arrayElement(['Applied', 'Screening', 'Interview', 'Offered', 'Hired', 'Rejected']);
         const offerStatus = stage === 'Offered' || stage === 'Hired' ? (stage === 'Hired' ? 'Accepted' : faker.helpers.arrayElement(['Pending', 'Declined'])) : null;
+
+        // Use purely random past dates to prevent faker from>to intersection crashes
         const offerDate = offerStatus ? faker.date.past({ years: 1 }) : null;
+        const createdAt = faker.date.past({ years: 1 });
 
         return {
             req_id: req.id,
@@ -173,6 +179,7 @@ async function seedCandidates(reqRecords: any[], count = 300) {
             offer_date: offerDate ? offerDate.toISOString() : null,
             join_date: stage === 'Hired' && offerDate ? faker.date.between({ from: offerDate, to: new Date() }).toISOString() : null,
             source: faker.helpers.arrayElement(['LinkedIn', 'Referral', 'Website', 'Agency']),
+            created_at: createdAt.toISOString()
         };
     });
 
