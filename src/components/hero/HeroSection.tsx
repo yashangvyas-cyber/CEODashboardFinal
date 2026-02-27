@@ -123,7 +123,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ selectedBU }) => {
                         <div className="flex justify-between items-center mb-0.5">
                             <div className="flex items-center">
                                 <span className="text-[10px] font-bold text-slate-500 uppercase">Open Roles</span>
-                                <InfoTooltip content="Number of active critical job openings that are yet to be filled." />
+                                <InfoTooltip content="Number of active job openings that are yet to be filled." />
                             </div>
                             <div className="flex justify-end mb-0.5 items-center">
                                 {employeeLoading ? (
