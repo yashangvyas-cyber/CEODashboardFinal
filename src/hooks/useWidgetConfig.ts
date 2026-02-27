@@ -113,7 +113,7 @@ function getInitialConfig(tab: ModuleOption): WidgetConfig {
 
 function getInitialLayout(tab: ModuleOption): Layout {
     try {
-        const stored = localStorage.getItem(`widgetLayout_v28_${tab}`);
+        const stored = localStorage.getItem(`widgetLayout_v29_${tab}`);
         if (stored) {
             const parsed = JSON.parse(stored) as LayoutItem[];
             const defaultLayout = DEFAULT_LAYOUTS[tab] || [];
@@ -143,17 +143,17 @@ export function useWidgetConfig(tab: ModuleOption) {
     }, [tab]);
 
     const isVisible = useCallback((widgetId: string): boolean => {
-        return config[widgetId] !== false;
+        return !!config[widgetId];
     }, [config]);
 
     const updateLayout = useCallback((newLayout: Layout) => {
         setLayout(newLayout);
-        try { localStorage.setItem(`widgetLayout_v28_${tab}`, JSON.stringify(newLayout)); } catch (_) { /* ignore */ }
+        try { localStorage.setItem(`widgetLayout_v29_${tab}`, JSON.stringify(newLayout)); } catch (_) { /* ignore */ }
     }, [tab]);
 
     const resetLayout = useCallback(() => {
         try {
-            ['v1', 'v2', 'v3', 'v4', 'v5', 'v6', 'v7', 'v8', 'v9', 'v10', 'v11', 'v12', 'v13', 'v14', 'v15', 'v16', 'v17', 'v18', 'v19', 'v20', 'v21', 'v22', 'v23', 'v24', 'v25', 'v26', 'v27', 'v28'].forEach(v => {
+            ['v1', 'v2', 'v3', 'v4', 'v5', 'v6', 'v7', 'v8', 'v9', 'v10', 'v11', 'v12', 'v13', 'v14', 'v15', 'v16', 'v17', 'v18', 'v19', 'v20', 'v21', 'v22', 'v23', 'v24', 'v25', 'v26', 'v27', 'v28', 'v29'].forEach(v => {
                 localStorage.removeItem(`widgetLayout_${v}_${tab}`);
             });
             localStorage.removeItem(`widgetLayout_${tab}`);
