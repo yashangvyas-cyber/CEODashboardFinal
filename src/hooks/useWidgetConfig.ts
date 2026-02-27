@@ -49,7 +49,7 @@ export const WIDGET_REGISTRY: Record<ModuleOption, WidgetDefinition[]> = {
         { id: 'revenueLeakage', label: 'Revenue Leakage Analysis', description: 'Projects exceeding budget targets, flagged by leakage amount.' },
         { id: 'topEffortConsumers', label: 'Top Effort Consumers', description: 'Projects consuming the most team hours this period.' },
         { id: 'contractAdjustments', label: 'Contract Adjustments', description: 'Historical view of Hired/Expired resource contracts.' },
-        { id: 'timesheetCompliance', label: 'Timesheet Compliance', description: 'Departments with unapproved or missing timesheet logs.' },
+
         { id: 'topSkillsDemand', label: 'Top Skills Demand', description: 'Ranked skills most requested in active Hirebase contracts (from the Hired For column).' },
         { id: 'hirebaseByDepartment', label: 'Hirebase by Department', description: 'Resource headcount across departments split by Billable vs Non-Billable status.' },
     ],
@@ -59,6 +59,7 @@ const DEFAULT_LAYOUTS: Record<ModuleOption, LayoutItem[]> = {
     people: [
         { i: 'peopleSummaryCards', x: 0, y: 0, w: 12, h: 3, minW: 6, minH: 3 },
         { i: 'talentRiskScore', x: 0, y: 4, w: 3, h: 7, minW: 3, minH: 5 },
+        { i: 'attritionAnalysis', x: 3, y: 4, w: 9, h: 9, minW: 6, minH: 8 },
         { i: 'exitByTypeAndReason', x: 0, y: 13, w: 4, h: 11, minW: 3, minH: 8 },
         { i: 'skillsGap', x: 5, y: 13, w: 7, h: 12, minW: 4, minH: 8 },
         { i: 'managerWatchlist', x: 0, y: 20, w: 4, h: 10, minW: 3, minH: 7 },
@@ -89,9 +90,8 @@ const DEFAULT_LAYOUTS: Record<ModuleOption, LayoutItem[]> = {
         { i: 'projectPortfolioStatus', x: 0, y: 4, w: 8, h: 14, minW: 6, minH: 8 },
         { i: 'pmHealthBreakdown', x: 0, y: 18, w: 4, h: 16, minW: 3, minH: 10 },
         { i: 'revenueLeakage', x: 4, y: 18, w: 8, h: 16, minW: 4, minH: 10 },
-        { i: 'topEffortConsumers', x: 0, y: 34, w: 4, h: 13, minW: 3, minH: 8 },
-        { i: 'contractAdjustments', x: 4, y: 34, w: 4, h: 13, minW: 3, minH: 8 },
-        { i: 'timesheetCompliance', x: 8, y: 34, w: 4, h: 13, minW: 3, minH: 8 },
+        { i: 'topEffortConsumers', x: 0, y: 34, w: 6, h: 13, minW: 3, minH: 8 },
+        { i: 'contractAdjustments', x: 6, y: 34, w: 6, h: 13, minW: 3, minH: 8 },
         { i: 'topSkillsDemand', x: 0, y: 47, w: 6, h: 13, minW: 4, minH: 8 },
         { i: 'hirebaseByDepartment', x: 6, y: 47, w: 6, h: 13, minW: 4, minH: 8 },
     ],
@@ -112,7 +112,7 @@ function getInitialConfig(tab: ModuleOption): WidgetConfig {
 
 function getInitialLayout(tab: ModuleOption): Layout {
     try {
-        const stored = localStorage.getItem(`widgetLayout_v40_${tab}`);
+        const stored = localStorage.getItem(`widgetLayout_v43_${tab}`);
         if (stored) {
             const parsed = JSON.parse(stored) as LayoutItem[];
             const defaultLayout = DEFAULT_LAYOUTS[tab] || [];
@@ -147,12 +147,12 @@ export function useWidgetConfig(tab: ModuleOption) {
 
     const updateLayout = useCallback((newLayout: Layout) => {
         setLayout(newLayout);
-        try { localStorage.setItem(`widgetLayout_v40_${tab}`, JSON.stringify(newLayout)); } catch (_) { /* ignore */ }
+        try { localStorage.setItem(`widgetLayout_v43_${tab}`, JSON.stringify(newLayout)); } catch (_) { /* ignore */ }
     }, [tab]);
 
     const resetLayout = useCallback(() => {
         try {
-            ['v1', 'v2', 'v3', 'v4', 'v5', 'v6', 'v7', 'v8', 'v9', 'v10', 'v11', 'v12', 'v13', 'v14', 'v15', 'v16', 'v17', 'v18', 'v19', 'v20', 'v21', 'v22', 'v23', 'v24', 'v25', 'v26', 'v27', 'v28', 'v29', 'v30', 'v31', 'v32', 'v33', 'v34', 'v35', 'v36', 'v37', 'v38', 'v39', 'v40'].forEach(v => {
+            ['v1', 'v2', 'v3', 'v4', 'v5', 'v6', 'v7', 'v8', 'v9', 'v10', 'v11', 'v12', 'v13', 'v14', 'v15', 'v16', 'v17', 'v18', 'v19', 'v20', 'v21', 'v22', 'v23', 'v24', 'v25', 'v26', 'v27', 'v28', 'v29', 'v30', 'v31', 'v32', 'v33', 'v34', 'v35', 'v36', 'v37', 'v38', 'v39', 'v40', 'v41', 'v42', 'v43'].forEach(v => {
                 localStorage.removeItem(`widgetLayout_${v}_${tab}`);
             });
             localStorage.removeItem(`widgetLayout_${tab}`);

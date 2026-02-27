@@ -51,11 +51,11 @@ const AttritionAnalysis: React.FC<Props> = ({ data }) => {
     };
 
     return (
-        <div className="flex flex-col border border-slate-200 rounded-[10px] p-4 bg-white shadow-sm hover:shadow transition-shadow w-full">
-            <div className="flex justify-between items-start mb-4 pb-4 border-b border-slate-100/80 w-full shrink-0 shrink-0 w-full z-10 relative">
+        <div className="bg-white rounded-[10px] border border-slate-200 p-4 shadow-sm h-full flex flex-col hover:shadow transition-shadow w-full">
+            <div className="flex justify-between items-center mb-4 pb-3 border-b border-slate-100/80 w-full shrink-0 relative z-10">
                 <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase">Exit Trend
                     <InfoTooltip content="Monthly trend of employee exits, categorized by regrettable and non-regrettable attrition." /></h3>
-                <div className="absolute right-0 top-0 w-full">
+                <div className="absolute right-0 top-0">
                     <Legend
                         content={renderCustomLegend}
                         wrapperStyle={{ position: 'relative', top: 0, right: 0, width: '100%' }}
@@ -63,7 +63,7 @@ const AttritionAnalysis: React.FC<Props> = ({ data }) => {
                 </div>
             </div>
 
-            <div className="h-[260px] relative z-0 mt-4 min-w-0">
+            <div className="flex-1 relative z-0 mt-2 min-h-0 w-full min-w-0">
                 <ResponsiveContainer width="100%" height="100%" minWidth={0} debounce={50}>
                     <BarChart
                         data={chartData}

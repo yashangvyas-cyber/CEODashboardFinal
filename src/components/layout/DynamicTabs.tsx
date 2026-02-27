@@ -27,7 +27,6 @@ import PMHealthBreakdown from '../project_management/PMHealthBreakdown';
 import ContractAdjustments from '../project_management/ContractAdjustments';
 import RevenueLeakage from '../project_management/RevenueLeakage';
 import TopEffortConsumers from '../project_management/TopEffortConsumers';
-import TimesheetCompliance from '../project_management/TimesheetCompliance';
 import ProjectPortfolioStatus from '../project_management/ProjectPortfolioStatus';
 import TopSkillsDemand from '../project_management/TopSkillsDemand';
 import HirebaseByDepartment from '../project_management/HirebaseByDepartment';
@@ -150,7 +149,6 @@ export const DynamicTabs: React.FC<DynamicTabsProps> = ({ activeTab, dateRange, 
                 case 'revenueLeakage': return <RevenueLeakage dateRange={dateRange} data={pmData.leakage} />;
                 case 'topEffortConsumers': return <TopEffortConsumers dateRange={dateRange} data={pmData.effortConsumers} />;
                 case 'contractAdjustments': return <ContractAdjustments dateRange={dateRange} data={pmData.contractAdjustments} metricData={pmData.hireVsExpire} />;
-                case 'timesheetCompliance': return <TimesheetCompliance dateRange={dateRange} data={pmData.compliance} />;
                 case 'topSkillsDemand': return <TopSkillsDemand data={pmData.topSkillsDemand} />;
                 case 'hirebaseByDepartment': return <HirebaseByDepartment data={pmData.hirebaseByDept} />;
             }
