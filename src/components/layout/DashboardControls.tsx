@@ -109,7 +109,11 @@ export const DashboardControls: React.FC<DashboardControlsProps> = ({
                             {PRESET_DATES.map(opt => (
                                 <button
                                     key={opt.value}
-                                    onClick={() => setPendingDate(opt.value)}
+                                    onClick={() => {
+                                        setPendingDate(opt.value);
+                                        onChangeDate(opt.value); // Confirm selection upstream immediately
+                                        setIsDateOpen(false); // Close popover
+                                    }}
                                     className={`px-3 py-1.5 rounded text-[11px] font-bold transition-all border outline-none ${pendingDate === opt.value
                                         ? 'bg-[#4f46e5] text-white border-[#4f46e5]' // Indigo-600 matching screenshot
                                         : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
