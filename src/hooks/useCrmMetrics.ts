@@ -130,7 +130,14 @@ export function useCrmMetrics(dateRange: DateRangeOption, businessUnit: Business
                         lostCount++;
                         // Fake lost reasons based on title/random for visualization
                         const r = Math.random();
-                        const reason = r > 0.6 ? 'Competitor' : r > 0.3 ? 'Budget' : r > 0.1 ? 'Delayed' : 'Other';
+                        const allReasons = [
+                            'Competitor', 'Budget', 'Delayed', 'Other',
+                            'Lack of Features', 'Poor Fit', 'Timing', 'Executive Change',
+                            'Lost Momentum', 'Price Too High', 'Internal Politics', 'No Decision',
+                            'Gone Dark', 'Merger/Acquisition', 'Bad Demo', 'Security Concerns',
+                            'Implementation Timeline', 'Compliance Issues', 'Poor Support', 'Legal Hold'
+                        ];
+                        const reason = allReasons[Math.floor(r * allReasons.length)];
                         lostReasons[reason] = (lostReasons[reason] || 0) + 1;
                     } else if (deal.stage !== 'Closed Won' && deal.stage !== 'Closed Lost') {
                         openCount++;
