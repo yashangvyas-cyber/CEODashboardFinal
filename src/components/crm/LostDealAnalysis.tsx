@@ -64,15 +64,19 @@ const LostDealAnalysis: React.FC<Props> = ({ data }) => {
                     </PieChart>
                 </div>
 
-                {/* 2x2 Legend for Top Reasons */}
-                <div className="w-full grid grid-cols-2 gap-3 mt-4">
-                    {chartData.map((item, idx) => (
-                        <div key={idx} className="flex items-center text-[10px] bg-slate-50/50 p-2 rounded-xl border border-slate-100 transition-colors">
-                            <div className="w-2 h-2 rounded-full mr-2 shrink-0" style={{ backgroundColor: item.hexColor }}></div>
-                            <span className="text-slate-500 font-bold flex-1 truncate uppercase tracking-wider pr-1" title={item.label}>{item.label}</span>
-                            <span className="font-black text-slate-900 shrink-0">{item.value}%</span>
+                {/* Dynamically Sized Legend */}
+                <div className="w-full mt-4 flex-1 min-h-0 relative">
+                    <div className="absolute inset-0 overflow-y-auto custom-scrollbar pr-2 pb-2">
+                        <div className="grid grid-cols-2 gap-2">
+                            {chartData.map((item, idx) => (
+                                <div key={idx} className="flex items-center text-[10px] bg-slate-50/50 p-2 rounded-lg border border-slate-100 hover:bg-slate-50 transition-colors">
+                                    <div className="w-2 h-2 rounded-full mr-2 shrink-0" style={{ backgroundColor: item.hexColor }}></div>
+                                    <span className="text-slate-500 font-bold flex-1 truncate uppercase tracking-wider pr-1" title={item.label}>{item.label}</span>
+                                    <span className="font-black text-slate-900 shrink-0">{item.value}%</span>
+                                </div>
+                            ))}
                         </div>
-                    ))}
+                    </div>
                 </div>
             </div>
         </div>
