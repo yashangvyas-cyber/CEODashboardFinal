@@ -73,7 +73,7 @@ export const DynamicTabs: React.FC<DynamicTabsProps> = ({ activeTab, dateRange, 
     // Fetch data for all modules
     const { data: peopleData, loading: peopleLoading } = usePeopleMetrics(dateRange, selectedBU);
     const { data: crmData, loading: crmLoading } = useCrmMetrics(dateRange, selectedBU);
-    const { data: pmData } = usePMMetrics(dateRange, selectedBU);
+    const { data: pmData, loading: pmLoading } = usePMMetrics(dateRange, selectedBU);
     const { data: recruitmentData, loading: recruitmentLoading } = useRecruitmentMetrics(dateRange, selectedBU);
 
     // Current tab's widget config
@@ -138,6 +138,13 @@ export const DynamicTabs: React.FC<DynamicTabsProps> = ({ activeTab, dateRange, 
             }
         }
         if (activeTab === 'project_management') {
+            if (pmLoading || !pmData) {
+                return (
+                    <div className="h-full w-full flex items-center justify-center bg-white rounded-[10px] border border-slate-200">
+                        <div className="animate-spin w-6 h-6 border-2 border-indigo-600 border-t-transparent rounded-full" />
+                    </div>
+                );
+            }
             switch (id) {
                 case 'pmSummaryCards': return <PMSummaryCards dateRange={dateRange} data={pmData.summary} />;
                 case 'projectPortfolioStatus': return <ProjectPortfolioStatus dateRange={dateRange} data={pmData.projectPortfolio.data} statuses={pmData.projectPortfolio.statuses} />;
