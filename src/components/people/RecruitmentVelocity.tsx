@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { DateRangeOption } from '../../types';
 import { Users, TrendingUp } from 'lucide-react';
 import InfoTooltip from '../common/InfoTooltip';
@@ -8,6 +8,7 @@ interface Props {
 }
 
 const RecruitmentVelocity: React.FC<Props> = () => {
+    const [hoveredSlice, setHoveredSlice] = useState<number | null>(null);
 
     // Widget C: Sourcing Efficacy Pie Data
     const sourcingData = [
@@ -42,9 +43,9 @@ const RecruitmentVelocity: React.FC<Props> = () => {
 
     return (
         <div className="bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col h-full overflow-hidden">
-            <div className="p-6 border-b border-slate-100 bg-white z-10">
+            <div className="p-4 border-b border-slate-100 bg-white shrink-0">
                 <div className="flex justify-between items-center">
-                    <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-100/80 w-full shrink-0">
+                    <div className="flex items-center gap-2">
                         <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase">Sourcing Channel Distribution</h3>
                         <InfoTooltip content="Shows the percentage of candidates sourced from different channels like LinkedIn, Referrals, and Agencies." />
                     </div>
@@ -53,26 +54,44 @@ const RecruitmentVelocity: React.FC<Props> = () => {
             </div>
 
             {/* Centered Chart Layout — Redundancy Removed */}
-            <div className="flex-1 flex flex-col items-center justify-center p-8 bg-slate-50/20 gap-10">
-                <div className="flex flex-col items-center w-full justify-center gap-12">
-                    <div className="relative w-52 h-52 shrink-0">
-                        <svg viewBox="-1.1 -1.1 2.2 2.2" className="w-full h-full transform -rotate-90 drop-shadow-2xl">
+            <div className="flex-1 flex flex-col items-center justify-center p-4 bg-slate-50/20 gap-6">
+                <div className="flex flex-col items-center w-full justify-center gap-6">
+                    <div className="relative w-48 h-48 shrink-0">
+                        <svg viewBox="-1.1 -1.1 2.2 2.2" className="w-full h-full transform -rotate-90">
                             {slices.map((slice, idx) => (
-                                <path key={idx} d={slice.path} className={`${slice.fill} hover:opacity-90 transition-opacity cursor-pointer stroke-white stroke-[0.03]`} />
+                                <path
+                                    key={idx}
+                                    d={slice.path}
+                                    className={`${slice.fill} transition-opacity cursor-pointer stroke-white stroke-[0.03] ${hoveredSlice === idx ? 'opacity-80' : 'opacity-100'}`}
+                                    onMouseEnter={() => setHoveredSlice(idx)}
+                                    onMouseLeave={() => setHoveredSlice(null)}
+                                />
                             ))}
                         </svg>
-                        <div className="absolute inset-0 m-auto w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-inner">
-                            <Users className="w-10 h-10 text-slate-200" />
+                        <div className="absolute inset-0 m-auto w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg">
+                            {hoveredSlice !== null ? (
+                                <div className="flex flex-col items-center animate-in fade-in zoom-in duration-200">
+                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-tighter leading-none">{sourcingData[hoveredSlice].label}</span>
+                                    <span className={`text-sm font-black ${sourcingData[hoveredSlice].color}`}>{sourcingData[hoveredSlice].value}%</span>
+                                </div>
+                            ) : (
+                                <Users className="w-8 h-8 text-slate-200" />
+                            )}
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-x-12 gap-y-4">
+                    <div className="grid grid-cols-2 gap-x-8 gap-y-3">
                         {sourcingData.map((source, idx) => (
-                            <div key={idx} className="flex items-center group">
-                                <div className={`w-3.5 h-3.5 rounded-md ${source.bg} mr-3 shadow-md ring-2 ring-white group-hover:scale-110 transition-transform`}></div>
+                            <div
+                                key={idx}
+                                className={`flex items-center transition-all duration-200 ${hoveredSlice === idx ? 'scale-105' : 'opacity-100'}`}
+                                onMouseEnter={() => setHoveredSlice(idx)}
+                                onMouseLeave={() => setHoveredSlice(null)}
+                            >
+                                <div className={`w-3 h-3 rounded-md ${source.bg} mr-2.5 shadow-sm ring-2 ring-white`}></div>
                                 <div className="flex flex-col">
-                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{source.label}</span>
-                                    <span className="text-sm font-black text-slate-900 tabular-nums leading-none">{source.value}%</span>
+                                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-0.5">{source.label}</span>
+                                    <span className="text-xs font-black text-slate-900 tabular-nums">{source.value}%</span>
                                 </div>
                             </div>
                         ))}

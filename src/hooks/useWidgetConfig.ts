@@ -80,10 +80,10 @@ const DEFAULT_LAYOUTS: Record<ModuleOption, LayoutItem[]> = {
     ],
     recruitment: [
         { i: 'recruitmentSummaryCards', x: 0, y: 0, w: 12, h: 3, minW: 6, minH: 3 },
-        { i: 'recruitmentVelocity', x: 0, y: 4, w: 4, h: 16, minW: 4, minH: 10 },
-        { i: 'stageConversion', x: 4, y: 4, w: 4, h: 16, minW: 4, minH: 10 },
-        { i: 'jobStatus', x: 8, y: 4, w: 4, h: 8, minW: 3, minH: 5 },
-        { i: 'offerAcceptance', x: 8, y: 12, w: 4, h: 9, minW: 3, minH: 5 },
+        { i: 'recruitmentVelocity', x: 0, y: 4, w: 4, h: 10, minW: 4, minH: 8 },
+        { i: 'stageConversion', x: 4, y: 4, w: 4, h: 10, minW: 4, minH: 8 },
+        { i: 'jobStatus', x: 8, y: 4, w: 4, h: 6, minW: 3, minH: 4 },
+        { i: 'offerAcceptance', x: 8, y: 10, w: 4, h: 7, minW: 3, minH: 4 },
     ],
     project_management: [
         { i: 'pmSummaryCards', x: 0, y: 0, w: 12, h: 3, minW: 6, minH: 3 },
@@ -113,7 +113,7 @@ function getInitialConfig(tab: ModuleOption): WidgetConfig {
 
 function getInitialLayout(tab: ModuleOption): Layout {
     try {
-        const stored = localStorage.getItem(`widgetLayout_v33_${tab}`);
+        const stored = localStorage.getItem(`widgetLayout_v34_${tab}`);
         if (stored) {
             const parsed = JSON.parse(stored) as LayoutItem[];
             const defaultLayout = DEFAULT_LAYOUTS[tab] || [];
@@ -148,12 +148,12 @@ export function useWidgetConfig(tab: ModuleOption) {
 
     const updateLayout = useCallback((newLayout: Layout) => {
         setLayout(newLayout);
-        try { localStorage.setItem(`widgetLayout_v33_${tab}`, JSON.stringify(newLayout)); } catch (_) { /* ignore */ }
+        try { localStorage.setItem(`widgetLayout_v34_${tab}`, JSON.stringify(newLayout)); } catch (_) { /* ignore */ }
     }, [tab]);
 
     const resetLayout = useCallback(() => {
         try {
-            ['v1', 'v2', 'v3', 'v4', 'v5', 'v6', 'v7', 'v8', 'v9', 'v10', 'v11', 'v12', 'v13', 'v14', 'v15', 'v16', 'v17', 'v18', 'v19', 'v20', 'v21', 'v22', 'v23', 'v24', 'v25', 'v26', 'v27', 'v28', 'v29', 'v30', 'v31', 'v32', 'v33'].forEach(v => {
+            ['v1', 'v2', 'v3', 'v4', 'v5', 'v6', 'v7', 'v8', 'v9', 'v10', 'v11', 'v12', 'v13', 'v14', 'v15', 'v16', 'v17', 'v18', 'v19', 'v20', 'v21', 'v22', 'v23', 'v24', 'v25', 'v26', 'v27', 'v28', 'v29', 'v30', 'v31', 'v32', 'v33', 'v34'].forEach(v => {
                 localStorage.removeItem(`widgetLayout_${v}_${tab}`);
             });
             localStorage.removeItem(`widgetLayout_${tab}`);
