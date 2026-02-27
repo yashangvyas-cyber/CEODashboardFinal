@@ -186,8 +186,8 @@ export const DynamicTabs: React.FC<DynamicTabsProps> = ({ activeTab, dateRange, 
                     onDragStop={(newLayout: Layout) => wc.updateLayout(newLayout)}
                     onResizeStop={(newLayout: Layout) => wc.updateLayout(newLayout)}
                     compactType="vertical"
-                    useCSSTransforms={true}
-                    isResizable={true}
+                    isDraggable={true}
+                    isResizable={false}
                 >
                     {visibleLayout.map((item: LayoutItem) => (
                         <div key={item.i}>
