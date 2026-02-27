@@ -3,6 +3,7 @@ import { useWidgetConfig } from '../../hooks/useWidgetConfig';
 import { usePeopleMetrics } from '../../hooks/usePeopleMetrics';
 import { useCrmMetrics } from '../../hooks/useCrmMetrics';
 import { usePMMetrics } from '../../hooks/usePMMetrics';
+import { useRecruitmentMetrics } from '../../hooks/useRecruitmentMetrics';
 import { Responsive, WidthProvider } from 'react-grid-layout/legacy';
 import WidgetWrapper from './SortableWidget';
 import '/node_modules/react-grid-layout/css/styles.css';
@@ -54,31 +55,7 @@ import OfferAcceptance from '../recruitment/OfferAcceptance';
 
 
 
-const mockRecruitmentData = {
-    hiringEfficiency: { interviewToHire: '8:1', timeToHire: 50 },
-    candidateRatio: { totalCandidates: 399, totalHires: 36, hireRatio: 9 },
-    stageConversion: [
-        { name: 'Total Candidates', value: 399, color: '#be123c' }, // rose-700
-        { name: 'Selected Candidates', value: 312, color: '#a3e635' }, // lime-400
-        { name: 'Offered Candidates', value: 184, color: '#22c55e' }, // green-500
-        { name: 'Offer Accepted', value: 162, color: '#d946ef' }, // fuchsia-500
-        { name: 'Joined Candidates', value: 154, color: '#4ade80' }  // green-400
-    ],
-    jobStatus: {
-        totalJobs: 68,
-        chartData: [
-            { name: 'Closed', value: 45, color: '#10b981' }, // emerald-500
-            { name: 'Open', value: 23, color: '#f43f5e' }   // rose-500
-        ]
-    },
-    offerAcceptance: {
-        totalOffers: 162,
-        chartData: [
-            { name: 'Accepted', value: 142, color: '#10b981' }, // emerald-500
-            { name: 'Declined/Pending', value: 20, color: '#f43f5e' } // rose-500
-        ]
-    }
-};
+// Mock Recruitment Data Removed
 
 interface DynamicTabsProps {
     activeTab: ModuleOption;
@@ -97,6 +74,7 @@ export const DynamicTabs: React.FC<DynamicTabsProps> = ({ activeTab, dateRange, 
     const { data: peopleData, loading: peopleLoading } = usePeopleMetrics(dateRange, selectedBU);
     const { data: crmData, loading: crmLoading } = useCrmMetrics(dateRange, selectedBU);
     const { data: pmData } = usePMMetrics(dateRange, selectedBU);
+    const { data: recruitmentData, loading: recruitmentLoading } = useRecruitmentMetrics(dateRange, selectedBU);
 
     // Current tab's widget config
     const wc = passedWc || (activeTab === 'people' ? peopleWC
@@ -146,12 +124,17 @@ export const DynamicTabs: React.FC<DynamicTabsProps> = ({ activeTab, dateRange, 
             }
         }
         if (activeTab === 'recruitment') {
+            if (recruitmentLoading || !recruitmentData) {
+                return <div className="h-full w-full flex items-center justify-center bg-white rounded-[10px] border border-slate-200">
+                    <div className="animate-spin w-6 h-6 border-2 border-indigo-600 border-t-transparent rounded-full" />
+                </div>;
+            }
             switch (id) {
-                case 'recruitmentSummaryCards': return <RecruitmentSummaryCards data={mockRecruitmentData} />;
-                case 'stageConversion': return <StageConversion data={mockRecruitmentData.stageConversion} />;
-                case 'recruitmentVelocity': return <RecruitmentVelocity dateRange="last_year" />;
-                case 'jobStatus': return <JobStatus data={mockRecruitmentData.jobStatus} />;
-                case 'offerAcceptance': return <OfferAcceptance data={mockRecruitmentData.offerAcceptance} />;
+                case 'recruitmentSummaryCards': return <RecruitmentSummaryCards data={recruitmentData} />;
+                case 'stageConversion': return <StageConversion data={recruitmentData.stageConversion} />;
+                case 'recruitmentVelocity': return <RecruitmentVelocity dateRange={dateRange} />;
+                case 'jobStatus': return <JobStatus data={recruitmentData.jobStatus} />;
+                case 'offerAcceptance': return <OfferAcceptance data={recruitmentData.offerAcceptance} />;
             }
         }
         if (activeTab === 'project_management') {

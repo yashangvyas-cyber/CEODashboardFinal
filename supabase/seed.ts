@@ -126,11 +126,58 @@ async function clearTables() {
     console.log('🧹 Clearing old data...');
     // Delete all rows in the tables we are about to seed
     await Promise.all([
+        supabase.from('candidates').delete().neq('id', '00000000-0000-0000-0000-000000000000'),
+        supabase.from('job_requisitions').delete().neq('id', '00000000-0000-0000-0000-000000000000'),
         supabase.from('invoices').delete().neq('id', '00000000-0000-0000-0000-000000000000'),
         supabase.from('deals').delete().neq('id', '00000000-0000-0000-0000-000000000000'),
         supabase.from('projects').delete().neq('id', '00000000-0000-0000-0000-000000000000'),
         supabase.from('employees').delete().neq('id', '00000000-0000-0000-0000-000000000000'),
     ]);
+}
+
+async function seedJobRequisitions(count = 50) {
+    console.log(`Seeding ${count} job requisitions...`);
+    const reqs = Array.from({ length: count }).map(() => {
+        const isClosed = faker.datatype.boolean({ probability: 0.3 });
+        const postedDate = faker.date.past({ years: 1 });
+        return {
+            role_title: faker.person.jobTitle(),
+            status: isClosed ? 'Closed' : 'Open',
+            department: faker.helpers.arrayElement(DEPARTMENTS),
+            priority: faker.helpers.arrayElement(['Low', 'Medium', 'High', 'Critical']),
+            posted_date: postedDate.toISOString(),
+            closed_date: isClosed ? faker.date.between({ from: postedDate, to: new Date() }).toISOString() : null,
+        };
+    });
+
+    const { error, data } = await supabase.from('job_requisitions').insert(reqs).select();
+    if (error) console.error('Error seeding job requisitions:', error.message);
+    return data;
+}
+
+async function seedCandidates(reqRecords: any[], count = 300) {
+    console.log(`Seeding ${count} candidates...`);
+    if (!reqRecords || reqRecords.length === 0) return;
+
+    const candidates = Array.from({ length: count }).map(() => {
+        const req = faker.helpers.arrayElement(reqRecords);
+        const stage = faker.helpers.arrayElement(['Applied', 'Screening', 'Interview', 'Offered', 'Hired', 'Rejected']);
+        const offerStatus = stage === 'Offered' || stage === 'Hired' ? (stage === 'Hired' ? 'Accepted' : faker.helpers.arrayElement(['Pending', 'Declined'])) : null;
+        const offerDate = offerStatus ? faker.date.past({ years: 1 }) : null;
+
+        return {
+            req_id: req.id,
+            name: faker.person.fullName(),
+            current_stage: stage,
+            offer_status: offerStatus,
+            offer_date: offerDate ? offerDate.toISOString() : null,
+            join_date: stage === 'Hired' && offerDate ? faker.date.between({ from: offerDate, to: new Date() }).toISOString() : null,
+            source: faker.helpers.arrayElement(['LinkedIn', 'Referral', 'Website', 'Agency']),
+        };
+    });
+
+    const { error } = await supabase.from('candidates').insert(candidates);
+    if (error) console.error('Error seeding candidates:', error.message);
 }
 
 async function runSeed() {
@@ -142,9 +189,8 @@ async function runSeed() {
     const deals = await seedDeals(120);
     await seedInvoices(deals || [], 200);
     await seedProjects(60);
-
-    // Note: Skipping ATS tables (Requisitions/Candidates) for brevity in this first pass, 
-    // but they follow the exact same pattern.
+    const reqs = await seedJobRequisitions(70);
+    await seedCandidates(reqs || [], 400);
 
     console.log('✅ Seeding Complete!');
 }

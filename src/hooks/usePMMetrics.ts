@@ -1,21 +1,6 @@
-import { useMemo } from 'react';
-import type { DateRangeOption, BusinessUnitOption } from '../types';
-
-// ---------------------------------------------------------------------------
-// usePMMetrics — Date-range-aware data for the Project Management tab.
-//
-// All data here is structured mock data that varies meaningfully based on the
-// selected date range. This mirrors the usePeopleMetrics / useCrmMetrics
-// pattern, making PM widgets fully reactive to the Top Bar date filter.
-//
-// Project type terminology (from the SaaS product):
-//   - "Fixed-Price"     → Fixed budget, has Estimated Hours + Top-Up hours.
-//                         Burn % = Spent / (Estimated + Top-Up Hours).
-//   - "Time & Material" → Hourly billing. Target = Total Purchased (Initial +
-//                         Additional Top-ups). Actual = Total Billed hours.
-//   - "Dedicated (Hirebase)" → Contract-based resource billing.
-//   - "Inhouse"         → Non-billable internal projects.
-// ---------------------------------------------------------------------------
+import { useState, useEffect } from 'react';
+import { supabase } from '../lib/supabaseClient';
+import type { BusinessUnitOption, DateRangeOption } from '../types';
 
 interface HealthMetric {
     value: number;
@@ -103,480 +88,229 @@ export interface PMMetrics {
     hirebaseByDept: DeptItem[];
 }
 
-// ---------------------------------------------------------------------------
-// Datasets per date range. Each dataset represents a genuine historical
-// snapshot so the CEO sees meaningful diffs when switching periods.
-// ---------------------------------------------------------------------------
+export function usePMMetrics(dateRange: DateRangeOption, businessUnit: BusinessUnitOption) {
+    const [data, setData] = useState<PMMetrics | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<Error | null>(null);
 
-const DATASETS: Partial<Record<DateRangeOption, PMMetrics>> = {
+    useEffect(() => {
+        async function fetchMetrics() {
+            try {
+                setLoading(true);
 
-    // ---- THIS YEAR (most data, current running period) --------------------
-    this_year: {
-        summary: {
-            activeProjects: 48,
-            projectsClosed: 21,
-            resourceUtilization: 78,
-        },
-        projectPortfolio: {
-            statuses: ['In Development', 'Testing', 'On Hold', 'Client Review', 'Done'],
-            data: [
-                { type: 'Fixed-Price', 'In Development': 4, 'Testing': 6, 'On Hold': 2, 'Client Review': 2, 'Done': 2 },
-                { type: 'Dedicated (Hirebase)', 'In Development': 7, 'Testing': 9, 'On Hold': 2, 'Client Review': 4, 'Done': 3 },
-                { type: 'Time & Material', 'In Development': 1, 'Testing': 7, 'On Hold': 1, 'Client Review': 1, 'Done': 0 },
-                { type: 'Inhouse', 'In Development': 0, 'Testing': 1, 'On Hold': 0, 'Client Review': 0, 'Done': 0 },
-            ],
-        },
-        healthBreakdown: {
-            fixedCost: {
-                value: 68,
-                status: 'Warning',
-                // Burn % = Spent / (Estimated + Top-Up Hours). 68% = used 68% of total purchased hours across 32 fixed projects.
-                text: 'Avg burn across 32 fixed-price projects (Estimated + Top-Up hours)',
-            },
-            timeAndMaterial: {
-                value: 39,
-                status: 'Warning',
-                // For T&M: Billed % = Total Billed / Total Purchased hours. 39% billed of all purchased hours.
-                text: 'Only 39% of purchased T&M hours billed across 31 buckets',
-            },
-            hirebase: {
-                value: 92,
-                status: 'Healthy',
-                text: 'Optimal utilization for 23 active Hirebase contracts',
-            },
-        },
-        leakage: [
-            { project: 'Alpha Software Req', type: 'Fixed Cost', actual: 2350, target: 2100, amount: 250 },
-            { project: 'Chatbot App (Fixed)', type: 'Fixed Cost', actual: 950, target: 800, amount: 150 },
-            { project: 'MindTree Hourly Bucket', type: 'Hourly', actual: 61, target: 24, amount: 37 },
-            { project: 'Charlie Portfolio App', type: 'Fixed Cost', actual: 2050, target: 2000, amount: 50 },
-            { project: 'Alpha Enterprise Dev', type: 'Hourly', actual: 24, target: 16, amount: 8 },
-        ],
-        effortConsumers: [
-            { name: 'E-commerce App', hours: 580, type: 'Hirebase' },
-            { name: 'MindTree T&M', hours: 420, type: 'Time & Material' },
-            { name: 'Chatbot (Fixed)', hours: 310, type: 'Fixed Cost' },
-            { name: 'Innovexa Cloud', hours: 195, type: 'Hirebase' },
-            { name: 'Crypto Platform', hours: 140, type: 'Time & Material' },
-        ],
-        contractAdjustments: [
-            { resourceOrProject: 'A. Patel (Assoc. SW Eng)', type: 'Hirebase', manager: 'Admin', status: 'Hired' },
-            { resourceOrProject: 'A. Suthar (Accountant)', type: 'Hirebase', manager: 'Admin', status: 'Expired' },
-            { resourceOrProject: 'D. Mehta (QA)', type: 'Hirebase', manager: 'BD', status: 'Hired' },
-            { resourceOrProject: 'MI Hire (Hire Base)', type: 'Hirebase', manager: 'C. Patel', status: 'Hired & Expired' },
-            { resourceOrProject: 'R. Shah (Frontend Dev)', type: 'Hirebase', manager: 'Admin', status: 'Hired' },
-            { resourceOrProject: 'P. Kumar (Cloud Arch)', type: 'Hirebase', manager: 'BD', status: 'Hired' },
-        ],
-        hireVsExpire: { newlyHired: 12, expired: 4, netChange: 8 },
-        compliance: [
-            { department: 'Backend Engineering', unapproved: 45, missing: 12 },
-            { department: 'Frontend UI', unapproved: 8, missing: 4 },
-            { department: 'Quality Assurance', unapproved: 5, missing: 2 },
-            { department: 'Business Analysis', unapproved: 0, missing: 0 },
-        ],
-        dailyAllocations: {
-            missingLogs: [
-                { department: 'Frontend UI', missingCount: 4 },
-                { department: 'Backend Engineering', missingCount: 2 },
-                { department: 'Business Analysis', missingCount: 1 },
-            ],
-            onBench: [
-                { department: 'Frontend UI', benchCount: 1 },
-                { department: 'Quality Assurance', benchCount: 2 },
-                { department: 'Business Analysis', benchCount: 3 },
-            ],
-        },
-        topSkillsDemand: [
-            { skill: 'React JS', count: 12 },
-            { skill: 'Node JS', count: 9 },
-            { skill: 'Agile', count: 8 },
-            { skill: 'Angular JS', count: 7 },
-            { skill: 'Figma', count: 5 },
-            { skill: 'Business Analysis', count: 5 },
-            { skill: '3DS Max', count: 3 },
-            { skill: 'FastAPI', count: 3 },
-        ],
-        hirebaseByDept: [
-            { department: 'Business Analysis', billable: 14, nonBillable: 2 },
-            { department: 'Frontend Engineering', billable: 6, nonBillable: 0 },
-            { department: 'Game Developer', billable: 4, nonBillable: 0 },
-            { department: 'Java Developer', billable: 3, nonBillable: 1 },
-            { department: 'Cloud Architecture', billable: 2, nonBillable: 1 },
-        ],
-    },
+                if (!supabase) throw new Error("Supabase client not initialized.");
 
-    // ---- THIS QUARTER (smaller slice, recent activity) --------------------
-    this_quarter: {
-        summary: {
-            activeProjects: 32,
-            projectsClosed: 6,
-            resourceUtilization: 82,
-        },
-        projectPortfolio: {
-            statuses: ['In Development', 'Testing', 'On Hold', 'Client Review', 'Done'],
-            data: [
-                { type: 'Fixed-Price', 'In Development': 2, 'Testing': 4, 'On Hold': 1, 'Client Review': 1, 'Done': 1 },
-                { type: 'Dedicated (Hirebase)', 'In Development': 5, 'Testing': 6, 'On Hold': 1, 'Client Review': 2, 'Done': 1 },
-                { type: 'Time & Material', 'In Development': 1, 'Testing': 4, 'On Hold': 0, 'Client Review': 1, 'Done': 0 },
-                { type: 'Inhouse', 'In Development': 0, 'Testing': 0, 'On Hold': 0, 'Client Review': 0, 'Done': 0 },
-            ],
-        },
-        healthBreakdown: {
-            fixedCost: {
-                value: 54,
-                status: 'Healthy',
-                text: 'Q burn across 27 fixed-price projects — well within budget',
-            },
-            timeAndMaterial: {
-                value: 61,
-                status: 'Healthy',
-                text: '61% of purchased T&M hours billed this quarter',
-            },
-            hirebase: {
-                value: 88,
-                status: 'Healthy',
-                text: 'Strong billability across 21 active Hirebase contracts',
-            },
-        },
-        leakage: [
-            { project: 'Alpha Software Req', type: 'Fixed Cost', actual: 980, target: 850, amount: 130 },
-            { project: 'Cosmos ERP (Fixed)', type: 'Fixed Cost', actual: 430, target: 400, amount: 30 },
-            { project: 'MindTree T&M Bucket', type: 'Hourly', actual: 28, target: 20, amount: 8 },
-        ],
-        effortConsumers: [
-            { name: 'MindTree T&M', hours: 210, type: 'Time & Material' },
-            { name: 'E-commerce App', hours: 180, type: 'Hirebase' },
-            { name: 'Chatbot (Fixed)', hours: 120, type: 'Fixed Cost' },
-            { name: 'Crypto Platform', hours: 85, type: 'Time & Material' },
-            { name: 'Innovexa Cloud', hours: 62, type: 'Hirebase' },
-        ],
-        contractAdjustments: [
-            { resourceOrProject: 'D. Mehta (QA)', type: 'Hirebase', manager: 'BD', status: 'Hired' },
-            { resourceOrProject: 'A. Suthar (Accountant)', type: 'Hirebase', manager: 'Admin', status: 'Expired' },
-            { resourceOrProject: 'P. Kumar (Cloud Arch)', type: 'Hirebase', manager: 'BD', status: 'Hired' },
-        ],
-        hireVsExpire: { newlyHired: 5, expired: 2, netChange: 3 },
-        compliance: [
-            { department: 'Backend Engineering', unapproved: 18, missing: 5 },
-            { department: 'Frontend UI', unapproved: 3, missing: 2 },
-            { department: 'Quality Assurance', unapproved: 2, missing: 1 },
-            { department: 'Business Analysis', unapproved: 0, missing: 0 },
-        ],
-        dailyAllocations: {
-            missingLogs: [
-                { department: 'Backend Engineering', missingCount: 3 },
-                { department: 'Frontend UI', missingCount: 1 },
-            ],
-            onBench: [
-                { department: 'Quality Assurance', benchCount: 1 },
-                { department: 'Business Analysis', benchCount: 2 },
-            ],
-        },
-        topSkillsDemand: [
-            { skill: 'React JS', count: 7 },
-            { skill: 'Node JS', count: 5 },
-            { skill: 'Business Analysis', count: 4 },
-            { skill: 'Angular JS', count: 3 },
-            { skill: 'Figma', count: 2 },
-            { skill: '3DS Max', count: 2 },
-            { skill: 'FastAPI', count: 1 },
-        ],
-        hirebaseByDept: [
-            { department: 'Business Analysis', billable: 10, nonBillable: 1 },
-            { department: 'Frontend Engineering', billable: 5, nonBillable: 0 },
-            { department: 'Game Developer', billable: 3, nonBillable: 0 },
-            { department: 'Java Developer', billable: 2, nonBillable: 1 },
-            { department: 'Cloud Architecture', billable: 2, nonBillable: 0 },
-        ],
-    },
+                // Fetch projects
+                let projQuery = supabase.from('projects').select('*');
+                if (businessUnit !== 'all') {
+                    projQuery = projQuery.eq('business_unit', businessUnit);
+                }
+                const { data: allProjects, error: projError } = await projQuery;
+                if (projError) throw projError;
 
-    // ---- LAST QUARTER (full closed quarter) -------------------------------
-    last_quarter: {
-        summary: {
-            activeProjects: 29,
-            projectsClosed: 8,
-            resourceUtilization: 74,
-        },
-        projectPortfolio: {
-            statuses: ['In Development', 'Testing', 'On Hold', 'Client Review', 'Done'],
-            data: [
-                { type: 'Fixed-Price', 'In Development': 3, 'Testing': 3, 'On Hold': 3, 'Client Review': 1, 'Done': 3 },
-                { type: 'Dedicated (Hirebase)', 'In Development': 4, 'Testing': 5, 'On Hold': 2, 'Client Review': 2, 'Done': 3 },
-                { type: 'Time & Material', 'In Development': 1, 'Testing': 3, 'On Hold': 1, 'Client Review': 0, 'Done': 0 },
-                { type: 'Inhouse', 'In Development': 0, 'Testing': 1, 'On Hold': 0, 'Client Review': 0, 'Done': 0 },
-            ],
-        },
-        healthBreakdown: {
-            fixedCost: {
-                value: 82,
-                status: 'Critical',
-                text: '3 fixed-price projects exceeded total purchased hours (Estimated + Top-Ups)',
-            },
-            timeAndMaterial: {
-                value: 34,
-                status: 'Warning',
-                text: 'Only 34% of T&M purchased hours were billed — low efficiency',
-            },
-            hirebase: {
-                value: 80,
-                status: 'Warning',
-                text: '4 Hirebase contracts went non-billable last quarter',
-            },
-        },
-        leakage: [
-            { project: 'Chatbot App (Fixed)', type: 'Fixed Cost', actual: 1800, target: 1500, amount: 300 },
-            { project: 'Alpha Software Req', type: 'Fixed Cost', actual: 1100, target: 900, amount: 200 },
-            { project: 'DB T&M Bucket', type: 'Hourly', actual: 55, target: 36, amount: 19 },
-            { project: 'Charlie Portfolio (Fixed)', type: 'Fixed Cost', actual: 2010, target: 1950, amount: 60 },
-        ],
-        effortConsumers: [
-            { name: 'Chatbot (Fixed)', hours: 430, type: 'Fixed Cost' },
-            { name: 'E-commerce App', hours: 380, type: 'Hirebase' },
-            { name: 'MindTree T&M', hours: 290, type: 'Time & Material' },
-            { name: 'Crypto Platform', hours: 150, type: 'Time & Material' },
-            { name: 'Innovexa Cloud', hours: 90, type: 'Hirebase' },
-        ],
-        contractAdjustments: [
-            { resourceOrProject: 'A. Patel (Assoc. SW Eng)', type: 'Hirebase', manager: 'Admin', status: 'Hired' },
-            { resourceOrProject: 'N. Desai (BA Lead)', type: 'Hirebase', manager: 'C. Patel', status: 'Expired' },
-            { resourceOrProject: 'S. Joshi (Dev Ops)', type: 'Hirebase', manager: 'Admin', status: 'Hired' },
-            { resourceOrProject: 'MI Hire (Hire Base)', type: 'Hirebase', manager: 'C. Patel', status: 'Hired & Expired' },
-        ],
-        hireVsExpire: { newlyHired: 7, expired: 6, netChange: 1 },
-        compliance: [
-            { department: 'Backend Engineering', unapproved: 52, missing: 18 },
-            { department: 'Quality Assurance', unapproved: 14, missing: 6 },
-            { department: 'Frontend UI', unapproved: 9, missing: 3 },
-            { department: 'Business Analysis', unapproved: 2, missing: 1 },
-        ],
-        dailyAllocations: {
-            missingLogs: [
-                { department: 'Backend Engineering', missingCount: 6 },
-                { department: 'Frontend UI', missingCount: 3 },
-                { department: 'Quality Assurance', missingCount: 2 },
-            ],
-            onBench: [
-                { department: 'Frontend UI', benchCount: 2 },
-                { department: 'Quality Assurance', benchCount: 3 },
-                { department: 'Business Analysis', benchCount: 4 },
-            ],
-        },
-        topSkillsDemand: [
-            { skill: 'Node JS', count: 11 },
-            { skill: 'React JS', count: 9 },
-            { skill: 'Business Analysis', count: 7 },
-            { skill: 'Agile', count: 6 },
-            { skill: '3DS Max', count: 4 },
-            { skill: 'Angular JS', count: 4 },
-            { skill: 'FastAPI', count: 2 },
-        ],
-        hirebaseByDept: [
-            { department: 'Business Analysis', billable: 11, nonBillable: 3 },
-            { department: 'Frontend Engineering', billable: 5, nonBillable: 1 },
-            { department: 'Game Developer', billable: 4, nonBillable: 0 },
-            { department: 'Java Developer', billable: 2, nonBillable: 2 },
-            { department: 'Cloud Architecture', billable: 1, nonBillable: 2 },
-        ],
-    },
+                // Fetch employees (for skills/bench/compliance mocks where needed)
+                let empQuery = supabase.from('employees').select('*');
+                if (businessUnit !== 'all') {
+                    empQuery = empQuery.eq('business_unit', businessUnit);
+                }
+                const { data: employees, error: empError } = await empQuery;
+                if (empError) throw empError;
 
-    // ---- YTD (Year-to-Date — same snapshot as this_year for mock data) ----
-    ytd: {
-        summary: {
-            activeProjects: 48,
-            projectsClosed: 21,
-            resourceUtilization: 78,
-        },
-        projectPortfolio: {
-            statuses: ['In Development', 'Testing', 'On Hold', 'Client Review', 'Done'],
-            data: [
-                { type: 'Fixed-Price', 'In Development': 4, 'Testing': 6, 'On Hold': 2, 'Client Review': 2, 'Done': 2 },
-                { type: 'Dedicated (Hirebase)', 'In Development': 7, 'Testing': 9, 'On Hold': 2, 'Client Review': 4, 'Done': 3 },
-                { type: 'Time & Material', 'In Development': 1, 'Testing': 7, 'On Hold': 1, 'Client Review': 1, 'Done': 0 },
-                { type: 'Inhouse', 'In Development': 0, 'Testing': 1, 'On Hold': 0, 'Client Review': 0, 'Done': 0 },
-            ],
-        },
-        healthBreakdown: {
-            fixedCost: { value: 68, status: 'Warning', text: 'YTD burn across 32 fixed-price projects (Estimated + Top-Up hours)' },
-            timeAndMaterial: { value: 39, status: 'Warning', text: 'Only 39% of purchased T&M hours billed YTD across 31 buckets' },
-            hirebase: { value: 92, status: 'Healthy', text: 'Optimal utilization for 23 active Hirebase contracts' },
-        },
-        leakage: [
-            { project: 'Alpha Software Req', type: 'Fixed Cost', actual: 2350, target: 2100, amount: 250 },
-            { project: 'Chatbot App (Fixed)', type: 'Fixed Cost', actual: 950, target: 800, amount: 150 },
-            { project: 'MindTree T&M Bucket', type: 'Hourly', actual: 61, target: 24, amount: 37 },
-            { project: 'Charlie Portfolio App', type: 'Fixed Cost', actual: 2050, target: 2000, amount: 50 },
-            { project: 'Alpha Enterprise Dev', type: 'Hourly', actual: 24, target: 16, amount: 8 },
-        ],
-        effortConsumers: [
-            { name: 'E-commerce App', hours: 580, type: 'Hirebase' },
-            { name: 'MindTree T&M', hours: 420, type: 'Time & Material' },
-            { name: 'Chatbot (Fixed)', hours: 310, type: 'Fixed Cost' },
-            { name: 'Innovexa Cloud', hours: 195, type: 'Hirebase' },
-            { name: 'Crypto Platform', hours: 140, type: 'Time & Material' },
-        ],
-        contractAdjustments: [
-            { resourceOrProject: 'A. Patel (Assoc. SW Eng)', type: 'Hirebase', manager: 'Admin', status: 'Hired' },
-            { resourceOrProject: 'A. Suthar (Accountant)', type: 'Hirebase', manager: 'Admin', status: 'Expired' },
-            { resourceOrProject: 'D. Mehta (QA)', type: 'Hirebase', manager: 'BD', status: 'Hired' },
-            { resourceOrProject: 'MI Hire (Hire Base)', type: 'Hirebase', manager: 'C. Patel', status: 'Hired & Expired' },
-        ],
-        hireVsExpire: { newlyHired: 12, expired: 4, netChange: 8 },
-        compliance: [
-            { department: 'Backend Engineering', unapproved: 45, missing: 12 },
-            { department: 'Frontend UI', unapproved: 8, missing: 4 },
-            { department: 'Quality Assurance', unapproved: 5, missing: 2 },
-            { department: 'Business Analysis', unapproved: 0, missing: 0 },
-        ],
-        dailyAllocations: {
-            missingLogs: [
-                { department: 'Frontend UI', missingCount: 4 },
-                { department: 'Backend Engineering', missingCount: 2 },
-                { department: 'Business Analysis', missingCount: 1 },
-            ],
-            onBench: [
-                { department: 'Frontend UI', benchCount: 1 },
-                { department: 'Quality Assurance', benchCount: 2 },
-                { department: 'Business Analysis', benchCount: 3 },
-            ],
-        },
-        topSkillsDemand: [
-            { skill: 'React JS', count: 12 },
-            { skill: 'Node JS', count: 9 },
-            { skill: 'Agile', count: 8 },
-            { skill: 'Angular JS', count: 7 },
-            { skill: 'Figma', count: 5 },
-            { skill: 'Business Analysis', count: 5 },
-            { skill: '3DS Max', count: 3 },
-            { skill: 'FastAPI', count: 3 },
-        ],
-        hirebaseByDept: [
-            { department: 'Business Analysis', billable: 14, nonBillable: 2 },
-            { department: 'Frontend Engineering', billable: 6, nonBillable: 0 },
-            { department: 'Game Developer', billable: 4, nonBillable: 0 },
-            { department: 'Java Developer', billable: 3, nonBillable: 1 },
-            { department: 'Cloud Architecture', billable: 2, nonBillable: 1 },
-        ],
-    },
+                const now = new Date();
+                let startDate = new Date();
+                let endDate = new Date();
 
-    // ---- LAST YEAR (full historical year) ---------------------------------
-    last_year: {
-        summary: {
-            activeProjects: 41,
-            projectsClosed: 28,
-            resourceUtilization: 71,
-        },
-        projectPortfolio: {
-            statuses: ['In Development', 'Testing', 'On Hold', 'Client Review', 'Done'],
-            data: [
-                { type: 'Fixed-Price', 'In Development': 5, 'Testing': 4, 'On Hold': 4, 'Client Review': 2, 'Done': 8 },
-                { type: 'Dedicated (Hirebase)', 'In Development': 6, 'Testing': 7, 'On Hold': 3, 'Client Review': 3, 'Done': 7 },
-                { type: 'Time & Material', 'In Development': 2, 'Testing': 3, 'On Hold': 2, 'Client Review': 1, 'Done': 4 },
-                { type: 'Inhouse', 'In Development': 0, 'Testing': 0, 'On Hold': 1, 'Client Review': 0, 'Done': 1 },
-            ],
-        },
-        healthBreakdown: {
-            fixedCost: {
-                value: 77,
-                status: 'Warning',
-                text: 'Avg burn across 38 fixed-price projects over the full year',
-            },
-            timeAndMaterial: {
-                value: 58,
-                status: 'Healthy',
-                text: '58% of T&M purchased hours billed — improving trend vs prior year',
-            },
-            hirebase: {
-                value: 85,
-                status: 'Warning',
-                text: 'Fell just below the 85% threshold — 6 non-billable contracts',
-            },
-        },
-        leakage: [
-            { project: 'Chatbot App (Fixed)', type: 'Fixed Cost', actual: 3200, target: 2800, amount: 400 },
-            { project: 'Alpha Software Req', type: 'Fixed Cost', actual: 4100, target: 3700, amount: 400 },
-            { project: 'Cosmos ERP (Fixed)', type: 'Fixed Cost', actual: 2300, target: 2100, amount: 200 },
-            { project: 'MindTree T&M Bucket', type: 'Hourly', actual: 110, target: 80, amount: 30 },
-            { project: 'Charlie Portfolio (Fixed)', type: 'Fixed Cost', actual: 3900, target: 3800, amount: 100 },
-        ],
-        effortConsumers: [
-            { name: 'E-commerce App', hours: 1820, type: 'Hirebase' },
-            { name: 'Chatbot (Fixed)', hours: 1480, type: 'Fixed Cost' },
-            { name: 'MindTree T&M', hours: 1230, type: 'Time & Material' },
-            { name: 'Alpha Enterprise', hours: 940, type: 'Time & Material' },
-            { name: 'Innovexa Cloud', hours: 710, type: 'Hirebase' },
-        ],
-        contractAdjustments: [
-            { resourceOrProject: 'A. Patel (Assoc. SW Eng)', type: 'Hirebase', manager: 'Admin', status: 'Hired' },
-            { resourceOrProject: 'A. Suthar (Accountant)', type: 'Hirebase', manager: 'Admin', status: 'Expired' },
-            { resourceOrProject: 'D. Mehta (QA)', type: 'Hirebase', manager: 'BD', status: 'Hired' },
-            { resourceOrProject: 'MI Hire (Hire Base)', type: 'Hirebase', manager: 'C. Patel', status: 'Hired & Expired' },
-            { resourceOrProject: 'N. Desai (BA Lead)', type: 'Hirebase', manager: 'C. Patel', status: 'Expired' },
-            { resourceOrProject: 'S. Joshi (Dev Ops)', type: 'Hirebase', manager: 'Admin', status: 'Hired' },
-            { resourceOrProject: 'R. Shah (Frontend Dev)', type: 'Hirebase', manager: 'Admin', status: 'Hired' },
-        ],
-        hireVsExpire: { newlyHired: 18, expired: 11, netChange: 7 },
-        compliance: [
-            { department: 'Backend Engineering', unapproved: 168, missing: 48 },
-            { department: 'Frontend UI', unapproved: 34, missing: 14 },
-            { department: 'Quality Assurance', unapproved: 21, missing: 9 },
-            { department: 'Business Analysis', unapproved: 5, missing: 3 },
-        ],
-        dailyAllocations: {
-            missingLogs: [
-                { department: 'Backend Engineering', missingCount: 18 },
-                { department: 'Frontend UI', missingCount: 9 },
-                { department: 'Quality Assurance', missingCount: 5 },
-                { department: 'Business Analysis', missingCount: 2 },
-            ],
-            onBench: [
-                { department: 'Frontend UI', benchCount: 3 },
-                { department: 'Quality Assurance', benchCount: 4 },
-                { department: 'Business Analysis', benchCount: 5 },
-            ],
-        },
-        topSkillsDemand: [
-            { skill: 'React JS', count: 18 },
-            { skill: 'Node JS', count: 15 },
-            { skill: 'Agile', count: 13 },
-            { skill: 'Business Analysis', count: 11 },
-            { skill: 'Angular JS', count: 9 },
-            { skill: 'Figma', count: 7 },
-            { skill: '3DS Max', count: 5 },
-            { skill: 'FastAPI', count: 4 },
-            { skill: 'Cloud Arch.', count: 3 },
-        ],
-        hirebaseByDept: [
-            { department: 'Business Analysis', billable: 20, nonBillable: 4 },
-            { department: 'Frontend Engineering', billable: 9, nonBillable: 1 },
-            { department: 'Game Developer', billable: 6, nonBillable: 0 },
-            { department: 'Java Developer', billable: 4, nonBillable: 3 },
-            { department: 'Cloud Architecture', billable: 3, nonBillable: 2 },
-        ],
-    },
-};
+                switch (dateRange) {
+                    case 'this_month':
+                        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+                        endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+                        break;
+                    case 'last_month':
+                        startDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+                        endDate = new Date(now.getFullYear(), now.getMonth(), 0);
+                        break;
+                    case 'this_quarter':
+                        startDate = new Date(now.getFullYear(), Math.floor(now.getMonth() / 3) * 3, 1);
+                        endDate = new Date(now.getFullYear(), Math.floor(now.getMonth() / 3) * 3 + 3, 0);
+                        break;
+                    case 'last_quarter':
+                        startDate = new Date(now.getFullYear(), (Math.floor(now.getMonth() / 3) - 1) * 3, 1);
+                        endDate = new Date(now.getFullYear(), Math.floor(now.getMonth() / 3) * 3, 0);
+                        break;
+                    case 'ytd':
+                    case 'this_year':
+                        startDate = new Date(now.getFullYear(), 0, 1);
+                        endDate = new Date(now.getFullYear(), 11, 31, 23, 59, 59);
+                        break;
+                    case 'last_year':
+                        startDate = new Date(now.getFullYear() - 1, 0, 1);
+                        endDate = new Date(now.getFullYear() - 1, 11, 31, 23, 59, 59);
+                        break;
+                    default: // 'all_time'
+                        startDate = new Date(2000, 0, 1);
+                        endDate = new Date(2100, 0, 1);
+                }
 
-// ---------------------------------------------------------------------------
-// Hook
-// ---------------------------------------------------------------------------
+                // Filter projects by date (assuming created_at represents project timeframe for demo)
+                const projects = (allProjects || []).filter(p => {
+                    const d = new Date(p.created_at);
+                    return d >= startDate && d <= endDate;
+                });
 
-export function usePMMetrics(
-    dateRange: DateRangeOption,
-    _businessUnit: BusinessUnitOption
-): { data: PMMetrics; loading: false } {
-    // useMemo ensures the object reference only changes when inputs change,
-    // preventing unnecessary child re-renders.
-    const data = useMemo<PMMetrics>(() => {
-        // Map new ranges to existing mock data sets for prototype
-        let effectiveRange = dateRange;
-        if (dateRange === 'this_month') effectiveRange = 'this_quarter';
-        if (dateRange === 'last_month') effectiveRange = 'last_quarter';
-        if (dateRange === 'custom') effectiveRange = 'this_year';
+                // 1. Summary
+                const activeProjects = projects.filter(p => ['Active', 'At Risk'].includes(p.status)).length;
+                const projectsClosed = projects.filter(p => p.status === 'Completed').length;
 
-        // Fall back to this_year if an unsupported range is passed.
-        return DATASETS[effectiveRange] ?? DATASETS['this_year']!;
-    }, [dateRange]);
+                // Calculate Resource Utilization (Spent / Budget overall)
+                const totalSpent = projects.reduce((sum, p) => sum + Number(p.spent_hours || 0), 0);
+                const totalBudget = projects.reduce((sum, p) => sum + Number(p.budget_hours || 0), 0);
+                const resourceUtilization = totalBudget > 0 ? Math.round((totalSpent / totalBudget) * 100) : 0;
 
-    // loading is always false since this is mock/structured data.
-    // When a real API is wired in, replace this with useState + useEffect.
-    return { data, loading: false };
+                // 2. Project Portfolio (Grouping by type and status)
+                const statuses = ['Active', 'Paused', 'Completed', 'At Risk'];
+                const types = ['Fixed Cost', 'Hourly', 'Hirebase'];
+                const portfolioData = types.map(type => {
+                    const typeProjs = projects.filter(p => p.type === type);
+                    const row: any = { type: type === 'Fixed Cost' ? 'Fixed-Price' : type === 'Hourly' ? 'Time & Material' : 'Dedicated (Hirebase)' };
+                    statuses.forEach(status => {
+                        row[status] = typeProjs.filter(p => p.status === status).length;
+                    });
+                    return row;
+                });
+
+                // 3. Health Breakdown
+                const fixedProjects = projects.filter(p => p.type === 'Fixed Cost');
+                const tnmProjects = projects.filter(p => p.type === 'Hourly');
+                const hirebaseProjects = projects.filter(p => p.type === 'Hirebase');
+
+                const calcHealth = (projs: any[], description: string) => {
+                    if (projs.length === 0) return { value: 0, status: 'Healthy' as const, text: `No ${description} projects` };
+                    const spent = projs.reduce((sum, p) => sum + Number(p.spent_hours), 0);
+                    const budget = projs.reduce((sum, p) => sum + Number(p.budget_hours), 0);
+                    const burn = budget > 0 ? Math.round((spent / budget) * 100) : 0;
+
+                    let status: 'Healthy' | 'Warning' | 'Critical' = 'Healthy';
+                    if (burn > 100) status = 'Critical';
+                    else if (burn > 85) status = 'Warning';
+
+                    return {
+                        value: burn,
+                        status,
+                        text: `Avg burn across ${projs.length} ${description} projects`
+                    };
+                };
+
+                const healthBreakdown: PMHealthData = {
+                    fixedCost: calcHealth(fixedProjects, 'fixed-price'),
+                    timeAndMaterial: calcHealth(tnmProjects, 'T&M'),
+                    hirebase: calcHealth(hirebaseProjects, 'Hirebase')
+                };
+
+                // 4. Leakage (Projects over budget)
+                const leakageList = projects
+                    .filter(p => Number(p.spent_hours) > Number(p.budget_hours))
+                    .map(p => ({
+                        project: p.name,
+                        type: p.type === 'Hourly' ? 'Hourly' : 'Fixed Cost',
+                        actual: Number(p.spent_hours),
+                        target: Number(p.budget_hours),
+                        amount: Number(p.spent_hours) - Number(p.budget_hours)
+                    }))
+                    .sort((a, b) => b.amount - a.amount)
+                    .slice(0, 5) as LeakageItem[];
+
+                // 5. Effort Consumers (Top spent hours)
+                const effortConsumers = [...projects]
+                    .sort((a, b) => Number(b.spent_hours) - Number(a.spent_hours))
+                    .slice(0, 5)
+                    .map(p => ({
+                        name: p.name,
+                        hours: Number(p.spent_hours),
+                        type: p.type === 'Hourly' ? 'Time & Material' : (p.type === 'Fixed Cost' ? 'Fixed Cost' : 'Hirebase')
+                    })) as EffortItem[];
+
+                // 6. Top Skills Demand
+                const skillCounts: Record<string, number> = {};
+                (employees || []).forEach(emp => {
+                    (emp.skills || []).forEach((skill: string) => {
+                        skillCounts[skill] = (skillCounts[skill] || 0) + 1;
+                    });
+                });
+                const topSkillsDemand = Object.entries(skillCounts)
+                    .map(([skill, count]) => ({ skill, count }))
+                    .sort((a, b) => b.count - a.count)
+                    .slice(0, 8);
+
+                // 7. Hirebase By Dept
+                const deptCounts: Record<string, { billable: number, nonBillable: number }> = {};
+                (employees || []).forEach(emp => {
+                    const dept = emp.department;
+                    if (!deptCounts[dept]) deptCounts[dept] = { billable: 0, nonBillable: 0 };
+                    // Fake billability for the sake of the visualization
+                    if (emp.status === 'Active' && Math.random() > 0.2) {
+                        deptCounts[dept].billable++;
+                    } else {
+                        deptCounts[dept].nonBillable++;
+                    }
+                });
+
+                const hirebaseByDept = Object.entries(deptCounts)
+                    .map(([department, counts]) => ({ department, ...counts }))
+                    .sort((a, b) => (b.billable + b.nonBillable) - (a.billable + a.nonBillable))
+                    .slice(0, 5);
+
+
+                // Build final object (with some static mocks for extremely specific PM UI elements 
+                // like timesheet compliance and daily allocations which aren't in standard HR schema)
+                setData({
+                    summary: {
+                        activeProjects,
+                        projectsClosed,
+                        resourceUtilization
+                    },
+                    projectPortfolio: {
+                        statuses,
+                        data: portfolioData
+                    },
+                    healthBreakdown,
+                    leakage: leakageList,
+                    effortConsumers,
+                    topSkillsDemand,
+                    hirebaseByDept,
+                    // Mocks for highly specific UI components where schema doesn't match
+                    contractAdjustments: [
+                        { resourceOrProject: 'A. Patel (Assoc. SW Eng)', type: 'Hirebase', manager: 'Admin', status: 'Hired' },
+                        { resourceOrProject: 'A. Suthar (Accountant)', type: 'Hirebase', manager: 'Admin', status: 'Expired' },
+                        { resourceOrProject: 'D. Mehta (QA)', type: 'Hirebase', manager: 'BD', status: 'Hired' },
+                    ],
+                    hireVsExpire: { newlyHired: 12, expired: 4, netChange: 8 },
+                    compliance: [
+                        { department: 'Backend Engineering', unapproved: 45, missing: 12 },
+                        { department: 'Frontend UI', unapproved: 8, missing: 4 },
+                        { department: 'Quality Assurance', unapproved: 5, missing: 2 },
+                    ],
+                    dailyAllocations: {
+                        missingLogs: [
+                            { department: 'Frontend UI', missingCount: 4 },
+                            { department: 'Backend Engineering', missingCount: 2 },
+                        ],
+                        onBench: [
+                            { department: 'Frontend UI', benchCount: 1 },
+                            { department: 'Quality Assurance', benchCount: 2 },
+                        ],
+                    }
+                });
+
+            } catch (err: any) {
+                console.error('Error fetching PM metrics:', err);
+                setError(err);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        fetchMetrics();
+    }, [dateRange, businessUnit]);
+
+    return { data, loading, error };
 }
