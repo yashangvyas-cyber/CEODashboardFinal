@@ -73,7 +73,7 @@ const RevenueTrend: React.FC<Props> = ({ data }) => {
             <div className="flex items-center justify-between mb-5 shrink-0">
                 <div className="flex items-center gap-2">
                     <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase">Revenue Trend</h3>
-                    <InfoTooltip content="Historical view of invoiced revenue versus targets over time." />
+                    <InfoTooltip content="Tracks the flow of money from Deal Won (Sales) to Invoiced (Billing) to Collected (Cash) over time. Use this to spot if collections are lagging behind sales." />
                 </div>
                 <div className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-widest">
                     {[
