@@ -34,9 +34,9 @@ const AvgDaysToPay: React.FC<Props> = ({ data }) => {
     const d = data || defaultData;
 
     return (
-        <div className="bg-white rounded-[10px] border border-slate-200 p-5 shadow-sm flex flex-col h-full hover:shadow transition-shadow">
+        <div className="bg-white rounded-[10px] border border-slate-200 p-4 shadow-sm hover:shadow transition-shadow inline-block w-full">
             {/* Header & Main Value aligned horizontally */}
-            <div className="flex items-start justify-between mb-4 shrink-0">
+            <div className="flex items-start justify-between mb-3 shrink-0">
                 <div className="flex items-center gap-2">
                     <div className="bg-emerald-50 rounded-lg p-1.5 flex items-center justify-center">
                         <svg className="w-4 h-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -57,7 +57,7 @@ const AvgDaysToPay: React.FC<Props> = ({ data }) => {
             </div>
 
             {/* Segmented Bar */}
-            <div className="w-full flex h-3.5 rounded-full overflow-hidden gap-1 mb-5">
+            <div className="w-full flex h-3.5 rounded-full overflow-hidden gap-1 mb-4">
                 {d.buckets.map((bucket, i) => (
                     <div
                         key={i}
@@ -69,7 +69,7 @@ const AvgDaysToPay: React.FC<Props> = ({ data }) => {
             </div>
 
             {/* Legend Grid */}
-            <div className="flex justify-between items-center w-full mt-auto text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+            <div className="flex justify-between items-center w-full text-[11px] font-bold text-slate-400 uppercase tracking-wider">
                 {d.buckets.map((bucket, i) => (
                     <div key={i} className="flex items-center gap-1.5">
                         <div className={`w-1.5 h-1.5 rounded-full ${bucket.bgColor}`} />
