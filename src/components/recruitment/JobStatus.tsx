@@ -16,7 +16,7 @@ const JobStatus: React.FC<Props> = ({ data }) => {
         <div className="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all p-6 flex flex-col h-full relative">
             <div className="flex items-center gap-2 mb-6 pb-4 border-b border-slate-100/80 w-full shrink-0">
                 <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase">Job Status</h3>
-                <InfoTooltip content="Current status of all job openings, categorized by open and closed positions." />
+                <InfoTooltip content="Distribution of job openings that were posted as Open or Closed during the selected date range." />
             </div>
 
             <div className="flex flex-row items-center justify-center gap-10 flex-1 min-h-0">
