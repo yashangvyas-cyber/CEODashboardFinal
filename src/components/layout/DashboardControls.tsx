@@ -61,6 +61,8 @@ export const DashboardControls: React.FC<DashboardControlsProps> = ({
     const handleApplyDate = () => {
         onChangeDate(pendingDate);
         setIsDateOpen(false);
+        // Immediately commit so dashboard data refreshes without needing a separate Search click
+        setTimeout(() => onSearch(), 0);
     };
 
     return (
@@ -110,8 +112,8 @@ export const DashboardControls: React.FC<DashboardControlsProps> = ({
                                     key={opt.value}
                                     onClick={() => setPendingDate(opt.value)}
                                     className={`px-3 py-1.5 rounded text-[11px] font-bold transition-all border outline-none ${pendingDate === opt.value
-                                            ? 'bg-[#4f46e5] text-white border-[#4f46e5]' // Indigo-600 matching screenshot
-                                            : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                                        ? 'bg-[#4f46e5] text-white border-[#4f46e5]' // Indigo-600 matching screenshot
+                                        : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
                                         }`}
                                 >
                                     {opt.label}
@@ -127,8 +129,8 @@ export const DashboardControls: React.FC<DashboardControlsProps> = ({
                             <button
                                 onClick={handleApplyDate}
                                 className={`px-4 py-1.5 rounded text-[11px] font-bold transition-all ${pendingDate !== selectedDate
-                                        ? 'bg-[#c7d2fe] text-white hover:bg-indigo-400' // Indigo-200 / 400
-                                        : 'bg-[#e0e7ff] text-indigo-300 cursor-not-allowed' // Indigo-100 disabled look
+                                    ? 'bg-[#c7d2fe] text-white hover:bg-indigo-400' // Indigo-200 / 400
+                                    : 'bg-[#e0e7ff] text-indigo-300 cursor-not-allowed' // Indigo-100 disabled look
                                     }`}
                             >
                                 Apply
