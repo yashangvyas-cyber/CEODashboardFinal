@@ -53,16 +53,15 @@ export const DashboardControls: React.FC<DashboardControlsProps> = ({
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    // Sync internal state when external changes
+    // Only sync pendingDate when selectedDate externally changes (e.g. Clear button)
+    // DO NOT add isDateOpen here — closing the popover must NOT reset pending selection!
     useEffect(() => {
         setPendingDate(selectedDate);
-    }, [selectedDate, isDateOpen]);
+    }, [selectedDate]);
 
     const handleApplyDate = () => {
         onChangeDate(pendingDate);
         setIsDateOpen(false);
-        // Immediately commit so dashboard data refreshes without needing a separate Search click
-        setTimeout(() => onSearch(), 0);
     };
 
     return (
