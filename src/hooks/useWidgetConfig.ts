@@ -71,12 +71,12 @@ const DEFAULT_LAYOUTS: Record<ModuleOption, LayoutItem[]> = {
         { i: 'crmPipelineSummaries', x: 0, y: 14, w: 4, h: 8, minW: 3, minH: 5 },
         { i: 'salesMetrics', x: 4, y: 14, w: 3, h: 8, minW: 3, minH: 4 },
         { i: 'lostDealAnalysis', x: 7, y: 14, w: 5, h: 8, minW: 4, minH: 6 },
-        { i: 'avgDaysToPay', x: 0, y: 22, w: 6, h: 5, minW: 3, minH: 4 },
-        { i: 'revenueSourceMix', x: 6, y: 22, w: 6, h: 5, minW: 4, minH: 4 },
-        { i: 'collectionGoalCard', x: 0, y: 27, w: 6, h: 7, minW: 4, minH: 5 },
-        { i: 'multiCurrencyCashFlow', x: 6, y: 27, w: 6, h: 7, minW: 4, minH: 5 },
-        { i: 'recentLargeInflows', x: 0, y: 34, w: 6, h: 10, minW: 4, minH: 7 },
-        { i: 'topRevenueContributors', x: 6, y: 34, w: 6, h: 10, minW: 6, minH: 7 },
+        { i: 'avgDaysToPay', x: 0, y: 22, w: 6, h: 5, minW: 3, minH: 5 },
+        { i: 'revenueSourceMix', x: 6, y: 22, w: 6, h: 5, minW: 4, minH: 5 },
+        { i: 'collectionGoalCard', x: 0, y: 27, w: 6, h: 7, minW: 4, minH: 6 },
+        { i: 'multiCurrencyCashFlow', x: 6, y: 27, w: 6, h: 7, minW: 4, minH: 6 },
+        { i: 'recentLargeInflows', x: 0, y: 34, w: 6, h: 8, minW: 4, minH: 6 },
+        { i: 'topRevenueContributors', x: 6, y: 34, w: 6, h: 8, minW: 6, minH: 6 },
     ],
     recruitment: [
         { i: 'recruitmentSummaryCards', x: 0, y: 0, w: 12, h: 3, minW: 6, minH: 3 },
@@ -113,7 +113,7 @@ function getInitialConfig(tab: ModuleOption): WidgetConfig {
 
 function getInitialLayout(tab: ModuleOption): Layout {
     try {
-        const stored = localStorage.getItem(`widgetLayout_v30_${tab}`);
+        const stored = localStorage.getItem(`widgetLayout_v32_${tab}`);
         if (stored) {
             const parsed = JSON.parse(stored) as LayoutItem[];
             const defaultLayout = DEFAULT_LAYOUTS[tab] || [];
@@ -148,12 +148,12 @@ export function useWidgetConfig(tab: ModuleOption) {
 
     const updateLayout = useCallback((newLayout: Layout) => {
         setLayout(newLayout);
-        try { localStorage.setItem(`widgetLayout_v30_${tab}`, JSON.stringify(newLayout)); } catch (_) { /* ignore */ }
+        try { localStorage.setItem(`widgetLayout_v32_${tab}`, JSON.stringify(newLayout)); } catch (_) { /* ignore */ }
     }, [tab]);
 
     const resetLayout = useCallback(() => {
         try {
-            ['v1', 'v2', 'v3', 'v4', 'v5', 'v6', 'v7', 'v8', 'v9', 'v10', 'v11', 'v12', 'v13', 'v14', 'v15', 'v16', 'v17', 'v18', 'v19', 'v20', 'v21', 'v22', 'v23', 'v24', 'v25', 'v26', 'v27', 'v28', 'v29', 'v30'].forEach(v => {
+            ['v1', 'v2', 'v3', 'v4', 'v5', 'v6', 'v7', 'v8', 'v9', 'v10', 'v11', 'v12', 'v13', 'v14', 'v15', 'v16', 'v17', 'v18', 'v19', 'v20', 'v21', 'v22', 'v23', 'v24', 'v25', 'v26', 'v27', 'v28', 'v29', 'v30', 'v31', 'v32'].forEach(v => {
                 localStorage.removeItem(`widgetLayout_${v}_${tab}`);
             });
             localStorage.removeItem(`widgetLayout_${tab}`);
