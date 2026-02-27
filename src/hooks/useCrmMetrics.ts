@@ -5,10 +5,8 @@ import type { BusinessUnitOption, DateRangeOption } from '../types';
 export interface CrmMetrics {
     summary: any;
     pipelineSummaries: any;
-    collectionEfficiency: any;
     pipelineFunnel: any;
     salesMetrics: any;
-    receivablesAging: any;
     collectionGoal: any;
     topContributors: any[];
     lostDealAnalysis: any[];
@@ -264,11 +262,6 @@ export function useCrmMetrics(dateRange: DateRangeOption, businessUnit: Business
                             avgConversionTime: avgDealConversionDays
                         }
                     },
-                    collectionEfficiency: {
-                        score: efficiency.toFixed(1),
-                        trend: "+2.4% vs last month",
-                        chartData: [40, 55, 45, 60, 75, 65, 80, 70, 85, efficiency] // Fake history, real current
-                    },
                     pipelineFunnel: {
                         deals: {
                             title: "Deal Funnel",
@@ -292,15 +285,6 @@ export function useCrmMetrics(dateRange: DateRangeOption, businessUnit: Business
                     salesMetrics: {
                         avgDealSize: { value: avgDealFormatted.value, unit: avgDealFormatted.unit, trend: 5.4 },
                         salesCycle: { days: 22, target: 30 }
-                    },
-                    receivablesAging: {
-                        total: formatCurrency(outstanding),
-                        items: [
-                            { range: '1-15 Days', amount: formatCurrency(outstanding * 0.6), value: 60, color: 'bg-slate-300' },
-                            { range: '16-30 Days', amount: formatCurrency(outstanding * 0.2), value: 20, color: 'bg-slate-400' },
-                            { range: '31-45 Days', amount: formatCurrency(outstanding * 0.15), value: 15, color: 'bg-slate-600' },
-                            { range: '45+ Days', amount: formatCurrency(outstanding * 0.05), value: 5, color: 'bg-rose-500 shadow-sm shadow-rose-500/30' }
-                        ]
                     },
                     collectionGoal: {
                         percentage: efficiency,
