@@ -51,11 +51,7 @@ const RevenueSourceMix: React.FC<Props> = ({ data }) => {
                 </div>
             </div>
 
-            <div className="mt-auto pt-4 flex justify-center">
-                <div className="px-3 py-1 bg-slate-50 rounded-full border border-slate-100 italic text-[9px] text-slate-400 font-medium">
-                    Based on YTD Invoiced Revenue
-                </div>
-            </div>
+
         </div>
     );
 }
