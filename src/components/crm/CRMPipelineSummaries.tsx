@@ -37,7 +37,9 @@ const PipelineCard = ({ title, total, subItems, icon: Icon, colorClass }: any) =
                     </div>
                     <div className="flex items-baseline space-x-1">
                         <span className="text-sm font-black text-slate-800 tracking-tight">{item.value}</span>
-                        <span className="text-[9px] font-bold text-slate-400">({item.percent}%)</span>
+                        {item.percent != null && (
+                            <span className="text-[9px] font-bold text-slate-400">({item.percent}%)</span>
+                        )}
                     </div>
                 </div>
             ))}

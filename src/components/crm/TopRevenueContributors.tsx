@@ -44,7 +44,7 @@ const TopRevenueContributors: React.FC<Props> = ({ data }) => {
     };
 
     return (
-        <div className="bg-white border border-slate-200 p-4 flex flex-col group transition-all hover:shadow-md relative overflow-hidden rounded-lg">
+        <div className="bg-white border border-slate-200 p-4 flex flex-col h-full group transition-all hover:shadow-md relative overflow-hidden rounded-lg">
             <div className="flex justify-between items-start mb-4 pb-4 border-b border-slate-100/80 w-full shrink-0">
                 <div className="flex items-center">
                     <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase">Top Revenue Contributors</h3>

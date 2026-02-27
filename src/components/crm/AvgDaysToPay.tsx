@@ -34,7 +34,7 @@ const AvgDaysToPay: React.FC<Props> = ({ data }) => {
     const d = data || defaultData;
 
     return (
-        <div className="bg-white rounded-[10px] border border-slate-200 p-4 shadow-sm hover:shadow transition-shadow inline-block w-full">
+        <div className="bg-white rounded-[10px] border border-slate-200 p-4 shadow-sm h-full flex flex-col justify-between hover:shadow transition-shadow w-full">
             {/* Header & Main Value aligned horizontally */}
             <div className="flex items-start justify-between mb-3 shrink-0">
                 <div className="flex items-center gap-2">
