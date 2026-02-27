@@ -295,11 +295,20 @@ export function useCrmMetrics(dateRange: DateRangeOption, businessUnit: Business
                         { name: "Acme Corp Global", invoiced: "₹12.5L", percent: 88, status: 'GOOD' },
                         { name: "TechStart Systems", invoiced: "₹8.5L", percent: 50, status: 'PARTIAL' },
                     ],
-                    lostDealAnalysis: Object.entries(lostReasons).map(([label, value]) => ({
-                        label,
-                        value: lostCount > 0 ? Math.round((value / lostCount) * 100) : 0,
-                        color: label === 'Competitor' ? "fill-rose-500 bg-rose-500" : label === 'Budget' ? "fill-slate-400 bg-slate-400" : label === 'Delayed' ? "fill-amber-400 bg-amber-400" : "fill-slate-200 bg-slate-200"
-                    })),
+                    lostDealAnalysis: Object.entries(lostReasons).map(([label, value]) => {
+                        let hexColor = "#e2e8f0"; // slate-200 default
+                        let color = "fill-slate-200 bg-slate-200";
+                        if (label === 'Competitor') { hexColor = "#f43f5e"; color = "fill-rose-500 bg-rose-500"; }
+                        else if (label === 'Budget') { hexColor = "#94a3b8"; color = "fill-slate-400 bg-slate-400"; }
+                        else if (label === 'Delayed') { hexColor = "#fbbf24"; color = "fill-amber-400 bg-amber-400"; }
+
+                        return {
+                            label,
+                            value: lostCount > 0 ? Math.round((value / lostCount) * 100) : 0,
+                            color,
+                            hexColor
+                        };
+                    }),
                     sourceMix: { new: newSourcePct, existing: existingSourcePct },
                     revenueTrend: revenueTrendChartData,
                     recentInflows,
