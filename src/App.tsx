@@ -24,7 +24,7 @@ function App() {
   const [appliedDate, setAppliedDate] = useState<DateRangeOption>('last_year');
 
   // Section 3 multi-select tabs (pending selection before Apply)
-  const [selectedTabs, setSelectedTabs] = useState<ModuleOption[]>(['crm']);
+  const [selectedTabs, setSelectedTabs] = useState<ModuleOption[]>([]);
 
   // Section 4 state (snapshot after Apply)
   const [appliedTabs, setAppliedTabs] = useState<ModuleOption[]>([]);
@@ -38,8 +38,7 @@ function App() {
   const toggleTab = (tab: ModuleOption) => {
     setSelectedTabs(prev =>
       prev.includes(tab)
-        ? prev.length === 1 ? prev // must keep at least one selected
-          : prev.filter(t => t !== tab)
+        ? prev.filter(t => t !== tab)
         : [...prev, tab]
     );
   };
@@ -61,7 +60,7 @@ function App() {
   };
 
   const handleClear = () => {
-    setSelectedTabs(['crm']);
+    setSelectedTabs([]);
     setAppliedTabs([]);
     setLastAppliedTab('crm');
     setSelectedBU('all');
@@ -99,15 +98,15 @@ function App() {
           {isApplied ? (
             <div className="flex flex-col h-full">
               {/* Tab Switcher & Customize Button Row */}
-              <div className="flex items-center justify-between px-6 pt-5 pb-3 bg-white">
-                <div className="flex items-center gap-2">
+              <div className="flex items-center justify-between px-6 pt-2 bg-white border-b border-slate-200">
+                <div className="flex items-center gap-6">
                   {ALL_MODULES.filter(m => appliedTabs.includes(m.id)).map(mod => (
                     <button
                       key={mod.id}
                       onClick={() => setLastAppliedTab(mod.id)}
-                      className={`px-4 py-1.5 rounded-full text-[11px] font-bold transition-all border ${activeAppliedTab === mod.id
-                        ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
-                        : 'bg-white text-slate-600 border-slate-300 hover:border-indigo-400 hover:text-indigo-600'
+                      className={`py-3 text-sm font-semibold transition-all duration-150 whitespace-nowrap select-none border-b-2 outline-none -mb-[1px] ${activeAppliedTab === mod.id
+                        ? 'text-indigo-600 border-indigo-600'
+                        : 'text-slate-500 border-transparent hover:text-slate-800'
                         }`}
                     >
                       {mod.label}
@@ -115,7 +114,7 @@ function App() {
                   ))}
                 </div>
 
-                <div className="flex items-center">
+                <div className="flex items-center pb-2">
                   <CustomizeWidgetsButton
                     tab={activeAppliedTab}
                     config={wc.config}
