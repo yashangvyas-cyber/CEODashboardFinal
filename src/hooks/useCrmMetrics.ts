@@ -302,26 +302,31 @@ export function useCrmMetrics(dateRange: DateRangeOption, businessUnit: Business
                         { name: "Acme Corp Global", invoiced: "₹12.5L", percent: 88, status: 'GOOD' },
                         { name: "TechStart Systems", invoiced: "₹8.5L", percent: 50, status: 'PARTIAL' },
                     ],
-                    lostDealAnalysis: Object.entries(lostReasons)
-                        .sort(([, valA], [, valB]) => (valB as number) - (valA as number)) // Sort by value desc
-                        .map(([label, value], index) => {
-                            // Define a vibrant, distinct palette for dynamic reasons
-                            const dynamicPalette = [
-                                { hexColor: "#f43f5e", color: "fill-rose-500 bg-rose-500" },     // Rose
-                                { hexColor: "#fbbf24", color: "fill-amber-400 bg-amber-400" },   // Amber
-                                { hexColor: "#94a3b8", color: "fill-slate-400 bg-slate-400" },   // Slate
-                                { hexColor: "#a855f7", color: "fill-purple-500 bg-purple-500" }, // Purple
-                                { hexColor: "#3b82f6", color: "fill-blue-500 bg-blue-500" },     // Blue
-                                { hexColor: "#10b981", color: "fill-emerald-500 bg-emerald-500" } // Emerald
-                            ];
+                    lostDealAnalysis: (() => {
+                        const sortedReasons = Object.entries(lostReasons).sort(([, valA], [, valB]) => (valB as number) - (valA as number));
+                        const topReasons = sortedReasons.slice(0, 3);
+                        const otherReasons = sortedReasons.slice(3);
 
-                            // Try to match hardcoded keys first
+                        const chartDataRaw = [...topReasons];
+                        if (otherReasons.length > 0) {
+                            const otherTotal = otherReasons.reduce((sum, [, val]) => sum + (val as number), 0);
+                            chartDataRaw.push(['Other', otherTotal]);
+                        }
+
+                        const dynamicPalette = [
+                            { hexColor: "#f43f5e", color: "fill-rose-500 bg-rose-500" },     // Rose
+                            { hexColor: "#fbbf24", color: "fill-amber-400 bg-amber-400" },   // Amber
+                            { hexColor: "#3b82f6", color: "fill-blue-500 bg-blue-500" },     // Blue
+                            { hexColor: "#94a3b8", color: "fill-slate-400 bg-slate-400" }    // Slate
+                        ];
+
+                        return chartDataRaw.map(([label, value], index) => {
                             let match = null;
                             if (label === 'Competitor') match = dynamicPalette[0];
                             else if (label === 'Delayed') match = dynamicPalette[1];
-                            else if (label === 'Budget') match = dynamicPalette[2];
+                            else if (label === 'Budget') match = { hexColor: "#10b981", color: "fill-emerald-500 bg-emerald-500" };
+                            else if (label === 'Other') match = dynamicPalette[3];
 
-                            // If it's a dynamic custom reason, assign from palette based on index
                             if (!match) {
                                 match = dynamicPalette[index % dynamicPalette.length];
                             }
@@ -332,7 +337,8 @@ export function useCrmMetrics(dateRange: DateRangeOption, businessUnit: Business
                                 color: match.color,
                                 hexColor: match.hexColor
                             };
-                        }),
+                        });
+                    })(),
                     sourceMix: { new: newSourcePct, existing: existingSourcePct },
                     revenueTrend: revenueTrendChartData,
                     recentInflows,
