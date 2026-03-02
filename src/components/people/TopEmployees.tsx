@@ -1,6 +1,6 @@
 import React from 'react';
 import type { DateRangeOption } from '../../types';
-import { Maximize2, MoreHorizontal, Trophy } from 'lucide-react';
+import { MoreHorizontal, Trophy } from 'lucide-react';
 import InfoTooltip from '../common/InfoTooltip';
 
 interface Props {
@@ -16,10 +16,9 @@ const TopEmployees: React.FC<Props> = ({ data }) => {
             <div className="flex justify-between items-center mb-4 shrink-0 border-b border-slate-100 pb-4">
                 <div className="flex items-center gap-2 w-full shrink-0">
                     <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase">Top Recognized</h3>
-                    <InfoTooltip content="The employees who as we will only consider, badges and recognitions." />
+                    <InfoTooltip content="Top employees recognized for their contributions based on badges and awards." />
                 </div>
                 <div className="flex items-center gap-2 text-slate-400">
-                    <button className="hover:text-slate-600 transition-colors"><Maximize2 className="w-3.5 h-3.5" /></button>
                     <button className="hover:text-slate-600 transition-colors"><MoreHorizontal className="w-4 h-4" /></button>
                 </div>
             </div>

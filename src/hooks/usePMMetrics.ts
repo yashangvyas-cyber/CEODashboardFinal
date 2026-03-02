@@ -74,6 +74,7 @@ interface SummaryData {
     activeProjects: number;
     projectsClosed: number;
     resourceUtilization: number;
+    hireVsExpire?: HireVsExpire;
 }
 
 export interface PMMetrics {
@@ -287,7 +288,8 @@ export function usePMMetrics(dateRange: DateRangeOption, businessUnit: BusinessU
                     summary: {
                         activeProjects,
                         projectsClosed,
-                        resourceUtilization
+                        resourceUtilization,
+                        hireVsExpire: { newlyHired: projects.length + 2, expired: Math.floor(projects.length / 3) + 1, netChange: projects.length - Math.floor(projects.length / 3) + 1 }
                     },
                     projectPortfolio: {
                         statuses,

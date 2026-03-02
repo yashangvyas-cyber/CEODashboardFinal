@@ -14,6 +14,7 @@ export interface CrmMetrics {
     revenueTrend: any[];
     recentInflows: any[];
     multiCurrencyFlow: any[];
+    avgDaysToPay: any;
 }
 
 export function useCrmMetrics(dateRange: DateRangeOption, businessUnit: BusinessUnitOption) {
@@ -269,6 +270,16 @@ export function useCrmMetrics(dateRange: DateRangeOption, businessUnit: Business
                             avgConversionTime: avgDealConversionDays
                         }
                     },
+                    avgDaysToPay: {
+                        avgDays: 3,
+                        trend: -1.2,
+                        buckets: [
+                            { label: 'On Time', percent: 66, color: '#10b981', textColor: 'text-emerald-600', bgColor: 'bg-emerald-500' },
+                            { label: '1-30', percent: 12, color: '#f59e0b', textColor: 'text-amber-500', bgColor: 'bg-amber-500' },
+                            { label: '30-45', percent: 8, color: '#f97316', textColor: 'text-orange-500', bgColor: 'bg-orange-500' },
+                            { label: '45+', percent: 14, color: '#f43f5e', textColor: 'text-rose-500', bgColor: 'bg-rose-500' },
+                        ]
+                    },
                     pipelineFunnel: {
                         deals: {
                             title: "Deal Funnel",
@@ -296,11 +307,15 @@ export function useCrmMetrics(dateRange: DateRangeOption, businessUnit: Business
                     collectionGoal: {
                         percentage: efficiency,
                         target: formatCurrency(totalInvoiced),
-                        collected: formatCurrency(totalCollected)
+                        collected: formatCurrency(totalCollected),
+                        surplus: formatCurrency(Math.max(0, totalCollected - (totalInvoiced * 0.8))), // Mocking surplus over a 80% threshold
+                        currencyCode: 'INR'
                     },
                     topContributors: [
-                        { name: "Acme Corp Global", invoiced: "₹12.5L", percent: 88, status: 'GOOD' },
-                        { name: "TechStart Systems", invoiced: "₹8.5L", percent: 50, status: 'PARTIAL' },
+                        { name: "Suraj Kumar", invoiced: "45,98,750", collected: "42,00,000", percent: 92, status: 'GOOD' },
+                        { name: "Safari Software1", invoiced: "900", collected: "500", percent: 55, status: 'PARTIAL' },
+                        { name: "Alex Parker", invoiced: "275", collected: "150", percent: 54, status: 'PARTIAL' },
+                        { name: "Altra tech", invoiced: "8", collected: "8", percent: 100, status: 'COMPLETED' },
                     ],
                     lostDealAnalysis: Object.entries(lostReasons)
                         .sort(([, valA], [, valB]) => (valB as number) - (valA as number)) // Sort by value desc

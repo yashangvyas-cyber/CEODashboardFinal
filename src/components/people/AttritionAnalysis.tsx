@@ -7,8 +7,7 @@ import {
     XAxis,
     YAxis,
     Tooltip,
-    CartesianGrid,
-    Legend
+    CartesianGrid
 } from 'recharts';
 
 import InfoTooltip from '../common/InfoTooltip';
@@ -29,37 +28,27 @@ const AttritionAnalysis: React.FC<Props> = ({ data }) => {
 
     const { chartData } = data;
 
-    const renderCustomLegend = (props: any) => {
-        const { payload } = props;
-        // Re-order to match screenshot exactly: Non-Regrettable (green), Regrettable (red), Unspecified (gray)
-        const orderedPayload = [
-            payload.find((p: any) => p.value === 'nonRegrettable'),
-            payload.find((p: any) => p.value === 'regrettable'),
-            payload.find((p: any) => p.value === 'unspecified')
-        ].filter(Boolean);
-
-        return (
-            <div className="flex justify-end gap-5 text-[11px] text-slate-500 font-semibold mb-2 pr-4">
-                {orderedPayload.map((entry: any, index: number) => (
-                    <div key={`item-${index}`} className="flex items-center gap-1.5">
-                        <span className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS[entry.value] }}></span>
-                        <span className="capitalize">{entry.value === 'regrettable' ? 'Regrettable' : entry.value === 'nonRegrettable' ? 'Non-Regrettable' : 'Unspecified'}</span>
-                    </div>
-                ))}
-            </div>
-        );
-    };
 
     return (
         <div className="bg-white rounded-[10px] border border-slate-200 p-4 shadow-sm h-full flex flex-col hover:shadow transition-shadow w-full">
             <div className="flex justify-between items-center mb-4 pb-3 border-b border-slate-100/80 w-full shrink-0 relative z-10">
                 <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase">Exit Trend
                     <InfoTooltip content="Monthly trend of employee exits, categorized by regrettable and non-regrettable attrition." /></h3>
-                <div className="absolute right-0 top-0">
-                    <Legend
-                        content={renderCustomLegend}
-                        wrapperStyle={{ position: 'relative', top: 0, right: 0, width: '100%' }}
-                    />
+
+                {/* Manual Legend at top right */}
+                <div className="flex items-center gap-4 text-[11px] font-bold text-slate-500">
+                    <div className="flex items-center gap-1.5">
+                        <span className="w-2.5 h-2.5 rounded-full bg-red-500"></span>
+                        <span>Regrettable</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                        <span className="w-2.5 h-2.5 rounded-full bg-green-500"></span>
+                        <span>Non-Regrettable</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                        <span className="w-2.5 h-2.5 rounded-full bg-slate-300"></span>
+                        <span>Unspecified</span>
+                    </div>
                 </div>
             </div>
 

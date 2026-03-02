@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import type { DateRangeOption } from '../../types';
 import InfoTooltip from '../common/InfoTooltip';
 
 interface CustomerData {
     name: string;
     invoiced: string;
+    collected: string;
     percent: number;
     status: 'GOOD' | 'PARTIAL' | 'COMPLETED' | 'LATE';
 }
@@ -15,79 +17,113 @@ interface Props {
 }
 
 const TopRevenueContributors: React.FC<Props> = ({ data }) => {
+    const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+    const [coords, setCoords] = useState({ top: 0, left: 0 });
+
     const customers: CustomerData[] = data || [
-        { name: "Acme Corp Global", invoiced: "₹12.5L", percent: 88, status: 'GOOD' },
-        { name: "TechStart Systems", invoiced: "₹8.5L", percent: 50, status: 'PARTIAL' },
-        { name: "Global Dynamics", invoiced: "₹6.2L", percent: 100, status: 'COMPLETED' },
-        { name: "Sirius Cybernetics", invoiced: "₹4.5L", percent: 22, status: 'LATE' },
-        { name: "Massive Dynamic", invoiced: "₹3.8L", percent: 89, status: 'GOOD' },
+        { name: "Suraj Kumar", invoiced: "45,98,750.58", collected: "42,00,000", percent: 92, status: 'GOOD' },
+        { name: "Safari Software1", invoiced: "900", collected: "500", percent: 55, status: 'PARTIAL' },
+        { name: "Alex Parker", invoiced: "275", collected: "150", percent: 54, status: 'PARTIAL' },
+        { name: "Altra tech", invoiced: "8", collected: "4", percent: 50, status: 'PARTIAL' },
     ];
 
-    const getStatusStyles = (status: CustomerData['status']) => {
-        switch (status) {
-            case 'GOOD': return 'text-emerald-600 bg-emerald-50 border-emerald-100';
-            case 'PARTIAL': return 'text-amber-600 bg-amber-50 border-amber-100';
-            case 'COMPLETED': return 'text-blue-600 bg-blue-50 border-blue-100';
-            case 'LATE': return 'text-rose-600 bg-rose-50 border-rose-100';
-            default: return 'text-slate-600 bg-slate-50 border-slate-100';
-        }
-    };
-
-    const getBarColor = (status: CustomerData['status']) => {
-        switch (status) {
-            case 'GOOD': return 'bg-emerald-500';
-            case 'PARTIAL': return 'bg-amber-500';
-            case 'COMPLETED': return 'bg-blue-500';
-            case 'LATE': return 'bg-rose-500 shadow-rose-500/20';
-            default: return 'bg-slate-400';
-        }
+    const handleMouseEnter = (idx: number, e: React.MouseEvent<HTMLDivElement>) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        setCoords({
+            top: rect.top,
+            left: rect.left + rect.width / 2
+        });
+        setHoveredIndex(idx);
     };
 
     return (
-        <div className="bg-white border border-slate-200 p-4 flex flex-col h-full group transition-all hover:shadow-md relative overflow-hidden rounded-lg">
-            <div className="flex justify-between items-start mb-4 pb-4 border-b border-slate-100/80 w-full shrink-0">
-                <div className="flex items-center">
-                    <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase">Top Revenue Contributors</h3>
-                    <InfoTooltip content="A list of the highest revenue-generating customers, showing their invoiced amounts and collection progression status." />
+        <div className="bg-white border border-slate-200 p-4 flex flex-col h-full group transition-all hover:shadow-md relative overflow-hidden rounded-xl shadow-sm">
+            {/* Header */}
+            <div className="flex justify-between items-start mb-6 pb-4 border-b border-slate-100/80 w-full shrink-0">
+                <div className="flex flex-col gap-0.5">
+                    <div className="flex items-center gap-1.5">
+                        <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase">Top 5 Revenue Contributors</h3>
+                        <InfoTooltip content="Highest value accounts by Invoiced Amount." />
+                    </div>
+                    <span className="text-[10px] font-bold text-slate-400 tracking-tight">Highest value accounts by Invoiced Amount</span>
                 </div>
-                <button className="text-[9px] font-black text-indigo-600 uppercase tracking-tighter hover:text-indigo-700 transition-colors mt-0.5">View All</button>
+
+                {/* Legend */}
+                <div className="flex items-center gap-4 mt-1">
+                    <div className="flex items-center gap-1.5">
+                        <div className="w-2 h-2 rounded-full bg-slate-200" />
+                        <span className="text-[9px] font-bold text-slate-500 uppercase tracking-tighter">Invoiced</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                        <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                        <span className="text-[9px] font-bold text-emerald-600 uppercase tracking-tighter">Collected</span>
+                    </div>
+                </div>
             </div>
 
-            <div className="flex-1 overflow-auto custom-scrollbar">
-                <table className="w-full text-[10px]">
-                    <thead className="text-slate-400 uppercase tracking-tighter font-black border-b border-slate-100">
-                        <tr>
-                            <th className="text-left py-2 px-1">Customer</th>
-                            <th className="text-center py-2 px-1">Invoiced</th>
-                            <th className="text-left py-2 px-1 w-1/3">Progress</th>
-                            <th className="text-right py-2 px-1">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-50">
-                        {customers.map((customer, idx) => (
-                            <tr key={idx} className="hover:bg-slate-50/50 transition-colors group/row">
-                                <td className="py-2.5 px-1 font-black text-slate-700">{customer.name}</td>
-                                <td className="py-2.5 px-1 text-center text-slate-500 font-bold">{customer.invoiced}</td>
-                                <td className="py-2.5 px-1">
-                                    <div className="flex items-center space-x-2">
-                                        <div className="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                                            <div
-                                                className={`h-full rounded-full transition-all duration-1000 ease-out ${getBarColor(customer.status)}`}
-                                                style={{ width: `${customer.percent}%` }}
-                                            />
-                                        </div>
-                                        <span className="text-[9px] font-black text-slate-400 group-hover/row:text-slate-600 transition-colors w-6 text-right">{customer.percent}%</span>
-                                    </div>
-                                </td>
-                                <td className="py-2.5 px-1 text-right">
-                                    <span className={`text-[8px] font-black border px-1.5 py-0.5 rounded shadow-sm ${getStatusStyles(customer.status)}`}>
-                                        {customer.status}
-                                    </span>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+            {/* List */}
+            <div className="flex-1 space-y-5 overflow-auto custom-scrollbar pt-1 pr-1">
+                {customers.map((customer, idx) => (
+                    <div
+                        key={idx}
+                        className="relative group/item z-0"
+                    >
+                        {/* Name and Rank Row */}
+                        <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-3">
+                                <div className="w-5 h-5 rounded-full bg-slate-50 text-slate-400 border border-slate-100 flex items-center justify-center text-[10px] font-black">
+                                    {idx + 1}
+                                </div>
+                                <span className="text-[11px] font-black text-slate-700 tracking-tight">{customer.name}</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">INVOICED:</span>
+                                <span className="text-[10px] font-black text-slate-600 tabular-nums">{customer.invoiced}</span>
+                                <span className="text-[8px] font-bold text-slate-300">...</span>
+                            </div>
+                        </div>
+
+                        {/* Progress Bar - Triggers Tooltip */}
+                        <div
+                            className="relative w-full h-4 bg-slate-50 rounded-full overflow-hidden border border-slate-100/50 shadow-inner group-hover/item:border-slate-200 transition-colors cursor-pointer"
+                            onMouseEnter={(e) => handleMouseEnter(idx, e)}
+                            onMouseLeave={() => setHoveredIndex(null)}
+                        >
+                            <div className="absolute inset-0 bg-slate-100/60" /> {/* Invoiced Layer */}
+                            <div
+                                className="absolute inset-y-0 left-0 bg-emerald-500 transition-all duration-1000 ease-out shadow-[0_0_8px_rgba(16,185,129,0.3)]"
+                                style={{ width: `${customer.percent}%` }}
+                            /> {/* Collected Layer */}
+                        </div>
+
+                        {/* Tooltip Portal */}
+                        {hoveredIndex === idx && createPortal(
+                            <div
+                                style={{
+                                    position: 'fixed',
+                                    top: `${coords.top - 8}px`,
+                                    left: `${coords.left}px`,
+                                    transform: 'translate(-50%, -100%)',
+                                    zIndex: 99999
+                                }}
+                                className="bg-[#1e293b] text-white px-4 py-2 rounded-lg shadow-2xl flex items-center gap-6 border border-slate-700/50 backdrop-blur-sm pointer-events-none whitespace-nowrap animate-in fade-in zoom-in-95 duration-200"
+                            >
+                                <div className="flex flex-col">
+                                    <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Invoiced</span>
+                                    <span className="text-[11px] font-black tracking-tight">{customer.invoiced}</span>
+                                </div>
+                                <div className="w-px h-6 bg-slate-700/50" />
+                                <div className="flex flex-col">
+                                    <span className="text-[8px] font-bold text-emerald-400 uppercase tracking-widest leading-none mb-1">Collected</span>
+                                    <span className="text-[11px] font-black tracking-tight text-emerald-400">{customer.collected}</span>
+                                </div>
+                                {/* Pointer */}
+                                <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-[6px] border-transparent border-t-[#1e293b]" />
+                            </div>,
+                            document.body
+                        )}
+                    </div>
+                ))}
             </div>
         </div>
     );

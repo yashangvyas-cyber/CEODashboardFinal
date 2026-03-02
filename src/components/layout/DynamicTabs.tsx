@@ -24,7 +24,6 @@ import TopEmployees from '../people/TopEmployees';
 // Project Management Components
 import PMSummaryCards from '../project_management/PMSummaryCards';
 import PMHealthBreakdown from '../project_management/PMHealthBreakdown';
-import ContractAdjustments from '../project_management/ContractAdjustments';
 import RevenueLeakage from '../project_management/RevenueLeakage';
 import TopEffortConsumers from '../project_management/TopEffortConsumers';
 import ProjectPortfolioStatus from '../project_management/ProjectPortfolioStatus';
@@ -34,13 +33,14 @@ import HirebaseByDepartment from '../project_management/HirebaseByDepartment';
 // CRM Components
 import CRMSummaryCards from '../crm/CRMSummaryCards';
 import CRMFunnelSwitcher from '../crm/CRMFunnelSwitcher';
+import CRMSideBySideFunnel from '../crm/CRMSideBySideFunnel';
 import CollectionGoalCard from '../crm/CollectionGoalCard';
 import CRMPipelineSummaries from '../crm/CRMPipelineSummaries';
 import TopRevenueContributors from '../crm/TopRevenueContributors';
 import LostDealAnalysis from '../crm/LostDealAnalysis';
 import RevenueSourceMix from '../crm/RevenueSourceMix';
 import RecentLargeInflows from '../crm/RecentLargeInflows';
-import MultiCurrencyCashFlow from '../crm/MultiCurrencyCashFlow';
+import CurrencySwitcher from '../crm/CurrencySwitcher';
 import RevenueTrend from '../crm/RevenueTrend';
 import AvgDaysToPay from '../crm/AvgDaysToPay';
 
@@ -109,15 +109,15 @@ export const DynamicTabs: React.FC<DynamicTabsProps> = ({ activeTab, dateRange, 
             switch (id) {
                 case 'crmSummaryCards': return <CRMSummaryCards dateRange={dateRange} data={crmData.summary} />;
                 case 'revenueTrend': return <RevenueTrend data={crmData.revenueTrend} />;
-                case 'avgDaysToPay': return <AvgDaysToPay />;
+                case 'avgDaysToPay': return <AvgDaysToPay data={crmData.avgDaysToPay} />;
                 case 'crmFunnelSwitcher': return <CRMFunnelSwitcher data={crmData.pipelineFunnel} />;
+                case 'crmSideBySideFunnel': return <CRMSideBySideFunnel data={crmData.pipelineFunnel} />;
                 case 'crmPipelineSummaries': return <CRMPipelineSummaries data={crmData.pipelineSummaries} />;
-                case 'collectionGoalCard': return <CollectionGoalCard dateRange={dateRange} data={crmData.collectionGoal} />;
+                case 'collectionGoalCard': return <CollectionGoalCard data={crmData.collectionGoal} />;
                 case 'revenueSourceMix': return <RevenueSourceMix data={crmData.sourceMix} />;
                 case 'lostDealAnalysis': return <LostDealAnalysis data={crmData.lostDealAnalysis} />;
                 case 'topRevenueContributors': return <TopRevenueContributors data={crmData.topContributors} />;
                 case 'recentLargeInflows': return <RecentLargeInflows data={crmData.recentInflows} />;
-                case 'multiCurrencyCashFlow': return <MultiCurrencyCashFlow data={crmData.multiCurrencyFlow} />;
             }
         }
         if (activeTab === 'recruitment') {
@@ -148,7 +148,6 @@ export const DynamicTabs: React.FC<DynamicTabsProps> = ({ activeTab, dateRange, 
                 case 'pmHealthBreakdown': return <PMHealthBreakdown dateRange={dateRange} data={pmData.healthBreakdown} />;
                 case 'revenueLeakage': return <RevenueLeakage dateRange={dateRange} data={pmData.leakage} />;
                 case 'topEffortConsumers': return <TopEffortConsumers dateRange={dateRange} data={pmData.effortConsumers} />;
-                case 'contractAdjustments': return <ContractAdjustments dateRange={dateRange} data={pmData.contractAdjustments} metricData={pmData.hireVsExpire} />;
                 case 'topSkillsDemand': return <TopSkillsDemand data={pmData.topSkillsDemand} />;
                 case 'hirebaseByDepartment': return <HirebaseByDepartment data={pmData.hirebaseByDept} />;
             }
@@ -160,6 +159,7 @@ export const DynamicTabs: React.FC<DynamicTabsProps> = ({ activeTab, dateRange, 
         <div className="w-full flex-1 flex flex-col pt-1 bg-slate-50/50">
             {/* Tab Content Area */}
             <div className="flex-1 px-4 pt-4 pb-12">
+                {activeTab === 'crm' && <CurrencySwitcher />}
                 <ResponsiveGridLayout
                     key={activeTab} // CRITICAL FIX: Forces deep remount on tab switch, preventing layout crossover scrambling!
                     className="layout"

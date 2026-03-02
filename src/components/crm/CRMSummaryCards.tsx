@@ -53,7 +53,7 @@ const CRMSummaryCards: React.FC<Props> = ({ data }) => {
             value: data?.invoiced.value || "₹3.8Cr",
             icon: FileText,
             colorClass: { bg: 'bg-blue-50/80', text: 'text-blue-600', border: 'border-blue-100/50' },
-            tooltip: "Total value of bills sent out to clients for successfully won deals, including all invoices sent during that period."
+            tooltip: "Total value of all invoices sent out to clients within the selected time range."
         },
         {
             label: "Collected",

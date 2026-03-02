@@ -48,10 +48,7 @@ const LeakageRow = ({ item }: { item: LeakageItem }) => {
         <div className="flex flex-col p-3 rounded-lg bg-slate-50 border border-slate-100 hover:bg-white hover:border-slate-300 hover:shadow-sm cursor-pointer transition-all duration-200">
             {/* Title row */}
             <div className="flex justify-between items-start mb-1.5">
-                <span className="text-xs font-bold text-slate-800 leading-tight w-2/3 truncate">{item.project}</span>
-                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border shrink-0 ${style.badge}`}>
-                    {item.type}
-                </span>
+                <span className="text-xs font-bold text-slate-800 leading-tight w-full truncate">{item.project}</span>
             </div>
 
             {/* Stats row */}
@@ -82,7 +79,7 @@ const LeakageRow = ({ item }: { item: LeakageItem }) => {
             {isOverflow && (
                 <div className="flex justify-end mt-1.5">
                     <span className={`text-[9px] font-black px-2 py-0.5 rounded-full border ${style.overrunBadge}`}>
-                        ⚠ {overrunPct}% of budget consumed
+                        ⚠ {item.type === 'Hourly' ? `Work is ${overrunPct}% of billed effort` : `${overrunPct}% of purchased budget consumed`}
                     </span>
                 </div>
             )}
@@ -117,14 +114,6 @@ const RevenueLeakage: React.FC<Props> = ({ data = [] }) => {
                     </h3>
                     <p className="text-xs text-slate-400 mt-1">Unbilled / Over-Budget Projects</p>
                 </div>
-                <div className="flex flex-col gap-1 shrink-0">
-                    <span className="text-[10px] font-semibold text-rose-500 flex items-center gap-1">
-                        <span className="w-2 h-2 rounded-sm bg-rose-400 inline-block" /> Fixed Cost
-                    </span>
-                    <span className="text-[10px] font-semibold text-amber-500 flex items-center gap-1">
-                        <span className="w-2 h-2 rounded-sm bg-amber-400 inline-block" /> Hourly
-                    </span>
-                </div>
             </div>
 
             {/* Item list */}
@@ -145,7 +134,7 @@ const RevenueLeakage: React.FC<Props> = ({ data = [] }) => {
 
             {/* Footer */}
             <div className="mt-3 pt-3 border-t border-slate-100 text-[10px] text-slate-400 bg-slate-50 p-2 rounded italic">
-                <strong>Logic:</strong> Tracks Fixed Cost projects where Actual {`>`} Purchased, and Hourly projects where Actual Spent exceeds Billed hours. Bar pulses red when overrun exceeds 100% of budget.
+                <strong>Logic:</strong> Tracks Fixed Cost projects where Actual {`>`} Purchased, and Hourly projects where Actual Spent exceeds Billed hours.
             </div>
         </div>
     );

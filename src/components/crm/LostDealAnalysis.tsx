@@ -35,23 +35,23 @@ const LostDealAnalysis: React.FC<Props> = ({ data }) => {
     };
 
     return (
-        <div className="premium-card p-6 flex flex-col h-full group hover-scale relative overflow-hidden h-full">
-            <div className="flex items-center gap-2 mb-2 pb-4 border-b border-slate-100/80 w-full shrink-0">
-                <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase">Lost Deal Reasons</h3>
-                <InfoTooltip content="Analysis of the primary reasons why deals were lost, such as competition, budget constraints, or timing." />
+        <div className="premium-card p-3 flex flex-col h-full group hover-scale relative overflow-hidden h-full">
+            <div className="flex items-center gap-2 mb-1 pb-2 border-b border-slate-100/80 w-full shrink-0">
+                <h3 className="text-[10px] font-black text-slate-700 tracking-tight uppercase">Lost Deal Reasons</h3>
+                <InfoTooltip content="Analysis of the primary reasons why deals were lost." />
             </div>
 
-            <div className="flex-1 flex flex-col items-center justify-center relative z-10 pt-4 w-full">
-                {/* Donut Chart */}
-                <div className="relative shrink-0 flex items-center justify-center w-full group-hover:scale-105 transition-transform duration-500" style={{ height: 130 }}>
-                    <PieChart width={140} height={140}>
+            <div className="flex-1 flex flex-row items-center gap-4 relative z-10 w-full min-h-0">
+                {/* Donut Chart on Left */}
+                <div className="shrink-0 flex items-center justify-center group-hover:scale-105 transition-transform duration-500" style={{ width: 100, height: 100 }}>
+                    <PieChart width={100} height={100}>
                         <Pie
                             data={chartData}
-                            cx={70}
-                            cy={70}
-                            innerRadius={0}
-                            outerRadius={65}
-                            paddingAngle={1}
+                            cx={50}
+                            cy={50}
+                            innerRadius={25}
+                            outerRadius={45}
+                            paddingAngle={2}
                             dataKey="value"
                             nameKey="label"
                             stroke="none"
@@ -60,18 +60,25 @@ const LostDealAnalysis: React.FC<Props> = ({ data }) => {
                                 <Cell key={`cell-${index}`} fill={entry.hexColor} />
                             ))}
                         </Pie>
-                        <Tooltip content={<CustomTooltip />} cursor={{ fill: 'transparent' }} />
+                        <Tooltip content={<CustomTooltip />} />
                     </PieChart>
                 </div>
 
-                {/* Dynamically Sized Legend */}
-                <div className="w-full mt-2 flex-1 min-h-0 relative">
-                    <div className="absolute inset-0 overflow-y-auto custom-scrollbar pr-2 pb-2">
-                        <div className="grid grid-cols-2 gap-2">
+                {/* Legend on Right (Scrollable if needed) */}
+                <div className="flex-1 h-full py-2">
+                    <div className="h-full overflow-y-auto custom-scrollbar pr-1">
+                        <div className="flex flex-col gap-1.5">
                             {chartData.map((item, idx) => (
-                                <div key={idx} className="flex items-center text-[10px] bg-slate-50/50 p-2 rounded-lg border border-slate-100 hover:bg-slate-50 transition-colors">
-                                    <div className="w-2 h-2 rounded-full mr-2 shrink-0" style={{ backgroundColor: item.hexColor }}></div>
-                                    <span className="text-slate-500 font-bold flex-1 truncate uppercase tracking-wider pr-1" title={item.label}>{item.label}</span>
+                                <div key={idx} className="flex items-center gap-2">
+                                    <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: item.hexColor }}></div>
+                                    <div className="flex flex-col leading-none">
+                                        <span className="text-[9px] font-black text-slate-700 uppercase tracking-tighter truncate leading-tight" title={item.label}>
+                                            {item.label}
+                                        </span>
+                                        <span className="text-[8px] font-bold text-slate-400">
+                                            {item.value}%
+                                        </span>
+                                    </div>
                                 </div>
                             ))}
                         </div>

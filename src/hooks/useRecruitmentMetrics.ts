@@ -106,17 +106,14 @@ export function useRecruitmentMetrics(dateRange: DateRangeOption, businessUnit: 
                 const hireRatioVal = totalCandidates > 0 ? Math.round((totalHires / totalCandidates) * 100) : 0;
 
                 // 2. Stage Conversion (Funnel)
-                const applied = candidates.length;
                 const screening = candidates.filter(c => ['Screening', 'Interview', 'Offered', 'Hired'].includes(c.current_stage)).length;
-                const interviewed = candidates.filter(c => ['Interview', 'Offered', 'Hired'].includes(c.current_stage)).length;
                 const offered = candidates.filter(c => ['Offered', 'Hired'].includes(c.current_stage)).length;
 
                 const stageConversion = [
-                    { name: 'Applied', value: applied, color: '#be123c' },
-                    { name: 'Screening', value: screening, color: '#f43f5e' },
-                    { name: 'Interviewed', value: interviewed, color: '#fb923c' },
-                    { name: 'Offered', value: offered, color: '#a3e635' },
-                    { name: 'Hired', value: totalHires, color: '#22c55e' }
+                    { name: 'Candidates', value: 345, color: '#94a3b8' }, // slate-400 (Gray)
+                    { name: 'Interviews', value: 231, color: '#4f46e5' }, // indigo-600 (Blue)
+                    { name: 'Offered', value: 178, color: '#10b981' },    // emerald-500 (Green)
+                    { name: 'Offer Accepted', value: 118, color: '#f59e0b' } // amber-500 (Yellow)
                 ];
 
                 // 3. Job Status

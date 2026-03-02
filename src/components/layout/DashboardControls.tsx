@@ -87,7 +87,7 @@ export const DashboardControls: React.FC<DashboardControlsProps> = ({
                 </div>
 
                 {/* Date Popover in its own track or part of a group */}
-                <div className="bg-slate-100 p-1 rounded-xl flex items-center gap-1 flex-shrink-0" ref={dateRef}>
+                <div className="relative bg-slate-100 p-1 rounded-xl flex items-center gap-1 flex-shrink-0" ref={dateRef}>
                     <button
                         onClick={() => setIsDateOpen(!isDateOpen)}
                         className="flex flex-row items-center gap-2 px-4 py-1.5 bg-white rounded-lg text-[11px] font-bold text-slate-600 hover:text-indigo-600 transition-colors shadow-sm"
@@ -97,7 +97,7 @@ export const DashboardControls: React.FC<DashboardControlsProps> = ({
                     </button>
 
                     {isDateOpen && (
-                        <div className="absolute top-12 left-0 z-50 bg-white border border-slate-200 rounded-lg shadow-xl p-3 w-80 mt-1 cursor-default">
+                        <div className="absolute top-12 right-0 z-50 bg-white border border-slate-200 rounded-lg shadow-xl p-3 w-80 mt-1 cursor-default">
                             <div className="text-[11px] font-bold text-slate-700 mb-2.5">Date Range</div>
                             <div className="grid grid-cols-2 gap-2 mb-3">
                                 {PRESET_DATES.map(opt => (

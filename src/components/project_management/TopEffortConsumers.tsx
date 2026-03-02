@@ -18,9 +18,9 @@ const TopEffortConsumers: React.FC<Props> = ({ data = [] }) => {
             <div className="flex justify-between items-start mb-6 shrink-0">
                 <div>
                     <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase"><Target className="w-4 h-4 mr-2 text-indigo-500" />
-                        Top Effort Consumers
+                        Top Effort Clients
                         <InfoTooltip content="Identifies projects or clients that are consuming the most resource effort in terms of logged hours, categorized by billing model." /></h3>
-                    <p className="text-xs text-slate-400 mt-1">Projects taking up the most team time</p>
+                    <p className="text-xs text-slate-400 mt-1">Clients taking up the most team time</p>
                 </div>
             </div>
 

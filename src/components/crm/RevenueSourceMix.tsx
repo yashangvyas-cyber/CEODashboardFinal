@@ -11,9 +11,9 @@ const RevenueSourceMix: React.FC<Props> = ({ data }) => {
     const sourceMix = data || { new: 45, existing: 55 };
 
     return (
-        <div className="premium-card p-6 flex flex-col h-full group hover-scale relative overflow-hidden h-full">
-            <div className="flex items-center gap-2 mb-6 pb-4 border-b border-slate-100/80 w-full shrink-0">
-                <h3 className="text-sm font-black text-slate-800 tracking-tight uppercase">Revenue Source Mix</h3>
+        <div className="premium-card p-4 flex flex-col h-full group hover-scale relative overflow-hidden">
+            <div className="flex items-center gap-2 mb-3 pb-2 border-b border-slate-100/80 w-full shrink-0">
+                <h3 className="text-[10px] font-black text-slate-400 tracking-widest uppercase">Revenue Source Mix</h3>
                 <InfoTooltip content="Breakdown of revenue between new customer acquisitions and expansion or retention of existing clients." />
             </div>
 

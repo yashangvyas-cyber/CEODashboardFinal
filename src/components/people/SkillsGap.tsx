@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import type { DateRangeOption } from '../../types';
-import { Maximize2, Search, ChevronDown, ChevronUp } from 'lucide-react';
+import { Search, ChevronDown, ChevronUp } from 'lucide-react';
 import InfoTooltip from '../common/InfoTooltip';
 
 interface SkillLevelData {
@@ -81,9 +81,6 @@ const SkillsGap: React.FC<Props> = ({ data }) => {
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
-                        <button className="text-slate-400 hover:text-slate-600 transition-colors p-1 hover:bg-slate-50 rounded-md">
-                            <Maximize2 className="w-3.5 h-3.5" />
-                        </button>
                     </div>
                 </div>
 

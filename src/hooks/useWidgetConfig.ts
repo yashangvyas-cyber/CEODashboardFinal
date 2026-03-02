@@ -28,11 +28,11 @@ export const WIDGET_REGISTRY: Record<ModuleOption, WidgetDefinition[]> = {
         { id: 'crmFunnelSwitcher', label: 'Pipeline Funnel', description: 'Lead and deal funnel stage conversion visualization.' },
         { id: 'crmPipelineSummaries', label: 'Pipeline Summaries', description: 'Aggregated lead and deal counts with win/loss ratios.' },
         { id: 'collectionGoalCard', label: 'Collection Goal', description: 'Progress towards the annual collection target.' },
-        { id: 'collectionGoalCard', label: 'Collection Goal', description: 'Progress towards the annual collection target.' },
+        { id: 'crmSideBySideFunnel', label: 'Side-by-Side Funnels', description: 'Deals and Leads funnel comparison displayed together.' },
         { id: 'revenueSourceMix', label: 'Revenue Source Mix', description: 'Split between new vs existing client revenue.' },
         { id: 'lostDealAnalysis', label: 'Lost Deal Reasons', description: 'Root causes for deals that were lost in the pipeline.' },
         { id: 'recentLargeInflows', label: 'Key Recent Collections', description: 'Top 5 largest recent payment inflows.' },
-        { id: 'multiCurrencyCashFlow', label: 'Multi-Currency Flow', description: 'Cash inflows consolidated by foreign currency.' },
+        { id: 'recentLargeInflows', label: 'Key Recent Collections', description: 'Top 5 largest recent payment inflows.' },
         { id: 'topRevenueContributors', label: 'Top Revenue Contributors', description: 'Client-wise breakdown of revenue contributions.' },
     ],
     recruitment: [
@@ -68,15 +68,15 @@ const DEFAULT_LAYOUTS: Record<ModuleOption, LayoutItem[]> = {
     crm: [
         { i: 'crmSummaryCards', x: 0, y: 0, w: 12, h: 3, minW: 6, minH: 3 },
         { i: 'revenueTrend', x: 0, y: 3, w: 8, h: 11, minW: 6, minH: 6 },
-        { i: 'crmFunnelSwitcher', x: 8, y: 3, w: 4, h: 14, minW: 4, minH: 6 },
-        { i: 'crmPipelineSummaries', x: 0, y: 14, w: 4, h: 6, minW: 3, minH: 5 },
-        { i: 'lostDealAnalysis', x: 8, y: 14, w: 4, h: 11, minW: 3, minH: 6 },
-        { i: 'avgDaysToPay', x: 0, y: 25, w: 4, h: 9, minW: 3, minH: 5 },
-        { i: 'revenueSourceMix', x: 8, y: 25, w: 4, h: 9, minW: 4, minH: 5 },
-        { i: 'collectionGoalCard', x: 0, y: 34, w: 4, h: 9, minW: 4, minH: 6 },
-        { i: 'multiCurrencyCashFlow', x: 4, y: 34, w: 4, h: 7, minW: 4, minH: 6 },
-        { i: 'recentLargeInflows', x: 0, y: 36, w: 4, h: 8, minW: 4, minH: 6 },
-        { i: 'topRevenueContributors', x: 4, y: 36, w: 8, h: 8, minW: 6, minH: 6 },
+        { i: 'crmFunnelSwitcher', x: 8, y: 3, w: 4, h: 11, minW: 4, minH: 6 },
+        { i: 'crmSideBySideFunnel', x: 0, y: 14, w: 8, h: 9, minW: 6, minH: 6 },
+        { i: 'crmPipelineSummaries', x: 8, y: 14, w: 4, h: 5, minW: 3, minH: 5 },
+        { i: 'lostDealAnalysis', x: 0, y: 23, w: 4, h: 6, minW: 4, minH: 6 },
+        { i: 'avgDaysToPay', x: 4, y: 23, w: 4, h: 4, minW: 3, minH: 3 },
+        { i: 'revenueSourceMix', x: 8, y: 23, w: 4, h: 4, minW: 4, minH: 3 },
+        { i: 'collectionGoalCard', x: 0, y: 31, w: 4, h: 9, minW: 4, minH: 6 },
+        { i: 'recentLargeInflows', x: 0, y: 43, w: 4, h: 8, minW: 4, minH: 6 },
+        { i: 'topRevenueContributors', x: 4, y: 43, w: 8, h: 8, minW: 6, minH: 6 },
     ],
     recruitment: [
         { i: 'recruitmentSummaryCards', x: 0, y: 0, w: 12, h: 3, minW: 6, minH: 3 },
@@ -100,19 +100,23 @@ const DEFAULT_LAYOUTS: Record<ModuleOption, LayoutItem[]> = {
 type WidgetConfig = Record<string, boolean>;
 
 function getInitialConfig(tab: ModuleOption): WidgetConfig {
-    try {
-        const stored = localStorage.getItem(`widgetConfig_${tab}`);
-        if (stored) return JSON.parse(stored);
-    } catch (_) { /* ignore */ }
-
     const defaults: WidgetConfig = {};
     WIDGET_REGISTRY[tab]?.forEach(w => { defaults[w.id] = true; });
+
+    try {
+        const stored = localStorage.getItem(`widgetConfig_${tab}`);
+        if (stored) {
+            const parsed = JSON.parse(stored);
+            return { ...defaults, ...parsed };
+        }
+    } catch (_) { /* ignore */ }
+
     return defaults;
 }
 
 function getInitialLayout(tab: ModuleOption): Layout {
     try {
-        const stored = localStorage.getItem(`widgetLayout_v43_${tab}`);
+        const stored = localStorage.getItem(`widgetLayout_v47_${tab}`);
         if (stored) {
             const parsed = JSON.parse(stored) as LayoutItem[];
             const defaultLayout = DEFAULT_LAYOUTS[tab] || [];
@@ -147,14 +151,15 @@ export function useWidgetConfig(tab: ModuleOption) {
 
     const updateLayout = useCallback((newLayout: Layout) => {
         setLayout(newLayout);
-        try { localStorage.setItem(`widgetLayout_v43_${tab}`, JSON.stringify(newLayout)); } catch (_) { /* ignore */ }
+        try { localStorage.setItem(`widgetLayout_v47_${tab}`, JSON.stringify(newLayout)); } catch (_) { /* ignore */ }
     }, [tab]);
 
     const resetLayout = useCallback(() => {
         try {
-            ['v1', 'v2', 'v3', 'v4', 'v5', 'v6', 'v7', 'v8', 'v9', 'v10', 'v11', 'v12', 'v13', 'v14', 'v15', 'v16', 'v17', 'v18', 'v19', 'v20', 'v21', 'v22', 'v23', 'v24', 'v25', 'v26', 'v27', 'v28', 'v29', 'v30', 'v31', 'v32', 'v33', 'v34', 'v35', 'v36', 'v37', 'v38', 'v39', 'v40', 'v41', 'v42', 'v43'].forEach(v => {
+            ['v1', 'v2', 'v3', 'v4', 'v5', 'v6', 'v7', 'v8', 'v9', 'v10', 'v11', 'v12', 'v13', 'v14', 'v15', 'v16', 'v17', 'v18', 'v19', 'v20', 'v21', 'v22', 'v23', 'v24', 'v25', 'v26', 'v27', 'v28', 'v29', 'v30', 'v31', 'v32', 'v33', 'v34', 'v35', 'v36', 'v37', 'v38', 'v39', 'v40', 'v41', 'v42', 'v43', 'v44', 'v45', 'v46', 'v47'].forEach(v => {
                 localStorage.removeItem(`widgetLayout_${v}_${tab}`);
             });
+            localStorage.setItem(`widgetLayout_v47_${tab}`, JSON.stringify(DEFAULT_LAYOUTS[tab]));
             localStorage.removeItem(`widgetLayout_${tab}`);
             localStorage.removeItem(`widgetConfig_${tab}`);
         } catch (_) { }

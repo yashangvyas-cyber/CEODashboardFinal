@@ -1,5 +1,5 @@
 import React from 'react';
-import { Briefcase, Users, UserCheck, Timer, CheckCircle, TrendingUp } from 'lucide-react';
+import { Users, UserCheck, Timer, CheckCircle, TrendingUp } from 'lucide-react';
 import InfoTooltip from '../common/InfoTooltip';
 
 interface Props {
@@ -50,13 +50,6 @@ const RecruitmentSummaryCards: React.FC<Props> = ({ data }) => {
             icon: UserCheck,
             colorClass: { bg: 'bg-amber-50', text: 'text-amber-600' },
             tooltip: "Total number of candidates who have successfully accepted offers and joined."
-        },
-        {
-            label: "Open Roles",
-            value: "14",
-            icon: Briefcase,
-            colorClass: { bg: 'bg-indigo-50', text: 'text-indigo-600' },
-            tooltip: "Total number of active job openings logged across all departments during the selected period."
         },
         {
             label: "Time-to-Hire",
