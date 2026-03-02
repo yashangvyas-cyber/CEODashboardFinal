@@ -67,7 +67,7 @@ const PMSummaryCards: React.FC<Props> = ({ dateRange, data }) => {
             value: null,
             icon: Users2,
             colorClass: { bg: 'bg-indigo-50/80', text: 'text-indigo-600', border: 'border-indigo-100/50' },
-            tooltip: "Summary of resource contract changes: Hired, Expired, and the Net effect on headcount.",
+            tooltip: "Summary of resource contract changes: Hired and Expired.",
             customContent: data?.hireVsExpire && (
                 <div className="flex items-center gap-6 mt-1">
                     <div className="flex flex-col">
@@ -83,11 +83,10 @@ const PMSummaryCards: React.FC<Props> = ({ dateRange, data }) => {
             )
         },
         {
-            label: "Resource Util.",
+            label: "Billability %",
             value: `${utilization}%`,
             icon: Users2,
             colorClass: { bg: 'bg-amber-50/80', text: 'text-amber-600', border: 'border-amber-100/50' },
-            subtext: isYear ? "Current Efficiency" : "Period Avg. Efficiency",
             tooltip: "Percentage of available staff hours that were logged as billable in the selected period."
         }
     ];
