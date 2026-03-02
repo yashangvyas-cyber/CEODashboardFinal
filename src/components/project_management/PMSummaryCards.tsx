@@ -87,7 +87,7 @@ const PMSummaryCards: React.FC<Props> = ({ dateRange, data }) => {
             value: `${utilization}%`,
             icon: Users2,
             colorClass: { bg: 'bg-amber-50/80', text: 'text-amber-600', border: 'border-amber-100/50' },
-            tooltip: "Percentage of available staff hours that were logged as billable in the selected period."
+            tooltip: "Percentage of total hours that were billed to client."
         }
     ];
 

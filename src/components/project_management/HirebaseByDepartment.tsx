@@ -66,7 +66,7 @@ const HirebaseByDepartment: React.FC<Props> = ({ data = [] }) => {
     const sorted = [...data].sort((a, b) => (b.billable + b.nonBillable) - (a.billable + a.nonBillable));
     const totalResources = sorted.reduce((s, d) => s + d.billable + d.nonBillable, 0);
     const totalBillable = sorted.reduce((s, d) => s + d.billable, 0);
-    const overallBillPct = totalResources > 0 ? Math.round((totalBillable / totalResources) * 100) : 0;
+
 
     // Shorten long department names for axis
     const chartData = sorted.map(d => ({
@@ -89,9 +89,6 @@ const HirebaseByDepartment: React.FC<Props> = ({ data = [] }) => {
                 <div className="flex flex-col items-end gap-1 shrink-0">
                     <span className="text-[10px] font-bold bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full border border-emerald-100">
                         {sorted.length} Departments
-                    </span>
-                    <span className="text-[10px] font-bold text-slate-400">
-                        {overallBillPct}% billable overall
                     </span>
                 </div>
             </div>

@@ -119,7 +119,7 @@ This dashboard serves as the organization's "Executive Command Center". It bridg
 *   **Calculation / Formula:**
     *   Active Projects: Started or ongoing in period.
     *   Projects Closed: Final status achieved in period.
-    *   Resource Utilization: `% Billable / Total Available Hours`.
+    *   Resource Utilization: `% Billable / Total Spent Hours`.
 
 **B. Chart: Project Portfolio Status**
 *   **Source:** PM Reports (Projects)
