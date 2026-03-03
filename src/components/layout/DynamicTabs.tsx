@@ -1,3 +1,4 @@
+import React from 'react';
 import type { ModuleOption, DateRangeOption, BusinessUnitOption } from '../../types';
 import { useWidgetConfig } from '../../hooks/useWidgetConfig';
 import { usePeopleMetrics } from '../../hooks/usePeopleMetrics';
@@ -68,9 +69,12 @@ export const DynamicTabs: React.FC<DynamicTabsProps> = ({ activeTab, dateRange, 
     const recruitmentWC = useWidgetConfig('recruitment');
     const pmWC = useWidgetConfig('project_management');
 
+    // Currency state
+    const [activeCurrency, setActiveCurrency] = React.useState('ALL');
+
     // Fetch data for all modules
     const { data: peopleData, loading: peopleLoading } = usePeopleMetrics(dateRange, selectedBU);
-    const { data: crmData, loading: crmLoading } = useCrmMetrics(dateRange, selectedBU);
+    const { data: crmData, loading: crmLoading } = useCrmMetrics(dateRange, selectedBU, activeCurrency);
     const { data: pmData, loading: pmLoading } = usePMMetrics(dateRange, selectedBU);
     const { data: recruitmentData, loading: recruitmentLoading } = useRecruitmentMetrics(dateRange, selectedBU);
 
@@ -108,7 +112,7 @@ export const DynamicTabs: React.FC<DynamicTabsProps> = ({ activeTab, dateRange, 
             }
             switch (id) {
                 case 'crmSummaryCards': return <CRMSummaryCards dateRange={dateRange} data={crmData.summary} />;
-                case 'revenueTrend': return <RevenueTrend data={crmData.revenueTrend} />;
+                case 'revenueTrend': return <RevenueTrend data={crmData.revenueTrend} currencySymbol={crmData.currencySymbol} />;
                 case 'avgDaysToPay': return <AvgDaysToPay data={crmData.avgDaysToPay} />;
                 case 'crmFunnelSwitcher': return <CRMFunnelSwitcher data={crmData.pipelineFunnel} />;
                 case 'crmSideBySideFunnel': return <CRMSideBySideFunnel data={crmData.pipelineFunnel} />;
@@ -159,7 +163,7 @@ export const DynamicTabs: React.FC<DynamicTabsProps> = ({ activeTab, dateRange, 
         <div className="w-full flex-1 flex flex-col pt-1 bg-slate-50/50">
             {/* Tab Content Area */}
             <div className="flex-1 px-4 pt-4 pb-12">
-                {activeTab === 'crm' && <CurrencySwitcher />}
+                {activeTab === 'crm' && <CurrencySwitcher activeCurrency={activeCurrency} onCurrencyChange={setActiveCurrency} />}
                 <ResponsiveGridLayout
                     key={activeTab} // CRITICAL FIX: Forces deep remount on tab switch, preventing layout crossover scrambling!
                     className="layout"

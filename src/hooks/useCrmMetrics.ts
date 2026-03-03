@@ -15,9 +15,10 @@ export interface CrmMetrics {
     recentInflows: any[];
     multiCurrencyFlow: any[];
     avgDaysToPay: any;
+    currencySymbol: string;
 }
 
-export function useCrmMetrics(dateRange: DateRangeOption, businessUnit: BusinessUnitOption) {
+export function useCrmMetrics(dateRange: DateRangeOption, businessUnit: BusinessUnitOption, currency: string = 'ALL') {
     const [data, setData] = useState<CrmMetrics | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
@@ -88,7 +89,15 @@ export function useCrmMetrics(dateRange: DateRangeOption, businessUnit: Business
                 }
 
                 // --- DATA PROCESSING LOGIC GOES HERE ---
-                // For the initial prototype connection, we'll map the raw data into the shapes expected by the components.
+                const EXCHANGE_RATES: Record<string, number> = {
+                    'USD': 1, 'INR': 83.5, 'EUR': 0.92, 'ALL': 95.0, 'AUD': 1.5, 'CAD': 1.35
+                };
+                const convertToSelected = (amount: number, fromCurr: string) => {
+                    const fromRate = EXCHANGE_RATES[fromCurr] || 1;
+                    const targetCurr = currency === 'ALL' ? 'USD' : currency;
+                    const toRate = EXCHANGE_RATES[targetCurr] || 1;
+                    return (amount / fromRate) * toRate;
+                };
 
                 // Aggregations
                 let totalWonValue = 0;
@@ -109,9 +118,12 @@ export function useCrmMetrics(dateRange: DateRangeOption, businessUnit: Business
                 (deals || []).forEach(deal => {
                     const closeDate = deal.close_date ? new Date(deal.close_date) : null;
                     const inRange = closeDate && closeDate >= startDate && closeDate <= endDate;
+                    const nativeValue = deal.deal_value || deal.value || 0;
+                    const nativeCurrency = deal.currency || 'USD';
+                    const convertedValue = convertToSelected(nativeValue, nativeCurrency);
 
                     if (deal.stage === 'Closed Won' && inRange) {
-                        totalWonValue += deal.deal_value || deal.value || 0;
+                        totalWonValue += convertedValue;
                         totalWonCount++;
 
                         // Calculate conversion time
@@ -145,21 +157,35 @@ export function useCrmMetrics(dateRange: DateRangeOption, businessUnit: Business
                     }
                 });
 
+                const collectedByCurrency: Record<string, number> = {};
+
                 (invoices || []).forEach(inv => {
-                    // Simple agg for demo, normally filter by date too
-                    const amt = inv.amount || 0;
+                    const nativeAmt = inv.amount || 0;
+                    const nativeCurrency = inv.currency || 'USD';
+                    const amt = convertToSelected(nativeAmt, nativeCurrency);
+
                     totalInvoiced += amt;
                     if (inv.status === 'Paid') {
                         totalCollected += amt;
+                        collectedByCurrency[nativeCurrency] = (collectedByCurrency[nativeCurrency] || 0) + nativeAmt;
                     }
                 });
 
                 // Formatters
+                const targetCurrency = currency === 'ALL' ? 'USD' : currency;
+                const currencySymbols: Record<string, string> = { 'USD': '$', 'INR': '₹', 'EUR': '€', 'ALL': 'L', 'AUD': 'A$', 'CAD': 'C$' };
+                const sym = currencySymbols[targetCurrency] || targetCurrency + ' ';
+
                 const formatCurrency = (val: number) => {
-                    if (val >= 10000000) return `₹${(val / 10000000).toFixed(2)}Cr`;
-                    if (val >= 100000) return `₹${(val / 100000).toFixed(1)}L`;
-                    if (val >= 1000) return `₹${(val / 1000).toFixed(0)}K`;
-                    return `₹${val.toFixed(0)}`;
+                    if (targetCurrency === 'INR') {
+                        if (val >= 10000000) return `${sym}${(val / 10000000).toFixed(2)}Cr`;
+                        if (val >= 100000) return `${sym}${(val / 100000).toFixed(1)}L`;
+                    } else {
+                        if (val >= 1000000) return `${sym}${(val / 1000000).toFixed(2)}M`;
+                        if (val >= 1000) return `${sym}${(val / 1000).toFixed(1)}K`;
+                    }
+                    if (val >= 1000) return `${sym}${(val / 1000).toFixed(1)}K`;
+                    return `${sym}${val.toFixed(0)}`;
                 };
 
                 const outstanding = totalInvoiced - totalCollected;
@@ -179,23 +205,30 @@ export function useCrmMetrics(dateRange: DateRangeOption, businessUnit: Business
 
                 const recentInflows = paidInvoicesInRange.slice(0, 5).map(inv => {
                     const d = inv.payment_date ? new Date(inv.payment_date) : new Date();
+                    const nativeCurrency = inv.currency || 'USD';
+                    const amt = convertToSelected(inv.amount || 0, nativeCurrency);
                     return {
                         clientName: inv.client_name || "Unknown Client",
-                        amount: formatCurrency(inv.amount || 0),
+                        amount: formatCurrency(amt),
                         date: d.toLocaleDateString('default', { day: '2-digit', month: 'short', year: 'numeric' }),
                         invoiceNo: `INV-${(inv.id || '').toString().slice(0, 8)}`
                     };
                 });
 
                 // --- NEW: Multi-Currency Flow ---
-                // Supabase doesn't have currency currently, so we simulate the breakdown based on Total Collected just to demonstrate the component
-                // In production, we'd GROUP BY invoice.currency
-                const mcFlow = [
-                    { currency: 'INR', amountFormatted: formatCurrency(totalCollected * 0.75), symbol: '₹' },
-                    { currency: 'USD', amountFormatted: '$' + (totalCollected * 0.15 / 80).toFixed(0) + 'K', symbol: '$' },
-                    { currency: 'EUR', amountFormatted: '€' + (totalCollected * 0.08 / 90).toFixed(0) + 'K', symbol: '€' },
-                    { currency: 'ALL', amountFormatted: 'L' + (totalCollected * 0.02 / 100).toFixed(0) + 'K', symbol: 'L' },
-                ];
+                const mcFlow = Object.entries(collectedByCurrency).map(([curr, nativeCollectedAmount]) => {
+                    const symb = currencySymbols[curr] || curr.charAt(0);
+                    const fmtAmt = nativeCollectedAmount >= 1000000 ? (nativeCollectedAmount / 1000000).toFixed(1) + 'M' : nativeCollectedAmount >= 1000 ? (nativeCollectedAmount / 1000).toFixed(1) + 'K' : nativeCollectedAmount.toFixed(0);
+                    return {
+                        currency: curr,
+                        amountFormatted: symb ? `${symb}${fmtAmt}` : `${curr} ${fmtAmt}`,
+                        symbol: symb
+                    };
+                }).sort((a, b) => b.amountFormatted.localeCompare(a.amountFormatted)).slice(0, 4);
+
+                if (mcFlow.length === 0) {
+                    mcFlow.push({ currency: 'USD', amountFormatted: '$0', symbol: '$' });
+                }
 
                 // Group by month for Revenue Trend
                 const monthlyData: Record<string, { won: number, invoiced: number, collected: number }> = {};
@@ -203,22 +236,24 @@ export function useCrmMetrics(dateRange: DateRangeOption, businessUnit: Business
                 (deals || []).forEach(deal => {
                     const closeDate = deal.close_date ? new Date(deal.close_date) : null;
                     const inRange = closeDate && closeDate >= startDate && closeDate <= endDate;
+                    const value = convertToSelected(deal.deal_value || deal.value || 0, deal.currency || 'USD');
                     if (deal.stage === 'Closed Won' && inRange) {
                         const monthKey = closeDate.toLocaleString('default', { month: 'short' }) + ' ' + closeDate.getFullYear();
                         if (!monthlyData[monthKey]) monthlyData[monthKey] = { won: 0, invoiced: 0, collected: 0 };
-                        monthlyData[monthKey].won += (deal.deal_value || deal.value || 0);
+                        monthlyData[monthKey].won += value;
                     }
                 });
 
                 (invoices || []).forEach(inv => {
                     const issueDate = inv.issue_date ? new Date(inv.issue_date) : null;
                     const inRange = issueDate && issueDate >= startDate && issueDate <= endDate;
+                    const amount = convertToSelected(inv.amount || 0, inv.currency || 'USD');
                     if (inRange) {
                         const monthKey = issueDate.toLocaleString('default', { month: 'short' }) + ' ' + issueDate.getFullYear();
                         if (!monthlyData[monthKey]) monthlyData[monthKey] = { won: 0, invoiced: 0, collected: 0 };
-                        monthlyData[monthKey].invoiced += (inv.amount || 0);
+                        monthlyData[monthKey].invoiced += amount;
                         if (inv.status === 'Paid') {
-                            monthlyData[monthKey].collected += (inv.amount || 0);
+                            monthlyData[monthKey].collected += amount;
                         }
                     }
                 });
@@ -236,8 +271,13 @@ export function useCrmMetrics(dateRange: DateRangeOption, businessUnit: Business
                 const avgDealSizeRaw = totalWonCount > 0 ? (totalWonValue / totalWonCount) : 0;
 
                 const avgDealValueFormatter = (val: number) => {
-                    if (val >= 10000000) return { value: (val / 10000000).toFixed(2), unit: "Cr" };
-                    if (val >= 100000) return { value: (val / 100000).toFixed(1), unit: "L" };
+                    if (targetCurrency === 'INR') {
+                        if (val >= 10000000) return { value: (val / 10000000).toFixed(2), unit: "Cr" };
+                        if (val >= 100000) return { value: (val / 100000).toFixed(1), unit: "L" };
+                    } else {
+                        if (val >= 1000000) return { value: (val / 1000000).toFixed(2), unit: "M" };
+                        if (val >= 1000) return { value: (val / 1000).toFixed(1), unit: "K" };
+                    }
                     if (val >= 1000) return { value: (val / 1000).toFixed(0), unit: "K" };
                     return { value: val.toFixed(0), unit: "" };
                 };
@@ -256,7 +296,7 @@ export function useCrmMetrics(dateRange: DateRangeOption, businessUnit: Business
                         collected: { value: formatCurrency(totalCollected), efficiency: `${efficiency.toFixed(1)}% Efficiency` },
                         outstanding: { value: formatCurrency(outstanding), label: "(Invoiced - Collected)" },
                         unbilled: { value: formatCurrency(unbilled), label: "Won but not Invoiced" },
-                        avgDealSize: { value: `₹${avgDealFormatted.value}${avgDealFormatted.unit}`, label: "Avg per deal" },
+                        avgDealSize: { value: `${sym}${avgDealFormatted.value}${avgDealFormatted.unit}`, label: "Avg per deal" },
                         salesCycle: { value: "22", unit: "Days" }
                     },
                     pipelineSummaries: {
@@ -309,7 +349,7 @@ export function useCrmMetrics(dateRange: DateRangeOption, businessUnit: Business
                         target: formatCurrency(totalInvoiced),
                         collected: formatCurrency(totalCollected),
                         surplus: formatCurrency(Math.max(0, totalCollected - (totalInvoiced * 0.8))), // Mocking surplus over a 80% threshold
-                        currencyCode: 'INR'
+                        currencyCode: targetCurrency
                     },
                     topContributors: [
                         { name: "Suraj Kumar", invoiced: "45,98,750", collected: "42,00,000", percent: 92, status: 'GOOD' },
@@ -347,7 +387,8 @@ export function useCrmMetrics(dateRange: DateRangeOption, businessUnit: Business
                     sourceMix: { new: newSourcePct, existing: existingSourcePct },
                     revenueTrend: revenueTrendChartData,
                     recentInflows,
-                    multiCurrencyFlow: mcFlow
+                    multiCurrencyFlow: mcFlow,
+                    currencySymbol: sym
                 };
 
                 setData(result);
@@ -360,7 +401,7 @@ export function useCrmMetrics(dateRange: DateRangeOption, businessUnit: Business
         }
 
         fetchMetrics();
-    }, [dateRange, businessUnit]);
+    }, [dateRange, businessUnit, currency]);
 
     return { data, loading, error };
 }

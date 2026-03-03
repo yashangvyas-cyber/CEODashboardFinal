@@ -19,6 +19,7 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey);
 const BUSINESS_UNITS = ['Engineering', 'Sales & Marketing', 'Finance & Admin', 'Legal & HR'];
 const DEPARTMENTS = ['Frontend', 'Backend', 'Design', 'QA', 'DevOps', 'Sales', 'Marketing', 'HR'];
 const SKILLS = ['React', 'Node.js', 'Python', 'AWS', 'Figma', 'SEO', 'Salesforce', 'SQL'];
+const CURRENCY_LIST = ['USD', 'INR', 'EUR', 'ALL', 'AUD', 'CAD'];
 
 // Helper to generate a random date within the last X years
 function recentDate(years = 3) {
@@ -63,6 +64,7 @@ async function seedDeals(count = 100) {
             loss_reason: stage === 'Closed Lost' ? faker.helpers.arrayElement(['Competitor', 'Budget', 'Timing', 'Product Gap']) : null,
             owner: faker.person.fullName(),
             business_unit: faker.helpers.arrayElement(BUSINESS_UNITS),
+            currency: faker.helpers.arrayElement(CURRENCY_LIST),
             created_date: recentDate(2),
             close_date: isClosed ? recentDate(1) : null,
         };
@@ -93,6 +95,7 @@ async function seedInvoices(dealRecords: any[], count = 150) {
             due_date: dueDate.toISOString(),
             payment_date: isPaid ? faker.date.between({ from: issueDate, to: new Date() }).toISOString() : null,
             business_unit: deal ? deal.business_unit : faker.helpers.arrayElement(BUSINESS_UNITS),
+            currency: deal ? deal.currency : faker.helpers.arrayElement(CURRENCY_LIST),
         };
     });
 

@@ -21,6 +21,7 @@ interface MonthData {
 interface Props {
     dateRange?: DateRangeOption;
     data?: MonthData[];
+    currencySymbol?: string;
 }
 
 const defaultData: MonthData[] = [
@@ -38,13 +39,7 @@ const defaultData: MonthData[] = [
     { month: 'May', won: 42000, invoiced: 38000, collected: 16300 },
 ];
 
-const formatValue = (val: number) => {
-    if (val >= 100000) return `₹${(val / 100000).toFixed(1)}L`;
-    if (val >= 1000) return `₹${(val / 1000).toFixed(0)}K`;
-    return `₹${val}`;
-};
-
-const CustomTooltip = ({ active, payload, label }: any) => {
+const CustomTooltip = ({ active, payload, label, formatter }: any) => {
     if (active && payload && payload.length) {
         return (
             <div className="bg-white border border-slate-200 rounded-xl shadow-lg p-3 text-xs">
@@ -55,7 +50,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
                             <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
                             <span className="font-bold text-slate-500">{entry.name}</span>
                         </div>
-                        <span className="font-black text-slate-800">{formatValue(entry.value)}</span>
+                        <span className="font-black text-slate-800">{formatter(entry.value)}</span>
                     </div>
                 ))}
             </div>
@@ -64,8 +59,20 @@ const CustomTooltip = ({ active, payload, label }: any) => {
     return null;
 };
 
-const RevenueTrend: React.FC<Props> = ({ data }) => {
+const RevenueTrend: React.FC<Props> = ({ data, currencySymbol = '₹' }) => {
     const chartData = data || defaultData;
+
+    const formatValue = (val: number) => {
+        if (currencySymbol === '₹') {
+            if (val >= 10000000) return `${currencySymbol}${(val / 10000000).toFixed(2)}Cr`;
+            if (val >= 100000) return `${currencySymbol}${(val / 100000).toFixed(1)}L`;
+            if (val >= 1000) return `${currencySymbol}${(val / 1000).toFixed(0)}K`;
+        } else {
+            if (val >= 1000000) return `${currencySymbol}${(val / 1000000).toFixed(2)}M`;
+            if (val >= 1000) return `${currencySymbol}${(val / 1000).toFixed(1)}K`;
+        }
+        return `${currencySymbol}${val}`;
+    };
 
     return (
         <div className="bg-white rounded-[10px] border border-slate-200 p-5 shadow-sm flex flex-col h-[400px] sm:h-full hover:shadow transition-shadow">
@@ -107,7 +114,7 @@ const RevenueTrend: React.FC<Props> = ({ data }) => {
                             tickLine={false}
                             width={48}
                         />
-                        <Tooltip content={<CustomTooltip />} />
+                        <Tooltip content={<CustomTooltip formatter={formatValue} />} />
                         <Line
                             type="monotone"
                             dataKey="won"
