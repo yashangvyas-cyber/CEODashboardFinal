@@ -74,7 +74,7 @@ const PMHealthBreakdown: React.FC<Props> = ({ data }) => {
                 />
                 <CircularProgress
                     value={hirebase.value}
-                    label="Hirebase Billable"
+                    label="Hirebase Contracts"
                     text={hirebase.text}
                     colorClass={hirebase.status === 'Warning' ? 'stroke-amber-500' : 'stroke-emerald-500'}
                     statusClass={hirebase.status === 'Warning' ? 'text-amber-600' : 'text-emerald-600'}
