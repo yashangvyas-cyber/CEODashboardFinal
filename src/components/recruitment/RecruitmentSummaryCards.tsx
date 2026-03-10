@@ -16,7 +16,7 @@ interface Props {
 }
 
 const MetricCard = ({ label, value, icon: Icon, colorClass, subtitle, tooltip }: any) => (
-    <div className="bg-white border border-slate-200 px-3 py-2 rounded-xl flex items-center group hover:shadow-md transition-all min-h-[60px] w-fit">
+    <div className="bg-white border border-slate-200 px-3 py-2 rounded-xl flex items-center group hover:shadow-md transition-all min-h-[60px] w-full">
         <div className={`p-1.5 rounded-lg ${colorClass.bg} ${colorClass.text} shrink-0 mr-3 shadow-sm`}>
             <Icon className="w-4 h-4" />
         </div>
@@ -77,7 +77,7 @@ const RecruitmentSummaryCards: React.FC<Props> = ({ data }) => {
 
     return (
         // flex row wrapping — cards only as wide as content, not grid-stretched
-        <div className="col-span-12 flex flex-row flex-wrap gap-3">
+        <div className="col-span-12 grid grid-cols-5 gap-3">
             {cards.map((card, idx) => (
                 <MetricCard key={idx} {...card} />
             ))}

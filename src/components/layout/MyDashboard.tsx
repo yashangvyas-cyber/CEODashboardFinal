@@ -47,7 +47,7 @@ import AvgDaysToPay from '../crm/AvgDaysToPay';
 
 // Recruitment Components
 import RecruitmentSummaryCards from '../recruitment/RecruitmentSummaryCards';
-import StageConversion from '../recruitment/StageConversion';
+import Top3Recruiters from '../recruitment/Top3Recruiters';
 import RecruitmentVelocity from '../people/RecruitmentVelocity';
 import JobStatus from '../recruitment/JobStatus';
 import OfferAcceptance from '../recruitment/OfferAcceptance';
@@ -108,7 +108,7 @@ const MyDashboard: React.FC<MyDashboardProps> = ({ dateRange, selectedBU }) => {
 
             // Recruitment
             case 'recruitmentSummaryCards': return recruitmentData ? <RecruitmentSummaryCards data={recruitmentData} /> : <Spinner />;
-            case 'stageConversion': return recruitmentData ? <StageConversion data={recruitmentData.stageConversion} /> : <Spinner />;
+            case 'stageConversion': return recruitmentData ? <Top3Recruiters data={recruitmentData.topRecruiters} dateRange={dateRange} /> : <Spinner />;
             case 'recruitmentVelocity': return <RecruitmentVelocity dateRange={dateRange} />;
             case 'jobStatus': return recruitmentData ? <JobStatus data={recruitmentData.jobStatus} /> : <Spinner />;
             case 'offerAcceptance': return recruitmentData ? <OfferAcceptance data={recruitmentData.offerAcceptance} /> : <Spinner />;

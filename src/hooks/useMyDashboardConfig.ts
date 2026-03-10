@@ -36,7 +36,7 @@ export const ALL_WIDGETS: UnifiedWidgetDefinition[] = [
 
     // Recruitment
     { id: 'recruitmentSummaryCards', label: 'Recruitment KPIs', description: 'Total Candidates, Hires, Efficiency, Open Roles.', module: 'recruitment', moduleLabel: 'Recruitment' },
-    { id: 'stageConversion', label: 'Stage Conversion', description: 'Candidate funnel from application to joining.', module: 'recruitment', moduleLabel: 'Recruitment' },
+    { id: 'stageConversion', label: 'Top 3 Recruiters', description: 'Top 3 recruiters ranked by hiring ratio, each with a candidate-to-join funnel.', module: 'recruitment', moduleLabel: 'Recruitment' },
     { id: 'recruitmentVelocity', label: 'Recruitment Velocity', description: 'Speed and efficiency of the hiring pipeline.', module: 'recruitment', moduleLabel: 'Recruitment' },
     { id: 'jobStatus', label: 'Job Status', description: 'Current status of all open and closed job positions.', module: 'recruitment', moduleLabel: 'Recruitment' },
     { id: 'offerAcceptance', label: 'Offer Acceptance', description: 'Ratio of accepted vs declined/pending offers.', module: 'recruitment', moduleLabel: 'Recruitment' },
