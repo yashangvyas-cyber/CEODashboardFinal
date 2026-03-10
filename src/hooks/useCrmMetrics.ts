@@ -297,7 +297,8 @@ export function useCrmMetrics(dateRange: DateRangeOption, businessUnit: Business
                         outstanding: { value: formatCurrency(outstanding), label: "(Invoiced - Collected)" },
                         unbilled: { value: formatCurrency(unbilled), label: "Won but not Invoiced" },
                         avgDealSize: { value: `${sym}${avgDealFormatted.value}${avgDealFormatted.unit}`, label: "Avg per deal" },
-                        salesCycle: { value: "22", unit: "Days" }
+                        salesCycle: { value: "22", unit: "Days" },
+                        collectionPct: Math.round(efficiency),
                     },
                     pipelineSummaries: {
                         leads: { total: 1240, qualified: 850, unqualified: 390, qPercent: 68, uPercent: 32, avgConversionTime: 12 }, // Keeping some mock struct for leads if not in DB

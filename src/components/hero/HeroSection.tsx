@@ -52,7 +52,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ selectedBU }) => {
                     </div>
                 </div>
 
-                <div className="bg-white border border-slate-200 rounded-lg shadow-sm flex-1 grid grid-cols-1 md:grid-cols-6 items-stretch overflow-hidden">
+                <div className="bg-white border border-slate-200 rounded-lg shadow-sm flex-1 grid grid-cols-1 md:grid-cols-5 items-stretch overflow-hidden">
 
                     {/* Revenue Pulse */}
                     <div className="md:col-span-3 p-3 md:p-4 border-b md:border-b-0 md:border-r border-slate-100 flex flex-col justify-center">
@@ -92,29 +92,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ selectedBU }) => {
                                 </span>
                                 <span className="text-rose-600">₹{((employeeData?.revenueYTD || 0) > 0 ? (employeeData?.revenueYTD || 0) * 1.15 : 1000000).toLocaleString()} <span className="text-[9px] text-slate-400 font-normal uppercase">(INR)</span></span>
                             </div>
-                        </div>
-                    </div>
-
-                    {/* Collection */}
-                    <div className="col-span-1 p-3 md:p-4 border-b md:border-b-0 md:border-r border-slate-100 flex flex-col justify-center min-w-[140px]">
-                        <div className="flex justify-between items-center mb-1.5">
-                            <div className="flex items-center">
-                                <span className="text-[10px] font-bold text-slate-500 uppercase">Collection</span>
-                                <InfoTooltip content="Percentage of invoiced revenue that has been successfully collected." />
-                            </div>
-                            <div className="flex justify-end mb-1.5 items-center">
-                                {employeeLoading ? (
-                                    <Loader2 className="w-4 h-4 text-emerald-600 animate-spin" />
-                                ) : (
-                                    <span className="text-sm font-black text-emerald-600">{employeeData?.collectionPct || 0}%</span>
-                                )}
-                            </div>
-                        </div>
-                        <div className="flex gap-1 h-1">
-                            <div className={`flex-1 rounded-full ${employeeData?.collectionPct && employeeData.collectionPct > 25 ? 'bg-emerald-500' : 'bg-slate-200'}`}></div>
-                            <div className={`flex-1 rounded-full ${employeeData?.collectionPct && employeeData.collectionPct > 50 ? 'bg-emerald-500' : 'bg-slate-200'}`}></div>
-                            <div className={`flex-1 rounded-full ${employeeData?.collectionPct && employeeData.collectionPct > 75 ? 'bg-emerald-500' : 'bg-slate-200'}`}></div>
-                            <div className={`flex-1 rounded-full ${employeeData?.collectionPct && employeeData.collectionPct > 95 ? 'bg-emerald-500' : 'bg-slate-200'}`}></div>
                         </div>
                     </div>
 

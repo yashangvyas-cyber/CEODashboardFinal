@@ -63,10 +63,11 @@ export function useDashboardMetrics(businessUnit: BusinessUnitOption) {
                 const activeEmployees = employees.filter(e => e.status === 'Active');
                 const trendCount = Math.floor(activeEmployees.length * 0.05) || 2; // Simulated trend
 
-                // --- CALC 2: REVENUE ---
-                // YTD Revenue = Sum of all Paid invoices this year (mocked as all invoices for prototype)
-                const totalInvoiced = invoices.reduce((sum, inv) => sum + Number(inv.amount), 0);
-                const annualTarget = totalInvoiced > 0 ? totalInvoiced * 1.15 : 1000000; // Fake target is 115% of current
+                // --- CALC 2: REVENUE (YTD only) ---
+                const yearStart = new Date(new Date().getFullYear(), 0, 1); // Jan 1 of current year
+                const ytdInvoices = invoices.filter(inv => inv.issue_date && new Date(inv.issue_date) >= yearStart);
+                const totalInvoiced = ytdInvoices.reduce((sum, inv) => sum + Number(inv.amount), 0);
+                const annualTarget = totalInvoiced > 0 ? totalInvoiced * 1.15 : 1000000; // Target is 115% of YTD
                 const targetPercent = totalInvoiced > 0 ? Math.round((totalInvoiced / annualTarget) * 100) : 0;
 
                 // --- CALC 3: COLLECTION ---
@@ -98,7 +99,7 @@ export function useDashboardMetrics(businessUnit: BusinessUnitOption) {
                     totalEmployees: activeEmployees.length,
                     employeeTrend: trendCount,
                     employeeTrendPct: 5,
-                    revenueYTD: totalInvoiced,
+                    revenueYTD: totalInvoiced, // Now correctly YTD
                     revenueTargetPct: targetPercent,
                     collectionPct: collectionPct,
                     billablePct: billablePct || 75, // Fallback if no projects

@@ -1,5 +1,5 @@
 import React from 'react';
-import { DollarSign, FileText, CheckCircle, Clock, TrendingUp, Calendar } from 'lucide-react';
+import { DollarSign, FileText, CheckCircle, Clock, TrendingUp, Calendar, BarChart2 } from 'lucide-react';
 import type { DateRangeOption } from '../../types';
 import InfoTooltip from '../common/InfoTooltip';
 
@@ -13,10 +13,11 @@ interface Props {
         unbilled: { value: string; label: string };
         avgDealSize: { value: string; label: string };
         salesCycle: { value: string; unit: string };
+        collectionPct: number;
     };
 }
 
-const MetricCard = ({ label, value, icon: Icon, colorClass, subtext, tooltip }: any) => (
+const MetricCard = ({ label, value, icon: Icon, colorClass, subtext, tooltip, children }: any) => (
     <div className="bg-white border border-slate-200 p-3 rounded-lg flex flex-col justify-between group hover:shadow-md transition-all relative overflow-hidden">
         <div className={`absolute -right-2 -top-2 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity transform group-hover:rotate-12 duration-500 ${colorClass.text}`}>
             <Icon className="w-16 h-16" />
@@ -32,8 +33,41 @@ const MetricCard = ({ label, value, icon: Icon, colorClass, subtext, tooltip }: 
             </div>
         </div>
         <div className="z-10 relative">
-            <div className="text-xl font-black text-slate-900 tracking-tighter leading-none">{value}</div>
-            {subtext && <div className="text-[8px] font-bold text-slate-400 mt-0.5 uppercase tracking-tighter">{subtext}</div>}
+            {children ? children : (
+                <>
+                    <div className="text-xl font-black text-slate-900 tracking-tighter leading-none">{value}</div>
+                    {subtext && <div className="text-[8px] font-bold text-slate-400 mt-0.5 uppercase tracking-tighter">{subtext}</div>}
+                </>
+            )}
+        </div>
+    </div>
+);
+
+// Mini segmented bar for Collection %
+const CollectionPctCard = ({ pct, tooltip }: { pct: number; tooltip: string }) => (
+    <div className="bg-white border border-slate-200 p-3 rounded-lg flex flex-col justify-between group hover:shadow-md transition-all relative overflow-hidden">
+        <div className="absolute -right-2 -top-2 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity text-emerald-500">
+            <BarChart2 className="w-16 h-16" />
+        </div>
+        <div className="flex items-center justify-between mb-2 z-10 relative">
+            <div className="flex items-center">
+                <span className="text-slate-400 text-[9px] font-black uppercase tracking-tighter">Collection %</span>
+                <InfoTooltip content={tooltip} />
+            </div>
+            <div className="p-1 rounded bg-emerald-50/80 border border-emerald-100/50">
+                <BarChart2 className="w-3 h-3 text-emerald-600" />
+            </div>
+        </div>
+        <div className="z-10 relative">
+            <div className={`text-xl font-black tracking-tighter leading-none ${pct >= 80 ? 'text-emerald-600' : pct >= 60 ? 'text-amber-500' : 'text-rose-500'}`}>{pct}%</div>
+            <div className="flex gap-0.5 h-1 mt-1.5">
+                {[25, 50, 75, 95].map(threshold => (
+                    <div key={threshold} className={`flex-1 rounded-full ${pct > threshold ? 'bg-emerald-500' : 'bg-slate-200'}`} />
+                ))}
+            </div>
+            <div className="text-[8px] font-bold text-slate-400 mt-0.5 uppercase tracking-tighter">
+                {pct >= 80 ? 'Healthy' : pct >= 60 ? 'At Risk' : 'Critical'}
+            </div>
         </div>
     </div>
 );
@@ -60,7 +94,6 @@ const CRMSummaryCards: React.FC<Props> = ({ data }) => {
             value: data?.collected.value || "₹3.45Cr",
             icon: DollarSign,
             colorClass: { bg: 'bg-emerald-50/80', text: 'text-emerald-600', border: 'border-emerald-100/50' },
-            subtext: data?.collected.efficiency || "90.8% Efficiency",
             tooltip: "Actual cash received from clients, representing the real liquidity of the business."
         },
         {
@@ -90,10 +123,14 @@ const CRMSummaryCards: React.FC<Props> = ({ data }) => {
     ];
 
     return (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 mb-4">
             {cards.map((card, idx) => (
                 <MetricCard key={idx} {...card} />
             ))}
+            <CollectionPctCard
+                pct={data?.collectionPct ?? 0}
+                tooltip="Percentage of invoiced revenue that has been successfully collected in the selected period."
+            />
         </div>
     );
 };
